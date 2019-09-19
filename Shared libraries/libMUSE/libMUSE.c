@@ -1,4 +1,4 @@
-#include "../src/libmuse.h"
+#include "libMUSE.h"
 #include <stdlib.h>
 #include <string.h>
 
