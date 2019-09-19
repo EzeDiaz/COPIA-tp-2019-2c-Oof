@@ -1,8 +1,35 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+/*
+ * SUSE.c
+ *
+ *  Created on: 18 sep. 2019
+ *      Author: utnso
+ */
 
-\f0\fs24 \cf0 EMPTY FILE - COMPLETE CON CODIGO LINDO}
+#include "metricas.h"
+
+int main(){
+
+	start_up();
+
+	/*DESARROLLO*/
+
+	terminate_SUSE();
+	return 0;
+}
+
+void start_up(){
+	/*INICIALIZO RECURSOS*/
+
+	incializar_log_sistema();
+
+}
+
+void terminate_SUSE(){
+
+
+	/*LIBERO RECURSOS GLOBALES*/
+	destruir_log_sistema();
+
+
+}
+
