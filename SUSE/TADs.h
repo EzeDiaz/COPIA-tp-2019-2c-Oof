@@ -38,4 +38,11 @@ typedef struct{
 
 }programa_t;
 
+typedef struct{
+	char* funcion // ??
+	int PID; // Del programa al que pertenece
+	int TID; // Unico por thread
+	int estado_del_hilo;
+}hilo_t;
+
 #endif /* TADS_H_ */
