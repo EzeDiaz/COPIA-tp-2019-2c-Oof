@@ -1,12 +1,53 @@
 #include "libMUSE.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
+//Para poder pedir el pid
+#include <unistd.h>
+
+//Para usar sockets
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 int muse_init(int id, char* ip, int puerto){
-    return 0;
+	int socket_MUSE; //Global para poder accederla desde toda la biblioteca?
+	struct hostent *server_host;
+	struct sockaddr_in server_address;
+
+	/* Get server host from server name. */
+	server_host = gethostbyname(ip);
+
+	//Inicializa IPv4 server address con server host.
+	memset(&server_address, 0, sizeof server_address);
+	server_address.sin_family = AF_INET;
+	server_address.sin_port = htons(puerto);
+	memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
+
+	//Crear socket TCP
+	socket_MUSE = socket(AF_INET, SOCK_STREAM, 0);
+	if (socket_MUSE == -1) {
+		printf("libMUSE no pudo crear el socket\n");
+		return -1; //Manejar este codigo de error para poder saber que fallo
+	}
+
+
+	//Conectarse a MUSE
+	if (connect(socket_MUSE, (struct sockaddr *)&server_address, sizeof server_address) == -1) {
+		printf("La conexion con MUSE no pudo establecerse");
+		return -1; //Manejar este codigo de error para poder saber que fallo
+	}
+
+	//Ademas hay que hacer un send para que MUSE registre que proceso es?
+
+	return 0;
+
 }
 
-void muse_close(){ /* Does nothing :) */ }
+void muse_close(){
+	//Lo unico que hace es cerrar el socket que abrio muse_init
+}
 
 uint32_t muse_alloc(uint32_t tam){
     return (uint32_t) malloc(tam);
