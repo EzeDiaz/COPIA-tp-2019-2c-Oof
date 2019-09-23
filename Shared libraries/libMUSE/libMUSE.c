@@ -56,12 +56,16 @@ int muse_init(int id, char* ip, int puerto){
 
 void muse_close(){
 	close(socket_MUSE);
+	//Le aviso a MUSE que me di de baja?
 	//Tendremos que cerrar mas cosas?
 	//Veremos en la medida que levantemos mas estructuras administrativas
 }
 
 uint32_t muse_alloc(uint32_t tam){
-    return (uint32_t) malloc(tam);
+	void* paquete_alloc = crear_paquete_alloc(02,tam);
+	send(socket_MUSE, paquete_alloc,sizeof(paquete_alloc),0);
+	//recv
+	return 0; //Retorno lo del recv
 }
 
 void muse_free(uint32_t dir) {
