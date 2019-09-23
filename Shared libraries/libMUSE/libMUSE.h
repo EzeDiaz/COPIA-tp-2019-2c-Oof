@@ -1,6 +1,9 @@
 #ifndef LIBMUSE_H_
 #define LIBMUSE_H_
 
+//Globales
+int socket_MUSE;
+
     #include <stdint.h>
     #include <stddef.h>
 

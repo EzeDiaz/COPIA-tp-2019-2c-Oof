@@ -12,7 +12,6 @@
 #include <netdb.h>
 
 int muse_init(int id, char* ip, int puerto){
-	int socket_MUSE; //Global para poder accederla desde toda la biblioteca?
 	struct hostent *server_host;
 	struct sockaddr_in server_address;
 
@@ -39,14 +38,17 @@ int muse_init(int id, char* ip, int puerto){
 		return -1; //Manejar este codigo de error para poder saber que fallo
 	}
 
-	//Ademas hay que hacer un send para que MUSE registre que proceso es?
+	//send
+	//recv
 
 	return 0;
 
 }
 
 void muse_close(){
-	//Lo unico que hace es cerrar el socket que abrio muse_init
+	close(socket_MUSE);
+	//Tendremos que cerrar mas cosas?
+	//Veremos en la medida que levantemos mas estructuras administrativas
 }
 
 uint32_t muse_alloc(uint32_t tam){
