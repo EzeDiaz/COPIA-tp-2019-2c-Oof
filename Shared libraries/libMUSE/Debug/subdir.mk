@@ -4,13 +4,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../libMUSE.c 
+../get_local_IP.c \
+../libMUSE.c \
+../serializacionMUSE.c 
 
 OBJS += \
-./libMUSE.o 
+./get_local_IP.o \
+./libMUSE.o \
+./serializacionMUSE.o 
 
 C_DEPS += \
-./libMUSE.d 
+./get_local_IP.d \
+./libMUSE.d \
+./serializacionMUSE.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

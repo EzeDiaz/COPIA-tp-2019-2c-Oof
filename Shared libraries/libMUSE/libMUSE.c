@@ -1,4 +1,9 @@
+//Bibliotecas propias
 #include "libMUSE.h"
+#include "serializacionMUSE.h"
+#include "get_local_IP.h"
+
+//Standards
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -38,7 +43,11 @@ int muse_init(int id, char* ip, int puerto){
 		return -1; //Manejar este codigo de error para poder saber que fallo
 	}
 
-	//send
+	//Concatenar id con IP local --> IP_local=get_local_IP()
+
+	void* paquete_init = crear_paquete_init(00,id);
+	send(socket_MUSE, paquete_init,sizeof(paquete_init),0);
+	free(paquete_init);
 	//recv
 
 	return 0;
