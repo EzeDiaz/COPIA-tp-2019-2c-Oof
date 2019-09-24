@@ -1,3 +1,21 @@
+/*
+ Notas sobre como tengo configuradas las commons:
+ 	 .Segui los pasos de aca: https://www.youtube.com/watch?v=Aw9kXFqWu_I&t=394s
+
+ 	 .Tengo un proyecto de Eclipse que se llama commons
+
+ 	 .Mi Eclipse abre en el workspace default: /home/utnso/workspace/
+
+ 	 .Las commons las copie en: /home/utnso/workspace/commons/
+
+ 	 .Si vemos que algo no anda bien preguntemos la mejor manera de configurarlo
+ 	  porque el cuatri pasado con Jorge nos pasaba que pusheabamos configuraciones
+ 	  locales y haciamos que el otro no pudiera correr/compilar
+
+ 	  .Si vemos que igual es un lio, agarramos y no subimos los archivos de configuracion
+ 	   como el .cproject, el subdir.mk y esas cosas
+ */
+
 //Bibliotecas propias
 #include "libMUSE.h"
 #include "serializacionMUSE.h"
