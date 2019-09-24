@@ -21,6 +21,9 @@
 #include "serializacionMUSE.h"
 #include "get_local_IP.h"
 
+//Commons
+#include <commons/string.h>
+
 //Standards
 #include <stdlib.h>
 #include <string.h>
@@ -62,8 +65,14 @@ int muse_init(int id, char* ip, int puerto){
 	}
 
 	//Concatenar id con IP local --> IP_local=get_local_IP()
+	char* IP_id=string_new();
+	char* id_como_char=string_new();
+	id_como_char=string_itoa(id);
+	string_append(&IP_id,get_local_IP());
+	string_append(&IP_id,"-");
+	string_append(&IP_id,id_como_char);
 
-	void* paquete_init = crear_paquete_init(00,id);
+	void* paquete_init = crear_paquete_init(00,IP_id);
 	send(socket_MUSE, paquete_init,sizeof(paquete_init),0);
 	free(paquete_init);
 	//recv

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void* crear_paquete_init(int codigo_de_operacion, int id) {
+void* crear_paquete_init(int codigo_de_operacion, char* IP_id) {
 	//Todos los pesos de los elementos
 	int peso_total=0;
 	int peso_codigo_de_operacion=sizeof(int);
@@ -15,7 +15,7 @@ void* crear_paquete_init(int codigo_de_operacion, int id) {
 	//El peso del codigo_de_operacion no tiene sentido ponerlo, ya se que es un int.
 	peso_total+=peso_codigo_de_operacion;
 
-	peso_del_siguiente=sizeof(id);
+	peso_del_siguiente=strlen(IP_id)+1;
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
 
@@ -27,10 +27,10 @@ void* crear_paquete_init(int codigo_de_operacion, int id) {
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;
 
-	peso_del_siguiente=sizeof(id);
+	peso_del_siguiente=strlen(IP_id)+1;
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
-	memcpy(paquete+offset, &id, peso_del_siguiente);
+	memcpy(paquete+offset, strlen(IP_id)+1, peso_del_siguiente);
 
 	return paquete;
 }

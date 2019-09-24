@@ -25,7 +25,7 @@ endif
 all: liblibMUSE.so
 
 dependents:
-	-cd /home/utnso/workspace/commons/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/commons/Debug && $(MAKE) all
 
 # Tool invocations
 liblibMUSE.so: $(OBJS) $(USER_OBJS) /home/utnso/workspace/commons/Debug/libcommons.so
