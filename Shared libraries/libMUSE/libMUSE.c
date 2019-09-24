@@ -69,7 +69,9 @@ uint32_t muse_alloc(uint32_t tam){
 }
 
 void muse_free(uint32_t dir) {
-    free((void*) dir);
+    //Siendo void quiere decir que nada puede malir sal? --> No hacer recv (?)
+	void* paquete_free = crear_paquete_free(03,dir);
+	send(socket_MUSE, paquete_free,sizeof(paquete_free),0);
 }
 
 int muse_get(void* dst, uint32_t src, size_t n){
