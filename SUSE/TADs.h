@@ -39,7 +39,7 @@ typedef struct{
 }programa_t;
 
 typedef struct{
-	char* funcion // ??
+	char* funcion; //Esto tiene olor a metaprogramacion donde no deberia(? ??
 	int PID; // Del programa al que pertenece
 	int TID; // Unico por thread
 	int estado_del_hilo;

@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "TADs.h"
+#include "colas.h"
+#include <hilolay.h>
+#include <commons/collections/queue.h>
+
 /*
  * Vamos a manejar los distintos estados con colas.
 
@@ -10,9 +17,9 @@
 
 th_create()
 {
-	t_hilo* hilo = suse_create(/*FUNCION*/) //t_hilo un struct hilo ¿con funcion y TID?
+	hilo_t* hilo = suse_create(/*FUNCION*/); //t_hilo un struct hilo ¿con funcion y TID?
 
-	queue_push(cola_New,hilo)
+	queue_push(cola_new,hilo);
 }
 
 
@@ -20,11 +27,13 @@ th_create()
 /// ************************************ PASAR THREADS DE NEW A READY ************************************** ///
 /// ******************************************************************************************************** ///
 
+
+//NO SE SUPONE QUE VOY A TENER VARIOS DE ESTOS ESTADOS READY?
 void newToReady()
 {
 	int i = 0;
 
-	t_hilo*  hilo = queue_pop(cola_New);
+	hilo_t*  hilo = queue_pop(cola_new);
 
 	sem_wait(&mx_colaReady);
 
@@ -34,9 +43,9 @@ void newToReady()
 
 	sem_post(&procesosEnReady);
 
-	sem_wait(&mx_log);
+	sem_wait(&semaforo_log_colas);
 
-	log_info(logger,"Se paso el hilo a la cola Ready \n");
+	log_info(log_colas,"Se paso el hilo a la cola Ready \n");
 
 }
 
@@ -72,15 +81,15 @@ void readyToExec()
 
 	sem_wait(&mx_colaReady);
 
-	t_hilo* hilo = queue_pop(cola_Ready);
+	hilo_t* hilo = queue_pop(cola_Ready);
 
 	sem_post(&mx_colaReady);
 
-	sem_wait(&mx_log);
+	sem_wait(&semaforo_log_colas);
 
-	log_info(logger,"Se paso el proceso a Exec \n");
+	log_info(log_colas,"Se paso el proceso a Exec \n");
 
-	sem_post(&mx_log);
+	sem_post(&semaforo_log_colas);
 
 }
 
@@ -115,11 +124,11 @@ void exec()
 // IGNORAR
 	if(!list_is_empty(comandos))
 	{
-		sem_wait(&mx_diccionario);
+		sem_wait(&semaforo_diccionario_de_procesos);
 
-		dictionary_put(diccionarioProcesos,proceso,comandos); // vuelvo a meter la lista de comandos que no ejecutaron en el diccionario
+		dictionary_put(diccionario_de_procesos,proceso,comandos); // vuelvo a meter la lista de comandos que no ejecutaron en el diccionario
 
-		sem_post(&mx_diccionario);
+		sem_post(&semaforo_diccionario_de_procesos);
 
 		sem_wait(&mx_colaReady);
 
@@ -129,21 +138,21 @@ void exec()
 
 		sem_post(&procesosEnReady);
 
-		sem_wait(&mx_log);
+		sem_wait(&semaforo_log_colas);
 
-		log_info(logger,"Se devolvio el proceso a la cola Ready \n");
-		log_info(logger,"PID: %s \n",proceso);
+		log_info(log_colas,"Se devolvio el proceso a la cola Ready \n");
+		log_info(log_colas,"PID: %s \n",proceso);
 
-		sem_post(&mx_log);
+		sem_post(&semaforo_log_colas);
 
 	}
 	else
 	{
-		sem_wait(&mx_diccionario);
+		sem_wait(&semaforo_diccionario_de_procesos);
 
-		dictionary_remove_and_destroy(diccionarioProcesos, proceso, (void*)elAsesinoIndomableDeProcesos); //termino de ejecutar todos sus comandos -> chau proceso
+		dictionary_remove_and_destroy(diccionario_de_procesos, proceso, (void*)elAsesinoIndomableDeProcesos); //termino de ejecutar todos sus comandos -> chau proceso
 
-		sem_post(&mx_diccionario);
+		sem_post(&semaforo_diccionario_de_procesos);
 	}
 
 }
