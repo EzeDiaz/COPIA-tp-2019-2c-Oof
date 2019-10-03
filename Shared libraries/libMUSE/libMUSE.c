@@ -72,7 +72,7 @@ int muse_init(int id, char* ip, int puerto){
 	string_append(&IP_id,"-");
 	string_append(&IP_id,id_como_char);
 
-	void* paquete_init = crear_paquete_init(00,IP_id);
+	void* paquete_init = crear_paquete_init(100,IP_id);
 	send(socket_MUSE, paquete_init,sizeof(paquete_init),0);
 	free(paquete_init);
 	//recv
@@ -89,37 +89,57 @@ void muse_close(){
 }
 
 uint32_t muse_alloc(uint32_t tam){
-	void* paquete_alloc = crear_paquete_alloc(02,tam);
+	void* paquete_alloc = crear_paquete_alloc(102,tam);
 	send(socket_MUSE, paquete_alloc,sizeof(paquete_alloc),0);
+	free(paquete_alloc);
 	//recv
 	return 0; //Retorno lo del recv
 }
 
 void muse_free(uint32_t dir) {
     //Siendo void quiere decir que nada puede malir sal? --> No hacer recv (?)
-	void* paquete_free = crear_paquete_free(03,dir);
+	void* paquete_free = crear_paquete_free(103,dir);
 	send(socket_MUSE, paquete_free,sizeof(paquete_free),0);
+	free(paquete_free);
 }
 
 int muse_get(void* dst, uint32_t src, size_t n){
-    memcpy(dst, (void*) src, n);
-    return 0;
+    void* paquete_get = crear_paquete_get(104, dst, src, n);
+    send(socket_MUSE, paquete_get,sizeof(paquete_get),0);
+    free(paquete_get);
+    //recv
+    return 0; //Si falla --> return -1
 }
 
 int muse_cpy(uint32_t dst, void* src, int n){
-    memcpy((void*) dst, src, n);
-    return 0;
+	void* paquete_cpy = crear_paquete_cpy(105, dst, src, n);
+	send(socket_MUSE, paquete_cpy,sizeof(paquete_cpy),0);
+	free(paquete_cpy);
+	//recv
+	return 0; //Si falla --> return -1
 }
 
 /////////////////////////////////////////////////////////////////////////////
 uint32_t muse_map(char *path, size_t length, int flags){
-    return 0;
+	void* paquete_map = crear_paquete_map(106, path, length, flags);
+	send(socket_MUSE, paquete_map,sizeof(paquete_map),0);
+	free(paquete_map);
+	//recv
+	return 0; //Retorna la pos de memoria de MUSE mapeada
 }
 
 int muse_sync(uint32_t addr, size_t len){
-    return 0;
+	void* paquete_sync = crear_paquete_sync(107, addr, len);
+	send(socket_MUSE, paquete_sync,sizeof(paquete_sync),0);
+	free(paquete_sync);
+	//recv
+	return 0; //Si falla --> rdeturn -1
 }
 
 int muse_unmap(uint32_t dir){
-    return 0;
+	void* paquete_unmap = crear_paquete_unmap(108, dir);
+	send(socket_MUSE, paquete_unmap,sizeof(paquete_unmap),0);
+	free(paquete_unmap);
+	//recv
+	return 0; //Si falla --> rdeturn -1
 }
