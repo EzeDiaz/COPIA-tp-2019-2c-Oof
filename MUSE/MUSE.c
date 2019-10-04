@@ -1,8 +1,38 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+//Bibliotecas propias
+#include <libMUSE.h>
+#include <serverMUSE.h>
 
-\f0\fs24 \cf0 EMPTY FILE - COMPLETE CON CODIGO LINDO}
+//Commons
+#include <commons/string.h>
+
+//Standards
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+//Para poder pedir el pid
+#include <unistd.h>
+
+//Para usar sockets
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+int main(){
+	/*
+	remove("log_MPServer.log");
+	logger = log_create("log_MPServer.log","ServidorMP", 0, LOG_LEVEL_DEBUG);	//hacemo' el log
+	char* linea= readline("Path del config a utilizar: ");
+	 */
+
+	//Todas estas cosas van de una o se dan luego del init?
+
+	//Traer las cosas necesarias del config
+	//Inicializar semaforos
+	//Malloc gigante
+	//Inicializar metricas
+
+	iniciar_servidor();
+
+	return 0;
+}

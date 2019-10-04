@@ -1,8 +1,17 @@
 #ifndef LIBMUSE_H_
 #define LIBMUSE_H_
 
+#include <commons/log.h>
+#include <commons/config.h>
+
 //Globales
 int socket_MUSE;
+
+//Provisorio para que compile (quizas quede aca efectivamente)
+t_log* logger;
+t_config* config;
+pthread_mutex_t mutexLog;
+pthread_mutex_t semaforoLogger;
 
     #include <stdint.h>
     #include <stddef.h>
