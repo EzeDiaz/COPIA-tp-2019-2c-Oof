@@ -12,6 +12,7 @@
 #include <semaphore.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <commons/config.h>
 #include "globales.h"
 #include "deserializar.h"
 
@@ -20,6 +21,7 @@ void* recibir_buffer(int* , int);
 
 int main(){
 
+	obtener_datos_del_config();
 	start_up();
 	struct sockaddr_in direccion_servidor;
 	direccion_servidor.sin_family = AF_INET;
@@ -129,5 +131,32 @@ void* recibir_buffer(int* alocador, int cliente_socket){
 		*alocador = 0;
 		return buffer;
 	}
+}
+
+void obtener_datos_del_config(){
+	char* nombre_config;
+	t_config* config;
+
+	//IP = string_new();
+
+	nombre_config = readline("Ingresar nombre del config a utilizar: ");
+
+	config = config_create(nombre_config);
+
+	char* aux = string_new();
+
+	string_append(&aux, "Leimos el config: ");
+	string_append(&aux, nombre_config);
+	string_append(&aux, "\n");
+
+	log_info(log_servidor, aux);
+	free(aux);
+	free(nombre_config);
+
+	IP = config_get_string_value(config, "IP");
+	PUERTO_ESCUCHA = config_get_int_value(config, "PUERTO_ESCUCHA");
+	//TODO
+	config_destroy(config);
+
 }
 
