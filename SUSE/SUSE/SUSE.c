@@ -5,6 +5,7 @@
  *      Author: utnso
  */
 
+#include "funciones_aux.h"
 #include "metricas.h"
 #include "colas.h"
 #include "globales.h"
@@ -31,7 +32,9 @@ void start_up(){
 
 	/*INICIALIZO LOG*/
 
-	incializar_log_sistema();
+	incializar_logs_sistema();
+
+	/*SETEAR CONFIG*/
 
 	/*INICIALIZO DICCIONARIOS*/
 
@@ -68,8 +71,8 @@ void terminate_SUSE(){
 
 
 	/*LIBERO RECURSOS GLOBALES*/
-	destruir_log_sistema();
-
+	destruir_logs_sistema();
+	//destruir_semaforos();
 
 }
 
@@ -82,7 +85,6 @@ void aceptar_proceso(int PID){
 	sem_post(semaforo_diccionario_procesos_x_semaforo);
 	sem_post(procesos_en_New);
 }
-
 
 
 

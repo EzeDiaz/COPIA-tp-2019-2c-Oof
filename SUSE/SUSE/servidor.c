@@ -17,13 +17,10 @@ void realizar_request(void *, int);
 void eliminar_semaforos();
 void* recibir_buffer(int* , int );
 
-int main(void){
+int iniciar_servidor(void){
 
 	remove("log_Servidor.log");
 	logger = log_create("log_Servidor.log","Servidor", 0, LOG_LEVEL_DEBUG);
-
-	iniciar_semaforos();
-	leer_config_y_setear();
 
 	bool suse_esta_atendiendo = true;
 
@@ -136,12 +133,3 @@ void realizar_request(void *buffer,int cliente){
 
 }
 
-void eliminarSemaforos(){
-
-
-}
-
-void iniciarSemaforos(){
-
-
-}
