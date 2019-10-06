@@ -13,9 +13,10 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include "globales.h"
+#include "deserializar.h"
 
 void atender_cliente(int);
-
+void* recibir_buffer(int* , int);
 
 int main(){
 
@@ -106,11 +107,27 @@ void atender_cliente(int cliente_socket){
 	close(cliente_socket);
 }
 
-void realizar_request(){
-	NULL;
+void realizar_request(void *buffer, int cliente_socket){
+
+	int codigo_de_operacion = determinar_protocolo(buffer);
+
+	identificar_paquete_y_ejecutar_comando(cliente_socket, buffer, codigo_de_operacion);
+	/*Deserializa y hace la opercion correspondiente*/
+	log_info(log_servidor,"Terminamos el request\n");
+
 }
 
-void recibir_buffer(){
-	NULL;
+void* recibir_buffer(int* alocador, int cliente_socket){
+
+	void* buffer;
+
+	if(recv(cliente_socket, alocador, 4, MSG_WAITALL)!=0){
+		buffer = malloc(*alocador);
+		recv(cliente_socket, buffer, *alocador, MSG_WAITALL);
+		return buffer;
+	}else{
+		*alocador = 0;
+		return buffer;
+	}
 }
 
