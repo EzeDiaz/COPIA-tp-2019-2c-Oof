@@ -10,6 +10,7 @@
 
 #include <commons/collections/list.h>
 #include <stdlib.h>
+#include "globales.h"
 
 typedef struct{
 
@@ -18,6 +19,11 @@ typedef struct{
 
 }semaforo_t;
 
+//Enums
+enum colas{
+	COLA_READY = 0,
+	COLA_EXEC = 1,
+};
 
 enum estado{
 	NEW = 0,
@@ -43,6 +49,8 @@ typedef struct{
 	int PID; // Del programa al que pertenece
 	int TID; // Unico por thread
 	int estado_del_hilo;
+	t_list* comandos;
+	float prioridad;
 }hilo_t;
 
 #endif /* TADS_H_ */

@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "TADs.h"
 #include "colas.h"
-#include <hilolay.h>
-#include <commons/collections/queue.h>
+
 
 /*
  * Vamos a manejar los distintos estados con colas.
@@ -15,7 +11,13 @@
 
 // SE CREA EL HILO
 
-th_create()
+hilo_t* suse_create(/*FUNCION*/){
+
+
+	return NULL;
+}
+
+void th_create()
 {
 	hilo_t* hilo = suse_create(/*FUNCION*/); //t_hilo un struct hilo ¿con funcion y TID?
 
@@ -35,13 +37,11 @@ void newToReady()
 
 	hilo_t*  hilo = queue_pop(cola_new);
 
-	sem_wait(&mx_colaReady);
+	t_queue*cola_ready = obtener_cola_ready_de(hilo->PID);
 
-	queue_push(cola_Ready,proceso);
+	queue_push(cola_ready,hilo);
 
-	sem_post(&mx_colaReady);
-
-	sem_post(&procesosEnReady);
+	sem_post(&procesos_en_Ready);
 
 	sem_wait(&semaforo_log_colas);
 
@@ -54,15 +54,15 @@ void * estadoNew()
 	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
 	// y se frenara la planificacion
 
-	while(!finDePlanificacion())
+	while(!finDePlanificacion)
 	{
-		if(!finDePlanificacion())
+		if(!finDePlanificacion)
 		{
-			sem_wait(&procesosEnNew);
-
-			//Tiene que chequear el grado de multiprogramacion y si hay lugar lo pasa a Ready
+			sem_wait(&procesos_en_New);
 
 			newToReady();
+			//Tiene que chequear el grado de multiprogramacion y si hay lugar lo pasa a Ready
+
 		}
 	}
 
@@ -75,36 +75,52 @@ void * estadoNew()
 /// ******************************************************************************************************** ///
 
 
-void readyToExec()
+void readyToExec(int PID)
 {
-	// Habria que chequear que entre UN SOLO thread a exec POR programa
+	// Habria que chequear que entre UN SOLO thread a exec POR proceso
 
-	sem_wait(&mx_colaReady);
 
-	hilo_t* hilo = queue_pop(cola_Ready);
+	t_queue* cola_Ready = obtener_cola_ready_de(PID);
+	t_queue* cola_Exec = obtener_cola_exec_de(PID);
+	void sjf(hilo_t* un_hilo){
+		un_hilo->prioridad = calcular_sjf(un_hilo);
+	}
 
-	sem_post(&mx_colaReady);
+	list_iterate(cola_Ready->elements,sjf);
+
+	bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
+		return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
+	}
+	list_sort(cola_Ready->elements,elemento_mas_grande);
+
+	hilo_t* hilo= list_remove(cola_Ready->elements,0);
+
+	sem_wait(&semaforo_diccionario_procesos_x_semaforo);
+	sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
+	sem_post(&semaforo_diccionario_procesos_x_semaforo);
+
+	sem_wait(&semaforo_exec_x_proceso);
+	queue_push(cola_Exec,hilo);
+	sem_post(&semaforo_exec_x_proceso);
 
 	sem_wait(&semaforo_log_colas);
-
 	log_info(log_colas,"Se paso el proceso a Exec \n");
-
 	sem_post(&semaforo_log_colas);
 
 }
 
-void * estadoReady()
+void * estadoReady(int PID)
 {
 	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
 	// y se frenara la planificacion
 
-	while(!finDePlanificacion())
+	while(!finDePlanificacion)
 	{
-		if(!finDePlanificacion())
+		if(!finDePlanificacion)
 		{
-			sem_wait(&procesosEnReady);
+			sem_wait(&procesos_en_Ready);
 
-			readyToExec();
+			readyToExec(PID);
 
 		}
 
@@ -118,41 +134,37 @@ void * estadoReady()
 /// ****************************************** PROCESOS EN EXEC  ******************************************* ///
 /// ******************************************************************************************************** ///
 
-void exec()
+void exec(hilo_t* hilo)
 {
 
 // IGNORAR
-	if(!list_is_empty(comandos))
+	if(!list_is_empty(hilo->comandos))
 	{
-		sem_wait(&semaforo_diccionario_de_procesos);
 
-		dictionary_put(diccionario_de_procesos,proceso,comandos); // vuelvo a meter la lista de comandos que no ejecutaron en el diccionario
 
-		sem_post(&semaforo_diccionario_de_procesos);
+		//TODO SEMAFOROS PROPIOS PARA ECHAR A LOS HILOS A BLOCKED
+		//sem_wait(&semaforo_diccionario_de_procesos);
 
-		sem_wait(&mx_colaReady);
+		//dictionary_put(diccionario_de_procesos,proceso,comandos); // vuelvo a meter la lista de comandos que no ejecutaron en el diccionario
 
-		queue_push(cola_Ready,proceso);
+		//sem_post(&semaforo_diccionario_de_procesos);
 
-		sem_post(&mx_colaReady);
+		t_queue* cola_Ready= obtener_cola_ready_de(hilo->PID);
+		queue_push(cola_Ready,hilo);
 
-		sem_post(&procesosEnReady);
+		sem_post(&procesos_en_Ready);
 
 		sem_wait(&semaforo_log_colas);
 
-		log_info(log_colas,"Se devolvio el proceso a la cola Ready \n");
-		log_info(log_colas,"PID: %s \n",proceso);
+		log_info(log_colas,"Se devolvio el hilo a la cola Ready \n");
+		log_info(log_colas,"TID: %d \n",hilo->TID);
 
 		sem_post(&semaforo_log_colas);
 
 	}
 	else
 	{
-		sem_wait(&semaforo_diccionario_de_procesos);
-
-		dictionary_remove_and_destroy(diccionario_de_procesos, proceso, (void*)elAsesinoIndomableDeProcesos); //termino de ejecutar todos sus comandos -> chau proceso
-
-		sem_post(&semaforo_diccionario_de_procesos);
+		exit_thread(hilo);
 	}
 
 }
@@ -177,9 +189,13 @@ void exec()
 
 // ESTADO EXIT
 
-void exit()
-{
+void exit_thread(hilo_t* hilo){
 	//Cuando termina de ejecutar la funcion del hilo, este "muere" y viene a exit ¿haciendo una cola de threads terminados?
+			sem_wait(&semaforo_lista_procesos_finalizados);
+
+
+			list_add(hilos_finalizados,hilo);
+			sem_post(&semaforo_lista_procesos_finalizados);
 
 
 }

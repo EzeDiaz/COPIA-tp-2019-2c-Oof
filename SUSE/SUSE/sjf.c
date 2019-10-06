@@ -3,7 +3,7 @@
 
 // SJF 1
 
-int main(int n, char **args) {
+int sjf_tincho(int n, char **args) {
 	printf("SJF: SHORTEST JOB FIRST");
 	// cada proceso contiene dos elementos:
 	//  - Posición 0 el tiempo del trabajo
@@ -102,41 +102,5 @@ void completionTime(int num, int mat[][6])
         {
             swap(mat[val][k], mat[i][k]);
         }
-    }
-}
-
-int main()
-{
-    int num, temp;
-
-    cout<<"Enter number of Process: ";
-    cin>>num;
-
-    cout<<"...Enter the process ID...\n";
-    for(int i=0; i<num; i++)
-    {
-        cout<<"...Process "<<i+1<<"...\n";
-        cout<<"Enter Process Id: ";
-        cin>>mat[i][0];
-        cout<<"Enter Arrival Time: ";
-        cin>>mat[i][1];
-        cout<<"Enter Burst Time: ";
-        cin>>mat[i][2];
-    }
-
-    cout<<"Before Arrange...\n";
-    cout<<"Process ID\tArrival Time\tBurst Time\n";
-    for(int i=0; i<num; i++)
-    {
-        cout<<mat[i][0]<<"\t\t"<<mat[i][1]<<"\t\t"<<mat[i][2]<<"\n";
-    }
-
-    arrangeArrival(num, mat);
-    completionTime(num, mat);
-    cout<<"Final Result...\n";
-    cout<<"Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n";
-    for(int i=0; i<num; i++)
-    {
-        cout<<mat[i][0]<<"\t\t"<<mat[i][1]<<"\t\t"<<mat[i][2]<<"\t\t"<<mat[i][4]<<"\t\t"<<mat[i][5]<<"\n";
     }
 }

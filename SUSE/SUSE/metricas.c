@@ -6,6 +6,9 @@
  */
 
 #include "metricas.h"
+#include <commons/string.h>
+#include <commons/log.h>
+#include <string.h>
 
 
 /*
