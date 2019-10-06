@@ -61,6 +61,7 @@ void metrica_por_cantidad_de_hilos(programa_t* un_programa){
 
 
 }
+/*
 void destruir_log_sistema(){
 
 	log_destroy(log_metricas_sistema);//destruyo el log y borro el archivo
@@ -74,8 +75,7 @@ void incializar_log_sistema(){
 	log_metricas_sistema=log_create("log_sistema.log","log_sistema",0,LOG_LEVEL_INFO);
 
 }
-
-
+*/
 void metrica_por_grado_actual_de_multiprogramacion(programa_t* un_programa){
 
 	char* msj=(char*)malloc(43+string_length(string_itoa(un_programa->grado_de_multiprogramacion_actual)));
