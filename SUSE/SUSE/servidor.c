@@ -17,21 +17,21 @@ void realizar_request(void *, int);
 void eliminar_semaforos();
 void* recibir_buffer(int* , int );
 
-<<<<<<< HEAD
+
+
 int levantar_servidor(void){
-=======
+
+}
+
+
 int iniciar_servidor(void){
->>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859
 
 	remove("log_Servidor.log");
 	logger = log_create("log_Servidor.log","Servidor", 0, LOG_LEVEL_DEBUG);
 
-<<<<<<< HEAD
-	//iniciar_semaforos();
+	iniciar_semaforos();
 	//leer_config_y_setear();
 
-=======
->>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859
 	bool suse_esta_atendiendo = true;
 
 	struct sockaddr_in direccionServidor;
@@ -143,16 +143,13 @@ void realizar_request(void *buffer,int cliente){
 
 }
 
-<<<<<<< HEAD
-void eliminarSemaforos(){
+void eliminar_semaforos(){
 
 
 }
 
-void iniciarSemaforos(){
+void iniciar_semaforos(){
 
 
 }
 
-=======
->>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859

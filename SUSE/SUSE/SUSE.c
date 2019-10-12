@@ -56,12 +56,8 @@ void _suse_init(){
 	/*INICIALIZO LOG*/
 
 	incializar_logs_sistema();
-<<<<<<< HEAD
-=======
 
 	/*SETEAR CONFIG*/
->>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859
-
 	/*INICIALIZO DICCIONARIOS*/
 
 	diccionario_de_procesos = dictionary_create();
@@ -151,11 +147,9 @@ void terminate_SUSE(){
 
 	/*LIBERO RECURSOS GLOBALES*/
 	destruir_logs_sistema();
-<<<<<<< HEAD
 
-=======
+
 	//destruir_semaforos();
->>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859
 
 }
 
