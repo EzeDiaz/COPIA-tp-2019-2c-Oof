@@ -5,6 +5,7 @@
  *      Author: utnso
  */
 
+#include "funciones_aux.h"
 #include "metricas.h"
 #include "colas.h"
 #include "globales.h"
@@ -55,6 +56,11 @@ void _suse_init(){
 	/*INICIALIZO LOG*/
 
 	incializar_logs_sistema();
+<<<<<<< HEAD
+=======
+
+	/*SETEAR CONFIG*/
+>>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859
 
 	/*INICIALIZO DICCIONARIOS*/
 
@@ -145,7 +151,11 @@ void terminate_SUSE(){
 
 	/*LIBERO RECURSOS GLOBALES*/
 	destruir_logs_sistema();
+<<<<<<< HEAD
 
+=======
+	//destruir_semaforos();
+>>>>>>> a98468c44b684bafeaa692b4c876b2d28c2d4859
 
 }
 
@@ -158,7 +168,6 @@ void aceptar_proceso(int PID){
 	sem_post(semaforo_diccionario_procesos_x_semaforo);
 	sem_post(procesos_en_New);
 }
-
 
 
 

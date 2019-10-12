@@ -5,6 +5,7 @@
  *      Author: utnso
  */
 
+#include "metricas.h"
 #include "funciones_aux.h"
 #include <commons/collections/dictionary.h>
 
@@ -52,5 +53,34 @@ void destruir_logs_sistema(){
 	remove("log_colas.log");
 
 }
+
+// CONFIG
+
+void leer_config_y_setear(){
+
+	char* nombre_config;
+	t_config* config;
+
+	//PUERTO_ESCUCHA= (char*) malloc(4);
+	IP=string_new();
+
+	nombre_config = readline("Ingresar nombre del config a utilizar: ");
+
+	config = config_create(nombre_config);
+
+	char* aux = string_new();
+	string_append(&aux, "Leimos el config: ");
+	string_append(&aux, nombre_config);
+	string_append(&aux, "\n");
+	log_info(logger,aux);
+	free(aux);
+
+	strcpy(IP,config_get_string_value(config, "IP"));
+
+	PUERTO_ESCUCHA = config_get_int_value(config,"PUERTO_ESCUCHA");
+
+	config_destroy(config);
+}
+
 
 
