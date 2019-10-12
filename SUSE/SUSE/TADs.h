@@ -11,6 +11,7 @@
 #include <commons/collections/list.h>
 #include <stdlib.h>
 #include "globales.h"
+#include <hilolay/hilolay.h>
 
 typedef struct{
 
@@ -36,21 +37,28 @@ enum estado{
 
 typedef struct{
 
-	int estado_del_proceso;
-	int cantidad_de_hilos;
-	t_list* hilos_del_programa;
+	t_list* hilos_del_programa;//lista de hilos_t*
 	int grado_de_multiprogramacion;
-	int grado_de_multiprogramacion_actual;
 
-}programa_t;
+}proceso_t;
+
+
 
 typedef struct{
-	char* funcion; //Esto tiene olor a metaprogramacion donde no deberia(? ??
+	int tiempo_de_ejecucion;// en ms
+	int tiempo_de_espera; // en ms
+	int tiempo_de_uso_del_cpu;// en ms
+	float porcentaje_total_tiempo_de_ejecucion_de_hilos;
+}metricas_t;
+
+
+typedef struct{
 	int PID; // Del programa al que pertenece
-	int TID; // Unico por thread
+	hilolay_t* hilo_informacion; // Unico por thread
 	int estado_del_hilo;
-	t_list* comandos;
+	metricas_t* metricas;
 	float prioridad;
 }hilo_t;
+
 
 #endif /* TADS_H_ */

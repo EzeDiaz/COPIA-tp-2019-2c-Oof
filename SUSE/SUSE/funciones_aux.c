@@ -10,7 +10,7 @@
 
 float calcular_sjf(hilo_t*un_hilo){
 
-return ( (1-alpha)* un_hilo->prioridad + alpha * un_hilo->comandos->elements_count);
+return ( (1-alpha)* un_hilo->prioridad + alpha * un_hilo->metricas->tiempo_de_ejecucion);
 
 
 }

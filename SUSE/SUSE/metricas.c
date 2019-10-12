@@ -43,16 +43,19 @@ void metrica_por_sistema(t_list* varios_semaforos){//Son mas de 1 semaforo TODO
 
 
 }
-void metrica_por_programa(programa_t *un_programa){
+void metrica_por_programa(proceso_t *un_programa){
 
 	metrica_por_cantidad_de_hilos(un_programa);
 	metrica_por_grado_actual_de_multiprogramacion(un_programa);
 }
 
-void metrica_por_cantidad_de_hilos(programa_t* un_programa){
+void metrica_por_cantidad_de_hilos(proceso_t* un_proceso){
 
-	char* msj=(char*)malloc(43+string_length(string_itoa(un_programa->grado_de_multiprogramacion_actual)));
-	msj=strcat("cantidad de hilos del programa",string_itoa(un_programa->grado_de_multiprogramacion_actual));
+
+
+
+	char* msj=(char*)malloc(43+string_length(string_itoa(un_proceso->hilos_del_programa->elements_count)));
+	msj=strcat("cantidad de hilos del programa",string_itoa(un_proceso->hilos_del_programa->elements_count));
 
 	loguear_mensaje(log_metricas_programa,msj);
 	free(msj);
@@ -76,10 +79,10 @@ void incializar_log_sistema(){
 
 }
 */
-void metrica_por_grado_actual_de_multiprogramacion(programa_t* un_programa){
+void metrica_por_grado_actual_de_multiprogramacion(proceso_t* un_proceso){
 
-	char* msj=(char*)malloc(43+string_length(string_itoa(un_programa->grado_de_multiprogramacion_actual)));
-	msj=strcat("se cambio el grado de multiprogramacion a ",string_itoa(un_programa->grado_de_multiprogramacion_actual));//potencial SEGFAULT
+	char* msj=(char*)malloc(43+string_length(string_itoa(un_proceso->hilos_del_programa->elements_count)));
+	msj=strcat("se cambio el grado de multiprogramacion a ",string_itoa(un_proceso->hilos_del_programa->elements_count));//potencial SEGFAULT
 	loguear_mensaje(log_metricas_programa,msj);
 	free(msj);//TODO hacerlo sin sarna
 

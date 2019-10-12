@@ -17,13 +17,13 @@ void realizar_request(void *, int);
 void eliminar_semaforos();
 void* recibir_buffer(int* , int );
 
-int main(void){
+int levantar_servidor(void){
 
 	remove("log_Servidor.log");
 	logger = log_create("log_Servidor.log","Servidor", 0, LOG_LEVEL_DEBUG);
 
-	iniciar_semaforos();
-	leer_config_y_setear();
+	//iniciar_semaforos();
+	//leer_config_y_setear();
 
 	bool suse_esta_atendiendo = true;
 
@@ -101,12 +101,12 @@ void atender_cliente(int cliente){
 		log_info(logger, "Recibimos conexion \n");
 		sem_post(&mutex_log_servidor);
 
-		buffer=recibirBuffer(&alocador,cliente);
+		buffer=recibir_buffer(&alocador,cliente);
 
 		while(0<alocador){
-			realizarRequest(buffer, cliente);
+			realizar_request(buffer, cliente);
 			free(buffer);
-			buffer=recibirBuffer(&alocador,cliente);
+			buffer=recibir_buffer(&alocador,cliente);
 		}
 
 		sem_wait(&mutex_log_servidor);
@@ -145,3 +145,4 @@ void iniciarSemaforos(){
 
 
 }
+

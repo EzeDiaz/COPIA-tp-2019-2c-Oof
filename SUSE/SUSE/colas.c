@@ -138,8 +138,6 @@ void exec(hilo_t* hilo)
 {
 
 // IGNORAR
-	if(!list_is_empty(hilo->comandos))
-	{
 
 
 		//TODO SEMAFOROS PROPIOS PARA ECHAR A LOS HILOS A BLOCKED
@@ -157,15 +155,11 @@ void exec(hilo_t* hilo)
 		sem_wait(&semaforo_log_colas);
 
 		log_info(log_colas,"Se devolvio el hilo a la cola Ready \n");
-		log_info(log_colas,"TID: %d \n",hilo->TID);
+		log_info(log_colas,"TID: %d \n",hilo->hilo_informacion->tid);
 
 		sem_post(&semaforo_log_colas);
 
-	}
-	else
-	{
 		exit_thread(hilo);
-	}
 
 }
 

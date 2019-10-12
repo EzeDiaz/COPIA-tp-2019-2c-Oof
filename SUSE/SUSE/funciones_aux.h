@@ -9,6 +9,8 @@
 #define FUNCIONES_AUX_H_
 
 #include "TADs.h"
+#include "metricas.h"
+#include <commons/log.h>
 #include <commons/collections/queue.h>
 
 //Prototipos
