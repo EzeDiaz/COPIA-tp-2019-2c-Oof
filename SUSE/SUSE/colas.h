@@ -8,7 +8,7 @@
 #ifndef COLAS_H_
 #define COLAS_H_
 
-
+#include <commons/temporal.h>
 #include "funciones_aux.h"
 #include "TADs.h"
 //hilolay falta

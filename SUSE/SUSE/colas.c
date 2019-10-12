@@ -33,7 +33,8 @@ void th_create()
 //NO SE SUPONE QUE VOY A TENER VARIOS DE ESTOS ESTADOS READY?
 void newToReady()
 {
-	int i = 0;
+
+
 
 	hilo_t*  hilo = queue_pop(cola_new);
 
@@ -79,6 +80,10 @@ void readyToExec(int PID)
 {
 	// Habria que chequear que entre UN SOLO thread a exec POR proceso
 
+	char* tiempo_inicio= temporal_get_string_time();
+	char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+	int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
+
 
 	t_queue* cola_Ready = obtener_cola_ready_de(PID);
 	t_queue* cola_Exec = obtener_cola_exec_de(PID);
@@ -101,6 +106,13 @@ void readyToExec(int PID)
 
 	sem_wait(&semaforo_exec_x_proceso);
 	queue_push(cola_Exec,hilo);
+
+	char* tiempo_fin= temporal_get_string_time();
+	char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+	int milisegundos_final= string_itoa(tiempo_fin_separado_por_dos_puntos[3]);
+
+	hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
+
 	sem_post(&semaforo_exec_x_proceso);
 
 	sem_wait(&semaforo_log_colas);
@@ -136,9 +148,9 @@ void * estadoReady(int PID)
 
 void exec(hilo_t* hilo)
 {
-
-// IGNORAR
-
+		char* tiempo_inicio= temporal_get_string_time();
+		char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+		int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
 
 		//TODO SEMAFOROS PROPIOS PARA ECHAR A LOS HILOS A BLOCKED
 		//sem_wait(&semaforo_diccionario_de_procesos);
@@ -160,6 +172,9 @@ void exec(hilo_t* hilo)
 		sem_post(&semaforo_log_colas);
 
 		exit_thread(hilo);
+
+
+
 
 }
 
