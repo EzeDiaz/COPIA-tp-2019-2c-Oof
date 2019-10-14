@@ -9,6 +9,8 @@
 //Sacado de: https://stackoverflow.com/questions/1570511/c-code-to-get-the-ip-address
 //(tiene hechos algunos ajustes)
 
+//A la variable que reciba la IP, se le debera hacer un free
+
 char* get_local_IP() {
 
 	struct ifaddrs *ifaddr, *ifa;
@@ -30,8 +32,13 @@ char* get_local_IP() {
 				printf("getnameinfo() failed: %s\n", gai_strerror(s));
 				exit(EXIT_FAILURE);
 			}
-			if(!strcmp(ifa->ifa_name,"enp0s3"))
-				return host;
+			if(!strcmp(ifa->ifa_name,"enp0s3")){
+				char* ip_a_retornar = (char*)malloc(strlen(host)+1);
+				memset(ip_a_retornar, '\0', sizeof(ip_a_retornar));
+				strcat(ip_a_retornar,host);
+				printf("IP: %s\n", ip_a_retornar);
+				return ip_a_retornar;
+			}
 		}
 	}
 
