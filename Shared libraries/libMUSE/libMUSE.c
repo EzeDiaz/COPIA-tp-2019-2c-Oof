@@ -75,9 +75,16 @@ int muse_init(int id, char* ip, int puerto){
 	void* paquete_init = crear_paquete_init(100,IP_id);
 	send(socket_MUSE, paquete_init,sizeof(paquete_init),0);
 	free(paquete_init);
-	//recv
 
-	return 0;
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(int);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	int resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	return resultado;
 
 }
 
@@ -92,8 +99,16 @@ uint32_t muse_alloc(uint32_t tam){
 	void* paquete_alloc = crear_paquete_alloc(102,tam);
 	send(socket_MUSE, paquete_alloc,sizeof(paquete_alloc),0);
 	free(paquete_alloc);
-	//recv
-	return 0; //Retorno lo del recv
+
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(uint32_t);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	uint32_t resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	return resultado;
 }
 
 void muse_free(uint32_t dir) {
@@ -107,16 +122,32 @@ int muse_get(void* dst, uint32_t src, size_t n){
     void* paquete_get = crear_paquete_get(104, dst, src, n);
     send(socket_MUSE, paquete_get,sizeof(paquete_get),0);
     free(paquete_get);
-    //recv
-    return 0; //Si falla --> return -1
+
+    void* var_recepcion;
+	int tamanio_recepcion = sizeof(int);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	int resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+    return resultado; //Si falla --> return -1
 }
 
 int muse_cpy(uint32_t dst, void* src, int n){
 	void* paquete_cpy = crear_paquete_cpy(105, dst, src, n);
 	send(socket_MUSE, paquete_cpy,sizeof(paquete_cpy),0);
 	free(paquete_cpy);
-	//recv
-	return 0; //Si falla --> return -1
+
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(int);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	int resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	return resultado;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -124,22 +155,46 @@ uint32_t muse_map(char *path, size_t length, int flags){
 	void* paquete_map = crear_paquete_map(106, path, length, flags);
 	send(socket_MUSE, paquete_map,sizeof(paquete_map),0);
 	free(paquete_map);
-	//recv
-	return 0; //Retorna la pos de memoria de MUSE mapeada
+
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(uint32_t);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	uint32_t resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	return resultado;
 }
 
 int muse_sync(uint32_t addr, size_t len){
 	void* paquete_sync = crear_paquete_sync(107, addr, len);
 	send(socket_MUSE, paquete_sync,sizeof(paquete_sync),0);
 	free(paquete_sync);
-	//recv
-	return 0; //Si falla --> rdeturn -1
+
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(int);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	int resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	return resultado;
 }
 
 int muse_unmap(uint32_t dir){
 	void* paquete_unmap = crear_paquete_unmap(108, dir);
 	send(socket_MUSE, paquete_unmap,sizeof(paquete_unmap),0);
 	free(paquete_unmap);
-	//recv
-	return 0; //Si falla --> rdeturn -1
+
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(int);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	int resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	return resultado;
 }
