@@ -65,16 +65,22 @@ int muse_init(int id, char* ip, int puerto){
 	}
 
 	//Concatenar id con IP local --> IP_local=get_local_IP()
-	char* IP_id=string_new();
-	char* id_como_char=string_new();
-	id_como_char=string_itoa(id);
-	string_append(&IP_id,get_local_IP());
-	string_append(&IP_id,"-");
-	string_append(&IP_id,id_como_char);
+	char* IP_como_char=get_local_IP();
+	char* guion = "-";
+	char* id_como_char=string_itoa(id);
+	char* IP_id = (char*)malloc(strlen(IP_como_char)+strlen(guion)+strlen(id_como_char)+1);
+
+	strcpy(IP_id, IP_como_char);
+	strcat(IP_id, guion);
+	strcat(IP_id, id_como_char);
 
 	void* paquete_init = crear_paquete_init(100,IP_id);
 	send(socket_MUSE, paquete_init,sizeof(paquete_init),0);
 	free(paquete_init);
+
+	free(IP_como_char);
+	free(id_como_char);
+	free(IP_id);
 
 	void* var_recepcion;
 	int tamanio_recepcion = sizeof(int);
