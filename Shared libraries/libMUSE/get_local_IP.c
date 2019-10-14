@@ -36,7 +36,7 @@ char* get_local_IP() {
 				char* ip_a_retornar = (char*)malloc(strlen(host)+1);
 				memset(ip_a_retornar, '\0', sizeof(ip_a_retornar));
 				strcat(ip_a_retornar,host);
-				printf("IP: %s\n", ip_a_retornar);
+
 				return ip_a_retornar;
 			}
 		}
