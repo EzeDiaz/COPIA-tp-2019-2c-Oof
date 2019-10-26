@@ -22,6 +22,7 @@ bool borrar_archivo();
 //Funcionalidades con directorios
 bool crear_directorio();
 t_list* listar_directorio_y_archivos();
+t_list* listar_metadata();
 bool eliminar_directorio();
 
 

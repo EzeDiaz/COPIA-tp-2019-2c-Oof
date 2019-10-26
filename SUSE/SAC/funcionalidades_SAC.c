@@ -13,6 +13,11 @@ bool crear_archivo(){
 	return flag;
 }
 
+t_list* listar_metadata(){
+	t_list* lista_de_retorno = list_create();
+		return lista_de_retorno;
+}
+
 bool escribir_archivo(){
 	bool flag = false;
 	return flag;
