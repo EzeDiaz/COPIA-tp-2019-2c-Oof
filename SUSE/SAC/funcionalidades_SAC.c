@@ -10,6 +10,8 @@
 //Funcionalidades con archivos
 bool crear_archivo(){
 	bool flag = false;
+
+	flag=agregar_metadata_de_archivo();
 	return flag;
 }
 
@@ -31,6 +33,15 @@ t_list* leer_archivo(){
 bool borrar_archivo(){
 	bool flag = false;
 	return flag;
+}
+
+bool agregar_metadata_de_archivo(){
+	bool flag= false;
+
+
+	return flag;
+
+
 }
 
 //Funcionalidades con directorios

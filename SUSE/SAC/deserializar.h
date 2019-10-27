@@ -30,7 +30,7 @@ enum codigo_de_operacion{
 
 //Prototipos
 int determinar_protocolo(void*);
-void identificar_paquete_y_ejecutar_comando(int, void*, int);
+void identificar_paquete_y_ejecutar_comando(int, void*);
 void* listar_metadata_directorio_y_archivos(void*);
 void* decifrar_archivo_a_crear(void*);
 void* decifrar_archivo_a_escribir(void*);

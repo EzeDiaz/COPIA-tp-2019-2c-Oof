@@ -111,9 +111,8 @@ void atender_cliente(int cliente_socket){
 
 void realizar_request(void *buffer, int cliente_socket){
 
-	int codigo_de_operacion = determinar_protocolo(buffer);
 
-	identificar_paquete_y_ejecutar_comando(cliente_socket, buffer, codigo_de_operacion);
+	identificar_paquete_y_ejecutar_comando(cliente_socket, buffer);
 	/*Deserializa y hace la opercion correspondiente*/
 	log_info(log_servidor,"Terminamos el request\n");
 
