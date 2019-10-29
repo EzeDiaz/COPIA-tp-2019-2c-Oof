@@ -13,12 +13,6 @@
 #include "globales.h"
 #include <hilolay/hilolay.h>
 
-typedef struct{
-
-	char* id;
-	int valor_actual;//este tipo de dato esta rancio TODO
-
-}semaforo_t;
 
 //Enums
 enum colas{

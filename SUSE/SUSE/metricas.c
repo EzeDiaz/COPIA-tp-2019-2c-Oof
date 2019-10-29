@@ -11,6 +11,7 @@
 #include <string.h>
 
 
+
 /*
 		• Por programa: grado actual de multiprogramación y cantidad de hilos en cada estado
 		• Por sistema: cada semáforo con su valor actual
@@ -28,13 +29,15 @@
 
 void metrica_por_sistema(t_list* varios_semaforos){//Son mas de 1 semaforo TODO
 
-	void loguear_valores(semaforo_t* un_semaforo){
+	void loguear_valores(char* un_semaforo){
 
-		int valor_string_id=string_length(string_itoa(un_semaforo->id));
-		int valor_string_semaforo=string_length(string_itoa(un_semaforo->valor_actual));
+		int valor_string_id=string_length(un_semaforo);
+
+		int valor_actual=dictionary_get(diccionario_de_valor_por_semaforo,un_semaforo);
+		int valor_string_semaforo=string_length(string_itoa(valor_actual));
 		char* msj=(char*)malloc(32+valor_string_id+valor_string_semaforo);
-		msj=strcat("el semaforo ",string_itoa(un_semaforo->id));
-		msj=strcat(" tiene un valor de ",string_itoa(un_semaforo->valor_actual));
+		msj=strcat("el semaforo ",string_itoa(un_semaforo));
+		msj=strcat(" tiene un valor de ",string_itoa(valor_actual));
 		loguear_mensaje(log_metricas_sistema,msj);
 		free(msj);
 	}

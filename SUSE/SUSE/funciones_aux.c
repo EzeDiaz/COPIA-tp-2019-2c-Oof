@@ -13,8 +13,30 @@ float calcular_sjf(hilo_t*un_hilo){
 
 return ( (1-alpha)* un_hilo->prioridad + alpha * un_hilo->metricas->tiempo_de_ejecucion);
 
+}
+
+
+//HILOS
+
+hilo_t* buscar_hilo_por_TID(int TID){
+
+	hilo_t* hilo_a_retornar;
+	void machear_tid(proceso_t* un_proceso){
+
+		void buscar_hilo(hilo_t* un_hilo){
+			if(un_hilo->hilo_informacion->tid==TID)
+			hilo_a_retornar=un_hilo;
+		}
+
+		list_iterate(un_proceso->hilos_del_programa,buscar_hilo);
+
+	}
+	dictionary_iterator(diccionario_de_procesos,machear_tid);
+
+	return hilo_a_retornar;
 
 }
+
 
 // COLAS
 

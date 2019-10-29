@@ -213,10 +213,16 @@ void exit_thread(hilo_t* hilo){
 
 // ESTADO BLOCKED
 
-void blocked()
+void blocked(char* nombre_semaforo, hilo_t* un_hilo)
 {
-	// Cuando hay un evento que traba la ejecucion del thread (semaforo)
+	// espera a que el recurso que lo metio aca sea liberado, es decir que el respectivo semaforo que lo metio lo deje salir
+	while(/*semaforo_ocupado(nombre_semaforo) TODO  */ 1){
 
+		//esto puede ser un wait de un semaforo posta y nos olvidamos de la espera activa del wait TODO
+	}
+
+	t_queue* cola_ready= obtener_cola_ready_de(un_hilo->PID);
+	queue_push(cola_ready,un_hilo);
 
 }
 
