@@ -177,6 +177,15 @@ void exec(hilo_t* hilo)
 
 
 }
+void blocked_to_ready(){
+
+
+	hilo_t*hilo=queue_pop(cola_blocked);
+	t_queue*cola_ready =obtener_cola_ready_de(hilo->PID);
+	queue_push(cola_ready,hilo);
+
+
+}
 
 /* void * estadoExec()
 {
