@@ -1,0 +1,8 @@
+[INFO] 12:04:28:219 main_server/(8632:8632): Logger creado
+[INFO] 12:04:28:219 main_server/(8632:8632): Archivo config levantado
+[INFO] 12:04:28:219 main_server/(8632:8632): El config tiene los campos necesarios para operar
+[INFO] 12:04:28:219 main_server/(8632:8632): Puerto de escucha: 5003
+[INFO] 12:04:28:220 main_server/(8632:8632): Tamanio de memoria (Bytes) 4096
+[INFO] 12:04:28:220 main_server/(8632:8632): Tamanio de pagina  (Bytes) 32
+[INFO] 12:04:28:220 main_server/(8632:8632): Tamanio de swap  (Bytes) 1024
+[INFO] 12:04:28:220 main_server/(8632:8632): Memoria creada
