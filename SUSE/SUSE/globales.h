@@ -44,11 +44,11 @@ t_log* logger;
 t_dictionary* diccionario_de_procesos;
 t_dictionary* diccionario_procesos_x_queues; // Va a ser una tupla de (PID;VectorDeColas)
 t_dictionary* diccionario_de_procesos_x_semaforo;
+t_dictionary* diccionario_bloqueados_por_semafaro;
 
 //COLAS
 t_queue* cola_new;
 t_queue* cola_exit;
-t_queue* cola_blocked;
 
 //VARIABLES
 float alpha;

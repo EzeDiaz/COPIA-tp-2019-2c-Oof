@@ -17,5 +17,6 @@ t_dictionary* diccionario_hilos_bloqueados_por_semaforo;
 //PROTOTIPOS
 void wait(char*,int);
 void signal(char*,int);
+void bloquear_hilo(char*, hilo_t*);
 
 #endif /* SEMAFOROS_HILOLAY_H_ */
