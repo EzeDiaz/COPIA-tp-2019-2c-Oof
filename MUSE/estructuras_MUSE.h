@@ -35,6 +35,7 @@ typedef struct{
 	int clientSocket;
 } client;
 
+t_list* GET_CLIENT_SEGMENTS(int a_client_socket);
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket);
 bool CLIENT_HAS_SEGMENT(int client);
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket);

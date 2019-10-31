@@ -18,7 +18,9 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
-
+t_list* GET_CLIENT_SEGMENTS(int a_client_socket) {
+	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
+}
 
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
 	bool es_el_cli_de_ese_socket(void *a_client) {

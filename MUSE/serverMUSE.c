@@ -142,12 +142,12 @@ void realizarRequest(void *buffer, int cliente){
 		free(buffer);
 		break;
 
-	//close
+		//close
 	case 101:
-			//Come on do stuff
-			break;
+		//Come on do stuff
+		break;
 
-	//alloc
+		//alloc
 	case 102:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -158,21 +158,29 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&bytes_a_reservar, (buffer + offset), longitudDelSiguiente);
 
 		int debe_crearse_segmento_flag = 0;
+		int se_pudo_escribir_flag = 0;
 
 		if(CLIENT_HAS_SEGMENT(cliente)) {
 			//El proceso que pide ya tiene segmento
-			if() {
-				//El segmento tiene lugar
-			} else {
-				//El segmento no tiene lugar
-				if() {
-					//El segmento puede agrandarse
-				} else {
-					//El segmento no puede agrandarse
-					debe_crearse_segmento_flag = 1;
+			void intentar_usar_segmento(segment* un_segmento) {
+				if(!se_pudo_escribir_flag) {
+					if() {
+						//El segmento tiene lugar
+						se_pudo_escribir_flag = 1;
+					} else {
+						//El segmento no tiene lugar
+						if() {
+							//El segmento puede agrandarse
+							se_pudo_escribir_flag = 1;
+						} else {
+							//El segmento no puede agrandarse
+						}
+					}
 				}
 			}
-
+			t_list* segments_list = GET_CLIENT_SEGMENTS(cliente);
+			list_iterate(segments_list, intentar_usar_segmento);
+			debe_crearse_segmento_flag = !se_pudo_escribir_flag;
 		} else {
 			//El proceso que pide no tiene segmento
 			debe_crearse_segmento_flag = 1;
@@ -191,13 +199,13 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
 		break;
 
-	//free
+		//free
 	case 103:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -218,13 +226,13 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
 		break;
 
-	//get
+		//get
 	case 104:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -259,14 +267,14 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
 		free(dst);
 		break;
 
-	//cpy
+		//cpy
 	case 105:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -301,14 +309,14 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
 		free(source);
 		break;
 
-	//map
+		//map
 	case 106:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -343,14 +351,14 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
 		free(path);
 		break;
 
-	//sync
+		//sync
 	case 107:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -378,13 +386,13 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
 		break;
 
-	//unmap
+		//unmap
 	case 108:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -406,7 +414,7 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(buffer,&peso,sizeof(int));
 		offset=sizeof(int);
 		memcpy(buffer+offset,resultado,peso);
-		*/
+		 */
 		//send
 
 		free(buffer);
