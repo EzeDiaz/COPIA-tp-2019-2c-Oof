@@ -8,6 +8,9 @@
 #ifndef GLOBALES_H_
 #define GLOBALES_H_
 
+#include <commons/collections/list.h>
+#include <commons/log.h>
+
 t_log* log_servidor;
 int PUERTO_ESCUCHA;
 char* IP;

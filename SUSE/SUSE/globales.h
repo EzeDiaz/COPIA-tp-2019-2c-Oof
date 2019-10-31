@@ -29,6 +29,8 @@ sem_t* semaforo_diccionario_procesos_x_queues;
 sem_t* semaforo_diccionario_procesos_x_semaforo;
 sem_t* mutex_log_servidor;
 sem_t* semaforo_lista_procesos_finalizados;
+sem_t* semaforo_estado_blocked;
+sem_t* semaforo_diccionario_por_semaforo;
 
 //Contador
 sem_t* procesos_x_grado_de_multiprogramacion;

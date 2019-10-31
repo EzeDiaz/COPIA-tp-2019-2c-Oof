@@ -68,7 +68,6 @@ void _suse_init(){
 
 	cola_new = queue_create();
 	cola_exit = queue_create();
-	cola_blocked = queue_create();
 
 	/*INICIALIZO SEMAFOROS*/
 
