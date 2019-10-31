@@ -18,6 +18,8 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+
+
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
 	client* new_client = (client*)malloc(sizeof(client));
 	new_client->clientProcessId = (char*)malloc(sizeof(client_ID)+1);
