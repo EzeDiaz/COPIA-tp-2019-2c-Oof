@@ -25,7 +25,7 @@ typedef struct{	//estructura propuesta por la catedra para la memoria, pesa SIEM
 } heapMetadata;
 
 typedef struct{
-	char* name; //para poder identificar de que proceso es el segmento
+	char* owner; //para poder identificar de que proceso es el segmento
 	t_list* pageFrameTable;
 } segment;
 
@@ -34,7 +34,8 @@ typedef struct{
 	int clientSocket;
 } client;
 
-int ADD_CLIENT_TO_LIST();
+bool CLIENT_HAS_SEGMENT(int client);
+int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket);
 void INITIALIZE_SEMAPHORES();
 void DESTROY_SEMAPHORES();
 void CHECK_LOGGER();

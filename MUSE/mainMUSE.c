@@ -52,7 +52,7 @@ int main(){
 
 		CREATE_NEW_EMPTY_SEGMENT("jorge");
 		segment* new =list_get(segmentation_table,0);
-		printf("Nombre del primer segmento : %s",new->name);
+		printf("Nombre del primer segmento : %s",new->owner);
 
 		free(mp_pointer);
 		DESTROY_SEMAPHORES();

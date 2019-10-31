@@ -18,7 +18,20 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+bool CLIENT_HAS_SEGMENT(int a_client_socket) {
 
+	bool es_el_cli_de_ese_socket(void *a_client) {
+		return ((client*)a_client)->clientSocket == a_client_socket;
+	}
+
+	client* the_client = list_find(client_list, es_el_cli_de_ese_socket); //Consigo el id segun el socket
+
+	bool segmento_es_del_cliente(void *a_segment) {
+		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
+	}
+
+	return list_any_satisfy(segmentation_table, segmento_es_del_cliente);
+}
 
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
 	client* new_client = (client*)malloc(sizeof(client));
@@ -147,8 +160,8 @@ void READ_HEAPMETADATA_IN_MEMORY(void* pointer){
 
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name){
 	segment* newSegment = (segment*)malloc(sizeof(segment));
-	newSegment->name=(char*)malloc(strlen(name)+1);	//strlen no incluye el \0
-	memcpy(newSegment->name,name,strlen(name)+1);
+	newSegment->owner=(char*)malloc(strlen(name)+1);	//strlen no incluye el \0
+	memcpy(newSegment->owner,name,strlen(name)+1);
 	newSegment->pageFrameTable=list_create();
 	list_add(segmentation_table,newSegment);
 

@@ -159,7 +159,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		int debe_crearse_segmento_flag = 0;
 
-		if() {
+		if(CLIENT_HAS_SEGMENT(cliente)) {
 			//El proceso que pide ya tiene segmento
 			if() {
 				//El segmento tiene lugar
