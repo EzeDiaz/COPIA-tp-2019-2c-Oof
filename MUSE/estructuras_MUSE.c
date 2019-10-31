@@ -18,13 +18,18 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
-bool CLIENT_HAS_SEGMENT(int a_client_socket) {
 
+
+client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
 	bool es_el_cli_de_ese_socket(void *a_client) {
 		return ((client*)a_client)->clientSocket == a_client_socket;
 	}
 
-	client* the_client = list_find(client_list, es_el_cli_de_ese_socket); //Consigo el id segun el socket
+	return list_find(client_list, es_el_cli_de_ese_socket); //Consigo el id segun el socket
+}
+
+bool CLIENT_HAS_SEGMENT(int a_client_socket) {
+	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
 
 	bool segmento_es_del_cliente(void *a_segment) {
 		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;

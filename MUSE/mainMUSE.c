@@ -30,7 +30,7 @@ int main(){
 
 		CHECK_LOGGER();
 
-		config = config_create("MUSE_CONFIG.config"); //abrimo' el archivo config
+		config = config_create("MUSE_config.config"); //abrimo' el archivo config
 
 		CHECK_CONFIG();
 		CHECK_FIELDS();

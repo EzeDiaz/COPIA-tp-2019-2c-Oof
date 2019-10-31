@@ -34,6 +34,7 @@ typedef struct{
 	int clientSocket;
 } client;
 
+client* FIND_CLIENT_BY_SOCKET(int a_client_socket);
 bool CLIENT_HAS_SEGMENT(int client);
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket);
 void INITIALIZE_SEMAPHORES();

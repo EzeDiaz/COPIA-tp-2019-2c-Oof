@@ -179,7 +179,7 @@ void realizarRequest(void *buffer, int cliente){
 		}
 
 		if(debe_crearse_segmento_flag) {
-
+			//Crear nuevo segmento
 		}
 
 		/* Armamos el paquetito de respuesta
