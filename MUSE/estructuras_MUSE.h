@@ -34,6 +34,7 @@ typedef struct{
 	int clientSocket;
 } client;
 
+int ADD_CLIENT_TO_LIST();
 void INITIALIZE_SEMAPHORES();
 void DESTROY_SEMAPHORES();
 void CHECK_LOGGER();

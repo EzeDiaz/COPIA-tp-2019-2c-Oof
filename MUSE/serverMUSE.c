@@ -157,7 +157,30 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&bytes_a_reservar, (buffer + offset), longitudDelSiguiente);
 
-		//MUSE YO TE INVOCO
+		int debe_crearse_segmento_flag = 0;
+
+		if() {
+			//El proceso que pide ya tiene segmento
+			if() {
+				//El segmento tiene lugar
+			} else {
+				//El segmento no tiene lugar
+				if() {
+					//El segmento puede agrandarse
+				} else {
+					//El segmento no puede agrandarse
+					debe_crearse_segmento_flag = 1;
+				}
+			}
+
+		} else {
+			//El proceso que pide no tiene segmento
+			debe_crearse_segmento_flag = 1;
+		}
+
+		if(debe_crearse_segmento_flag) {
+
+		}
 
 		/* Armamos el paquetito de respuesta
 		void* buffer;
