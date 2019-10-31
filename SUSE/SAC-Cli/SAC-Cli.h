@@ -8,6 +8,11 @@
 #ifndef SAC_CLI_H_
 #define SAC_CLI_H_
 
+
+
+#include <fuse.h>
+#include <errno.h>
+#include <fcntl.h>
 #include "serializacion.h"
 
 void conectar_SAC_SERVER(int , char**);

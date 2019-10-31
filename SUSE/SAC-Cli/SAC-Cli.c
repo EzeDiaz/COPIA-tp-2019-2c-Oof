@@ -5,16 +5,11 @@
  *      Author: utnso
  */
 
-#include "SAC-Cli.h"
-
-
-#include <fuse.h>
-
-#include <errno.h>
-#include <fcntl.h>
-
 #define SERVER_NAME_LEN_MAX 255
+#define _FILE_OFFSET_BITS  64
 #define FUSE_USE_VERSION 26
+
+#include "SAC-Cli.h"
 
 static struct fuse_operations fs_oper = {
 	//.getattr     = fs_getattr,
@@ -60,7 +55,7 @@ static struct fuse_operations fs_oper = {
 int main(int argc, char *argv[]){
 	config= leer_config();
 	conectar_SAC_SERVER(argc,argv);
-	return fuse_main(argc, argv, &fs_oper);
+	return fuse_main(argc, argv, &fs_oper,NULL);
 }
 
 t_config* leer_config(){

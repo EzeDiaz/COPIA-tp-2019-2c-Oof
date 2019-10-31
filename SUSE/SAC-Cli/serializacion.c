@@ -23,12 +23,12 @@ void* serializar_paquete_para_crear_directorio(char* path,mode_t mode){
 	int peso_mode= sizeof(mode);
 	peso=peso_path+peso_mode + 3* sizeof(int);
 	int offset=0;
-
+	int codigo_de_operacion= CREAR_DIRECTORIO;
 	void*paquete=malloc(peso+sizeof(int));
 
 	memcpy(paquete,&peso,sizeof(int));
 	offset+=sizeof(int);
-	memcpy(paquete+offset,&CREAR_DIRECTORIO,sizeof(int));
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
 	offset+=sizeof(int);
 	memcpy(paquete+offset,&peso_path,sizeof(int));
 	offset+=sizeof(int);
