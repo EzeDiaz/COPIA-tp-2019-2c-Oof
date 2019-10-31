@@ -16,22 +16,19 @@
 #include "globales.h"
 
 //ESTRUCTURAS DE DATOS
+// --> Estan en el .h
 
-typedef struct{		//administracion de paginas
-	bool presenceBit;	//bit de presencia
-	bool modifiedBit;	//bit de modificado
-	void* pagePointer;		//puntero al inicio de pagina en memoria principal
-} pageFrame;	//hay que ahorrar por la macrisis, asi que pongo bool y no algun tipo numerico
+int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
+	client* new_client = (client*)malloc(sizeof(client));
+	new_client->clientProcessId = (char*)malloc(sizeof(client_ID)+1);
 
-typedef struct{	//estructura propuesta por la catedra para la memoria, pesa SIEMPRE 5B
-	uint32_t size;
-	bool isFree;
-} heapMetadata;
+	memcpy(new_client->clientProcessId, client_ID, sizeof(client_ID)+1);
+	memcpy(&new_client->clientSocket, &client_socket, sizeof(int));
 
-typedef struct{
-	char* name;
-	t_list* pageFrameTable;
-} segment;
+	list_add(client_list, new_client);
+
+	return 0; //"Si no lo pude inicializar retorna -1. Podria pasar o es solo del lado del cliente?
+}
 
 void CHECK_LOGGER(){
 	if(logger!=NULL)
@@ -117,14 +114,14 @@ void SUBSTRACT_MEMORY_LEFT(int size){
 	}
 }
 
-//usemos 1 como usado y 0 como libre en el bool porque sino nos volvemos put....
+//usemos 1 como usado y 0 como libre en el bool
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 	if(memory_left>=5){
 		sem_wait(&mp_semaphore);
 		int aux = size-5;
 		memcpy(pointer,&aux,sizeof(uint32_t));
 		memcpy(pointer+sizeof(uint32_t),&status,sizeof(bool));
-		SUSTRACT_MEMORY_LEFT(5);
+		SUBSTRACT_MEMORY_LEFT(5);
 		sem_post(&mp_semaphore);
 	}else{
 		//aca hay que ver que hacemos si no hay espacio en memoria
@@ -140,8 +137,8 @@ void READ_HEAPMETADATA_IN_MEMORY(void* pointer){
 	memcpy(&newMetadata->isFree,pointer+sizeof(uint32_t),sizeof(bool));
 	sem_post(&mp_semaphore);
 	//control tumbero
-	printf("size en metadata actual: %d \n",newMetadata->size);
-	printf("bool actual en metadata: %d \n",newMetadata->isFree);
+	printf("Size en metadata actual: %d \n",newMetadata->size);
+	printf("Bool actual en metadata: %d \n",newMetadata->isFree);
 
 	free(newMetadata);
 }
@@ -182,7 +179,7 @@ void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size,char 
 		memcpy(pointer+(memory_size-memory_left),info,size);
 		WRITE_ADDRESSES_IN_SEGMENT(pointer+(memory_size-memory_left),size,CREATE_NEW_EMPTY_SEGMENT(name));
 		WRITE_HEAPMETADATA_IN_MEMORY(pointer+(memory_size-memory_left)+size,memory_left,0);
-	}else{	//si no te queda espacio
-		//algo, no se
+	}else{
+		//Que hacer si no queda espacio?
 	}
 }

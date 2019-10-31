@@ -14,6 +14,7 @@ t_log* logger;	//hace falta que mencione esto?
 t_config* config;	//lo mismo que el de arriba pero para config
 t_list* segmentation_table;	//tabla de segmentacion implementado a traves de una t_list*
 uint8_t* memory_controller;	//tal vez despues lo usamos
+t_list* client_list;
 
 pthread_mutex_t mp_semaphore;
 pthread_mutex_t logger_semaphore;

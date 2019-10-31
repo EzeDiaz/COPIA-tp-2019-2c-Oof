@@ -8,6 +8,8 @@
 
 //Bibliotecas propias
 #include <libMUSE.h>
+#include "globales.h"
+#include "estructuras_MUSE.h"
 
 //Commons
 #include <commons/string.h>
@@ -27,6 +29,8 @@
 
 
 void iniciarServidor(){
+
+	client_list = list_create();
 
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
@@ -116,6 +120,7 @@ void realizarRequest(void *buffer, int cliente){
 
 	switch(cod_op){
 
+	//init
 	case 100:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -126,23 +131,23 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(IP_ID, (buffer + offset), longitudDelSiguiente);
 
-		//MUSE YO TE INVOCO
+		int resultado = ADD_CLIENT_TO_LIST(IP_ID, cliente);
 
-		/* Armamos el paquetito de respuesta
 		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		*/
-		//send
+		buffer=(void*)malloc(sizeof(int));
+		memcpy(buffer,&resultado,sizeof(int));
+
+		send(socket_MUSE, buffer, sizeof(buffer),0);
 
 		free(buffer);
 		break;
 
+	//close
+	case 101:
+			//Come on do stuff
+			break;
+
+	//alloc
 	case 102:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -169,6 +174,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(buffer);
 		break;
 
+	//free
 	case 103:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -195,6 +201,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(buffer);
 		break;
 
+	//get
 	case 104:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -236,6 +243,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(dst);
 		break;
 
+	//cpy
 	case 105:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -277,6 +285,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(source);
 		break;
 
+	//map
 	case 106:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -318,6 +327,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(path);
 		break;
 
+	//sync
 	case 107:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
@@ -351,6 +361,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(buffer);
 		break;
 
+	//unmap
 	case 108:
 		int offset= sizeof(int);
 		int longitudDelSiguiente=0;
