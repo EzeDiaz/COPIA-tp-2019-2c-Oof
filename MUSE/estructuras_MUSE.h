@@ -27,6 +27,7 @@ typedef struct{	//estructura propuesta por la catedra para la memoria, pesa SIEM
 typedef struct{
 	char* owner; //para poder identificar de que proceso es el segmento
 	t_list* pageFrameTable;
+	void* segmentPointer; //puntero al inicio del segmento. No se si es redundante con el pagePointer
 } segment;
 
 typedef struct{
