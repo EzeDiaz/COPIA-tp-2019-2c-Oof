@@ -7,7 +7,6 @@
 
 #ifndef SERIALIZACION_H_
 #define SERIALIZACION_H_
-
 #include <string.h>
 #include <arpa/inet.h>
 #include "globales.h"
@@ -19,7 +18,6 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <commons/config.h>
-
 
 
 static int serializar_fs_mkdir(const char*, mode_t );

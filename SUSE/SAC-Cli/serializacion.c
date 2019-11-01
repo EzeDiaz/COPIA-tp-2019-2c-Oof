@@ -7,8 +7,8 @@
 #include "serializacion.h"
 
 static int serializar_fs_mkdir(const char *path, mode_t mode){
-	void* paquete= serializar_paquete_para_crear_directorio(path,mode);
-	void* resultado =enviar_paquete(paquete);
+	void* paquete = serializar_paquete_para_crear_directorio(path,mode);
+	void* resultado = enviar_paquete(paquete);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));

@@ -10,6 +10,7 @@
 #define FUSE_USE_VERSION 26
 
 #include "SAC-Cli.h"
+#include <readline/readline.h>
 
 static struct fuse_operations fs_oper = {
 	//.getattr     = fs_getattr,
