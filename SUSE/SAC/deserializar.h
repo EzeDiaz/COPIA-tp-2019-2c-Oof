@@ -9,6 +9,12 @@
 #define DESERIALIZAR_H_
 #include <commons/log.h>
 
+//TADS
+typedef struct{
+	char* path;
+	mode_t mode;
+}directorio_a_crear_t;
+
 t_log* logger_de_deserializacion;
 
 
@@ -36,7 +42,7 @@ void* decifrar_archivo_a_crear(void*);
 void* decifrar_archivo_a_escribir(void*);
 void* decifrar_archivo_a_leer(void*);
 void* decifrar_archivo_a_borrar(void*);
-void* decifrar_directorio_a_crear(void*);
+directorio_a_crear_t* decifrar_directorio_a_crear(void*);
 void* decifrar_directorio_a_listar(void*);
 void* decifrar_directorio_a_borrar(void*);
 

@@ -5,6 +5,9 @@
  *      Author: utnso
  */
 #include "deserializar.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int determinar_protocolo(void* buffer){
 	int codigo_de_operacion;
@@ -52,8 +55,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case CREAR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'creacion de direcorio', comenzando la deserializacion de parametros\n");
-		paquete_decifrado=decifrar_directorio_a_crear(buffer);
-		resultado=crear_directorio(paquete_decifrado);
+		directorio_a_crear_t* directorio=decifrar_directorio_a_crear(buffer);
+		resultado=crear_directorio(directorio->path,directorio->mode);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 	break;
 
@@ -104,9 +107,18 @@ void* decifrar_archivo_a_borrar(void*buffer){
 
 	return NULL;
 }
-void* decifrar_directorio_a_crear(void*buffer){
+directorio_a_crear_t* decifrar_directorio_a_crear(void*buffer){
+	directorio_a_crear_t* directorio = malloc(sizeof(directorio_a_crear_t));
+	int offset=0;
+	int peso;
+	memcpy(&peso, buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	directorio->path=(char*) malloc(peso);
+	memcpy(directorio->path, buffer+offset,peso);
+	offset+=peso;
+	memcpy(&directorio->mode, buffer+offset,sizeof(mode_t));
 
-	return NULL;
+	return directorio;
 }
 void* decifrar_directorio_a_listar(void*buffer){
 

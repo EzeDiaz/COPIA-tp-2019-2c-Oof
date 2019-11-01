@@ -6,6 +6,10 @@
  */
 
 #include "funcionalidades_SAC.h"
+#include <errno.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 //Funcionalidades con archivos
 bool crear_archivo(){
@@ -45,8 +49,11 @@ bool agregar_metadata_de_archivo(){
 }
 
 //Funcionalidades con directorios
-bool crear_directorio(){
+bool crear_directorio(char* path, mode_t mode){
 	bool flag = false;
+	mkdir(path, mode);
+	if(errno!=EEXIST)
+		flag=true;
 	return flag;
 }
 

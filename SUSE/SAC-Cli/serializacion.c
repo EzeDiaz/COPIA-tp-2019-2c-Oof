@@ -6,7 +6,7 @@
  */
 #include "serializacion.h"
 
-static int serializar_fs_mkdir(const char *path, mode_t mode){
+int serializar_fs_mkdir(const char *path, mode_t mode){
 	void* paquete = serializar_paquete_para_crear_directorio(path,mode);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
@@ -21,7 +21,7 @@ void* serializar_paquete_para_crear_directorio(char* path,mode_t mode){
 	int peso=0;
 	int peso_path=string_length(path)+1;
 	int peso_mode= sizeof(mode);
-	peso=peso_path+peso_mode + 3* sizeof(int);
+	peso=peso_path+peso_mode + 2* sizeof(int);
 	int offset=0;
 	int codigo_de_operacion= CREAR_DIRECTORIO;
 	void*paquete=malloc(peso+sizeof(int));
@@ -34,9 +34,7 @@ void* serializar_paquete_para_crear_directorio(char* path,mode_t mode){
 	offset+=sizeof(int);
 	memcpy(paquete+offset,path,peso_path);
 	offset+=peso_path;
-	memcpy(paquete+offset,peso_mode,sizeof(int));
-	offset+=sizeof(int);
-	memcpy(paquete+offset,mode,peso_mode);
+	memcpy(paquete+offset,mode,sizeof(mode_t));
 
 	return paquete;
 }

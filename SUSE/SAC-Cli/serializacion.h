@@ -20,7 +20,7 @@
 #include <commons/config.h>
 
 
-static int serializar_fs_mkdir(const char*, mode_t );
+int serializar_fs_mkdir(const char*, mode_t );
 void* serializar_paquete_para_crear_directorio(char* ,mode_t );
 void* enviar_paquete(void*);
 void* recibir_resultado(int* );
