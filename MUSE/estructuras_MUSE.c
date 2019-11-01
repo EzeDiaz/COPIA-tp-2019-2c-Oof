@@ -20,6 +20,11 @@
 
 t_list* GET_CLIENT_SEGMENTS(int a_client_socket) {
 	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
+
+	bool segmento_es_del_cliente(void *a_segment) {
+		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
+	}
+	return list_filter(segmentation_table, segmento_es_del_cliente);
 }
 
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
