@@ -158,37 +158,53 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&bytes_a_reservar, (buffer + offset), longitudDelSiguiente);
 
 		int debe_crearse_segmento_flag = 0;
-		int se_pudo_escribir_flag = 0;
+		int se_pudo_reservar_flag = 0;
 
-		if(CLIENT_HAS_SEGMENT(cliente)) {
-			//El proceso que pide ya tiene segmento
-			void intentar_usar_segmento(segment* un_segmento) {
-				if(!se_pudo_escribir_flag) {
-					if() {
-						//El segmento tiene lugar
-						se_pudo_escribir_flag = 1;
-					} else {
-						//El segmento no tiene lugar
-						if() {
-							//El segmento puede agrandarse
-							se_pudo_escribir_flag = 1;
+		if(memory_left >= bytes_a_reservar) {
+			if(CLIENT_HAS_SEGMENT(cliente)) {
+				//El proceso que pide ya tiene segmento
+				void intentar_usar_segmento(segment* un_segmento) {
+					if(!se_pudo_reservar_flag) {
+						void* pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata
+						if(pointer != NULL) {
+							//El segmento tiene lugar
+							sem_wait(&mp_semaphore);
+							uint32_t bytes_que_habia;
+							uint32_t bytes_sobrantes;
+							memcpy(&bytes_que_habia, pointer - 5, sizeof(uint32_t));
+							//Sobreescribo la metadata
+							memcpy(pointer - 5, &bytes_a_reservar, sizeof(uint32_t));
+							memcpy(pointer - 1, &false, sizeof(bool));
+							//Escribo la nueva metadata
+							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
+							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
+							sem_post(&mp_semaphore);
+							se_pudo_reservar_flag = 1;
 						} else {
-							//El segmento no puede agrandarse
+							//El segmento no tiene lugar
+							if() {
+								//El segmento puede agrandarse
+								se_pudo_reservar_flag = 1;
+							} else {
+								//El segmento no puede agrandarse
+							}
 						}
 					}
 				}
+				t_list* segments_list = GET_CLIENT_SEGMENTS(cliente);
+				list_iterate(segments_list, intentar_usar_segmento);
+				debe_crearse_segmento_flag = !se_pudo_reservar_flag;
+				//borrar la segments_list
+			} else {
+				//El proceso que pide no tiene segmento
+				debe_crearse_segmento_flag = 1;
 			}
-			t_list* segments_list = GET_CLIENT_SEGMENTS(cliente);
-			list_iterate(segments_list, intentar_usar_segmento);
-			debe_crearse_segmento_flag = !se_pudo_escribir_flag;
-			//borrar la segments_list
-		} else {
-			//El proceso que pide no tiene segmento
-			debe_crearse_segmento_flag = 1;
-		}
 
-		if(debe_crearse_segmento_flag) {
-			//Crear nuevo segmento
+			if(debe_crearse_segmento_flag) {
+				//Crear nuevo segmento
+			}
+		} else {
+			//No pude escribir porque no hay memoria
 		}
 
 		/* Armamos el paquetito de respuesta

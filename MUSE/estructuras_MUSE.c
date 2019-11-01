@@ -18,6 +18,25 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
+
+	int segment_size = a_segment->pageFrameTable->elements_count * page_size;
+	int move_counter = 0;
+	void* pointer = a_segment->segmentPointer;
+
+	while(move_counter < segment_size) { //mientras este en mi segmento
+		heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer - 5);
+		if(new_metadata->isFree)
+			if(new_metadata->size >= intended_size)
+				return pointer;
+		pointer = pointer + new_metadata->size + 5;
+		move_counter+=new_metadata->size;
+		free(new_metadata);
+	}
+
+	return NULL;
+}
+
 t_list* GET_CLIENT_SEGMENTS(int a_client_socket) {
 	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
 
@@ -141,7 +160,7 @@ void SUBSTRACT_MEMORY_LEFT(int size){
 	}
 }
 
-//usemos 1 como usado y 0 como libre en el bool
+//usemos 1 como usado y 0 como libre en el bool (LIBRE 1 - USADO 0)
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 	if(memory_left>=5){
 		sem_wait(&mp_semaphore);
@@ -156,18 +175,15 @@ void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 	}
 }
 
-void READ_HEAPMETADATA_IN_MEMORY(void* pointer){
-	heapMetadata* newMetadata = (heapMetadata*)malloc(sizeof(heapMetadata));
+heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer){
+	heapMetadata* new_metadata = (heapMetadata*)malloc(sizeof(heapMetadata));
 
 	sem_wait(&mp_semaphore);
-	memcpy(&newMetadata->size,pointer,sizeof(uint32_t));
-	memcpy(&newMetadata->isFree,pointer+sizeof(uint32_t),sizeof(bool));
+	memcpy(&new_metadata->size, pointer,sizeof(uint32_t));
+	memcpy(&new_metadata->isFree, pointer+sizeof(uint32_t),sizeof(bool));
 	sem_post(&mp_semaphore);
-	//control tumbero
-	printf("Size en metadata actual: %d \n",newMetadata->size);
-	printf("Bool actual en metadata: %d \n",newMetadata->isFree);
 
-	free(newMetadata);
+	return new_metadata;
 }
 
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name){
