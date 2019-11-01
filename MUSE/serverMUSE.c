@@ -181,6 +181,7 @@ void realizarRequest(void *buffer, int cliente){
 			t_list* segments_list = GET_CLIENT_SEGMENTS(cliente);
 			list_iterate(segments_list, intentar_usar_segmento);
 			debe_crearse_segmento_flag = !se_pudo_escribir_flag;
+			//borrar la segments_list
 		} else {
 			//El proceso que pide no tiene segmento
 			debe_crearse_segmento_flag = 1;
