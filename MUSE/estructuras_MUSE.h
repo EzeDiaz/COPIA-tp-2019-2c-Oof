@@ -17,6 +17,7 @@ typedef struct{		//administracion de paginas
 	bool presenceBit;	//bit de presencia
 	bool modifiedBit;	//bit de modificado
 	void* pagePointer;		//puntero al inicio de pagina en memoria principal
+	//Numero de frame?
 } pageFrame;	//hay que ahorrar por la macrisis, asi que pongo bool y no algun tipo numerico
 
 typedef struct{	//estructura propuesta por la catedra para la memoria, pesa SIEMPRE 5B
@@ -25,9 +26,11 @@ typedef struct{	//estructura propuesta por la catedra para la memoria, pesa SIEM
 } heapMetadata;
 
 typedef struct{
-	char* owner; //para poder identificar de que proceso es el segmento
+	char* owner; //para poder identificar de que proceso es el segmento - ?
 	t_list* pageFrameTable;
-	void* segmentPointer; //puntero al inicio del segmento (datos). Redundante con el pagePointer?
+	void* segmentPointer; //puntero al inicio del segmento (datos). - ?
+	//Base logica?
+	//Tamanio?
 } segment;
 
 typedef struct{

@@ -8,6 +8,7 @@
 #ifndef GLOBALES_H_
 #define GLOBALES_H_
 
+#include <commons/bitarray.h>
 
 void* mp_pointer;	//puntero a la memoria principal
 t_log* logger;	//hace falta que mencione esto?
@@ -25,6 +26,7 @@ int listen_port;
 int memory_size;
 int page_size;
 int swap_size;
+t_bitarray* bitmap;
 
 int memory_left;
 

@@ -14,9 +14,39 @@
 #include <string.h>
 #include <semaphore.h>
 #include "globales.h"
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdint.h>
 
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
+
+void SET_BITMAP(){
+	FILE* archivo= fopen("bitmap.bin","w");
+
+	int number_of_frames = config_get_int_value(config,"MEMORY_SIZE") / config_get_int_value(config,"PAGE_SIZE");
+	//Lo "paso" a bits
+	if((number_of_frames % 8) == 0) {
+		number_of_frames = number_of_frames / 8;
+	} else {
+		number_of_frames = (number_of_frames / 8) + 1;
+	}
+
+	char* frames_vector=(char*)malloc(number_of_frames);
+	frames_vector=string_repeat('\0',number_of_frames);
+	fwrite(frames_vector,number_of_frames,1,archivo);
+	fclose(archivo);
+
+	int file_desc_bitmap = open("bitmap.bin", O_RDWR, S_IRUSR | S_IWUSR);
+
+	char* bit_array = mmap(NULL, number_of_frames, PROT_READ | PROT_WRITE, MAP_SHARED, file_desc_bitmap, 0);
+
+	bitmap = bitarray_create_with_mode(bit_array,number_of_frames,LSB_FIRST);
+
+	free(frames_vector);
+}
 
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
 
