@@ -62,8 +62,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case LISTAR_DIRECTORIO_Y_ARCHIVOS:
 		log_info(logger_de_deserializacion, "Es el codigo de 'listado de directorio', comenzando la deserializacion de parametros\n");
-		paquete_decifrado=decifrar_directorio_a_listar(buffer);
-		resultado=listar_directorio_y_archivos(paquete_decifrado);
+		directorio_a_listar_t* directorio_a_listar=decifrar_directorio_a_listar(buffer);
+		resultado=listar_directorio_y_archivos(directorio_a_listar);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 	break;
 
@@ -120,9 +120,21 @@ directorio_a_crear_t* decifrar_directorio_a_crear(void*buffer){
 
 	return directorio;
 }
-void* decifrar_directorio_a_listar(void*buffer){
+directorio_a_listar_t* decifrar_directorio_a_listar(void*buffer){
+	directorio_a_listar_t* retorno;
+	int offset=0;
+	int peso;
+	memcpy(&peso, buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	retorno->path=(char*) malloc(peso);
+	memcpy(retorno->path, buffer+offset,peso);
+	offset+=peso;
+	memcpy(&peso, buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	retorno->string_nombre_de_archivos=(char*) malloc(peso);
+	memcpy(retorno->string_nombre_de_archivos, buffer+offset,peso);
 
-	return NULL;
+	return retorno;
 }
 void* decifrar_directorio_a_borrar(void*buffer){
 

@@ -15,6 +15,11 @@ typedef struct{
 	mode_t mode;
 }directorio_a_crear_t;
 
+typedef struct{
+	char* path;
+	char* string_nombre_de_archivos;
+}directorio_a_listar_t;
+
 t_log* logger_de_deserializacion;
 
 
@@ -43,7 +48,7 @@ void* decifrar_archivo_a_escribir(void*);
 void* decifrar_archivo_a_leer(void*);
 void* decifrar_archivo_a_borrar(void*);
 directorio_a_crear_t* decifrar_directorio_a_crear(void*);
-void* decifrar_directorio_a_listar(void*);
+directorio_a_listar_t* decifrar_directorio_a_listar(void*);
 void* decifrar_directorio_a_borrar(void*);
 
 #endif /* DESERIALIZAR_H_ */

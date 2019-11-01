@@ -7,6 +7,7 @@
 
 #ifndef SERIALIZACION_H_
 #define SERIALIZACION_H_
+#define _FILE_OFFSET_BITS 64
 #include <string.h>
 #include <arpa/inet.h>
 #include "globales.h"
@@ -18,9 +19,11 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <commons/config.h>
-
+#include <fuse.h>
 
 int serializar_fs_mkdir(const char*, mode_t );
+int serializar_fs_readdir(const char*, void*, fuse_fill_dir_t, off_t, struct fuse_file_info*);
+void* serializar_paquete_para_leer_directorio(const char*, void*, fuse_fill_dir_t, off_t, struct fuse_file_info*);
 void* serializar_paquete_para_crear_directorio(char* ,mode_t );
 void* enviar_paquete(void*);
 void* recibir_resultado(int* );
@@ -38,4 +41,7 @@ enum codigo_de_operacion{
 	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=7
 };
 
+
+//Funciones Auxiliares
+char* leer_nombres_de_archivos_y_directorios(void*);
 #endif /* SERIALIZACION_H_ */
