@@ -15,12 +15,17 @@
 #include <commons/config.h>
 #include "globales.h"
 #include "deserializar.h"
+#include <dirent.h>
+#include <string.h>
+#include <sys/stat.h>
 
 void atender_cliente(int);
 void* recibir_buffer(int* , int);
+t_log* log_servidor;
 
 int main(){
 
+	log_servidor = log_create("log_servidor","SAC_Servidor",0,LOG_LEVEL_DEBUG);
 	obtener_datos_del_config();
 	start_up();
 	struct sockaddr_in direccion_servidor;
@@ -29,6 +34,7 @@ int main(){
 	direccion_servidor.sin_port = htons(PUERTO_ESCUCHA);
 
 	int servidor = socket(AF_INET, SOCK_STREAM, 0);
+	sem_init(&mutex_log_servidor,0,1);
 	sem_wait(&mutex_log_servidor);
 	log_info(log_servidor, "Levantamos el servidor\n");
 	sem_post(&mutex_log_servidor);
@@ -75,8 +81,23 @@ int main(){
 
 }
 
-void start_up(){ //TODO
-	NULL;
+void start_up(){
+	char* comando = string_new();
+	string_append(&comando,"dd if=/dev/random iflag=fullblock of=");
+	string_append(&comando,PUNTO_DE_MONTAJE);
+	string_append(&comando,"/");
+	string_append(&comando,NOMBRE_DEL_DISCO);
+	string_append(&comando," bs=");
+	string_append(&comando,string_itoa(BLOCK_SIZE));
+	string_append(&comando," count=");
+	string_append(&comando,string_itoa(CANT_MAX_BLOQUES));
+	int retorno = system(comando);
+	//FILE* fd = popen(comando,"w");
+	if(retorno<0){
+		printf("No podemos levantar el FileSystem\n");
+		exit(1);
+	}
+
 }
 
 void eliminar_semaforos(){ //TODO
@@ -151,11 +172,16 @@ void obtener_datos_del_config(){
 	log_info(log_servidor, aux);
 	free(aux);
 	free(nombre_config);
-
+	IP = malloc(10);
 	IP = config_get_string_value(config, "IP");
 	PUERTO_ESCUCHA = config_get_int_value(config, "PUERTO_ESCUCHA");
-	//TODO
-	config_destroy(config);
+	PUNTO_DE_MONTAJE = malloc(50);
+	PUNTO_DE_MONTAJE = config_get_string_value(config, "PUNTO_DE_MONTAJE");
+	BLOCK_SIZE = config_get_int_value(config, "BLOCK_SIZE");
+	CANT_MAX_BLOQUES = config_get_int_value(config, "CANT_MAX_BLOQUES");
+	NOMBRE_DEL_DISCO= malloc(10);
+	NOMBRE_DEL_DISCO= config_get_string_value(config, "NOMBRE_DEL_DISCO");
+	mkdir(PUNTO_DE_MONTAJE,S_IRWXU);
 
 }
 

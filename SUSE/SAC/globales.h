@@ -13,11 +13,13 @@
 #include <semaphore.h>
 
 //variables globales
-t_log* log_servidor;
 int PUERTO_ESCUCHA;
 char* IP;
 char* PUNTO_DE_MONTAJE;
 t_list* tabla_de_nodos;
+int BLOCK_SIZE;
+int CANT_MAX_BLOQUES;
+char* NOMBRE_DEL_DISCO;
 
 //semaforos
 sem_t*mutex_tabla_de_nodos;
