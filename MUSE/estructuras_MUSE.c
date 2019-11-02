@@ -23,6 +23,16 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+addressSpace* GET_ADDRESS_SPACE(int client_socket) {
+	client* a_client = FIND_CLIENT_BY_SOCKET(client_socket);
+
+	bool el_address_spaces_es_del_cliente(void *an_address_space) {
+		return strcmp(((addressSpace*)an_address_space)->owner, a_client->clientProcessId) == 0;
+	}
+
+	return list_find(all_address_spaces, el_address_spaces_es_del_cliente);
+}
+
 void FREE_FRAME(int frame_number) {
 	int limit = bitarray_get_max_bit(bitmap);
 	if(frame_number < limit) { //Menor estricto o amplio?
