@@ -40,7 +40,8 @@ typedef struct{
 	int clientSocket;
 } client;
 
-
+void* GET_POINTER_TO_FRAME(int frame_number);
+int ASSIGN_FIRST_FREE_FRAME();
 int CREATE_ADDRESS_SPACE(char* IP_ID);
 void SET_BITMAP();
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket);

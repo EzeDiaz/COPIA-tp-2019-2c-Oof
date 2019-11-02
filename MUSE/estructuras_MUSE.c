@@ -23,6 +23,10 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void* GET_POINTER_TO_FRAME(int frame_number) {
+	return mp_pointer + frame_number * page_size;
+}
+
 int ASSIGN_FIRST_FREE_FRAME() {
 	int counter = bitarray_get_max_bit(bitmap);
 	for(int i=0;i<counter;i++){
