@@ -44,7 +44,7 @@ int main(){
 		CHECK_MEMORY();	//checkeo si
 		bzero(mp_pointer,memory_size);	//limpiamos la memoria
 
-		all_address_space = list_create(); //Incializo el espacio de direcciones del sistema
+		all_address_spaces = list_create(); //Incializo el espacio de direcciones del sistema
 
 		/*
 		WRITE_HEAPMETADATA_IN_MEMORY(mp_pointer,memory_left,0);

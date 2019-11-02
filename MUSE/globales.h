@@ -13,7 +13,7 @@
 void* mp_pointer;	//puntero a la memoria principal
 t_log* logger;	//hace falta que mencione esto?
 t_config* config;	//lo mismo que el de arriba pero para config
-t_list* all_address_space;	//tabla de segmentacion implementado a traves de una t_list*
+t_list* all_address_spaces;	//tabla de segmentacion implementado a traves de una t_list*
 uint8_t* memory_controller;	//tal vez despues lo usamos
 t_list* client_list;
 

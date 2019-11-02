@@ -23,7 +23,16 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
-void* GET_POINTER_TO_FRAME(int frame_number) {
+void FREE_FRAME(int frame_number) {
+	int limit = bitarray_get_max_bit(bitmap);
+	if(frame_number < limit) { //Menor estricto o amplio?
+		bitarray_clean_bit(bitmap, frame_number);
+	} else {
+		//Estas queriendo liberar un numero de frame que no existe
+	}
+}
+
+void* GET_FRAME_POINTER(int frame_number) {
 	return mp_pointer + frame_number * page_size;
 }
 
@@ -46,7 +55,7 @@ int CREATE_ADDRESS_SPACE(char* IP_ID) {
 	memcpy(new_address_space->owner, IP_ID, sizeof(IP_ID));
 	new_address_space->segment_table = list_create();
 
-	list_add(all_address_space, new_address_space);
+	list_add(all_address_spaces, new_address_space);
 
 	return 0; //En que caso podria retornar -1?
 }
