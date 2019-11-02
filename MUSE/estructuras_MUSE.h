@@ -28,7 +28,7 @@ typedef struct{
 	bool isHeap;
 	t_list* pageFrameTable;
 	uint32_t base; //Base logica
-	uint32_t limite;
+	uint32_t size;
 } segment;
 
 typedef struct{
