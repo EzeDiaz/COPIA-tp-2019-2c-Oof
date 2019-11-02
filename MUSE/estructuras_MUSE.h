@@ -40,6 +40,8 @@ typedef struct{
 	int clientSocket;
 } client;
 
+
+int CREATE_ADDRESS_SPACE(char* IP_ID);
 void SET_BITMAP();
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket);
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket);
@@ -62,5 +64,7 @@ void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size);
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_CLIENT_SEGMENTS(int a_client_socket);
 bool CLIENT_HAS_SEGMENT(int client);
+
+
 
 #endif /* ESTRUCTURAS_MUSE_H_ */

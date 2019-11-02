@@ -131,7 +131,9 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(IP_ID, (buffer + offset), longitudDelSiguiente);
 
-		int resultado = ADD_CLIENT_TO_LIST(IP_ID, cliente);
+		ADD_CLIENT_TO_LIST(IP_ID, cliente);
+
+		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
 
 		void* buffer;
 		buffer=(void*)malloc(sizeof(int));

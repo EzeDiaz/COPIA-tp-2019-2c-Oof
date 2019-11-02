@@ -23,6 +23,18 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+int CREATE_ADDRESS_SPACE(char* IP_ID) {
+	addressSpace* new_address_space = (addressSpace*)malloc(sizeof(addressSpace));
+	new_address_space->owner = (char*)malloc(sizeof(IP_ID));
+
+	memcpy(new_address_space->owner, IP_ID, sizeof(IP_ID));
+	new_address_space->segment_table = list_create();
+
+	list_add(all_address_space, new_address_space);
+
+	return 0; //En que caso podria retornar -1?
+}
+
 void SET_BITMAP(){
 	FILE* archivo= fopen("bitmap.bin","w");
 

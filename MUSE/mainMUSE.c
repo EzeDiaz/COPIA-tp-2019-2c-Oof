@@ -44,8 +44,9 @@ int main(){
 		CHECK_MEMORY();	//checkeo si
 		bzero(mp_pointer,memory_size);	//limpiamos la memoria
 
-		segmentation_table=list_create();
+		all_address_space = list_create(); //Incializo el espacio de direcciones del sistema
 
+		/*
 		WRITE_HEAPMETADATA_IN_MEMORY(mp_pointer,memory_left,0);
 		READ_HEAPMETADATA_IN_MEMORY(mp_pointer);
 		printf("hola maude! \n");
@@ -55,6 +56,7 @@ int main(){
 		printf("Nombre del primer segmento : %s",new->owner);
 
 		free(mp_pointer);
+		*/
 		DESTROY_SEMAPHORES();
 		return 0;
 
