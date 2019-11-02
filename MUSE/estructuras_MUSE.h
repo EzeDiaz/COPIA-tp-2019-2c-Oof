@@ -27,8 +27,8 @@ typedef struct{	//Pesa SIEMPRE 5 bytes
 typedef struct{
 	bool isHeap;
 	t_list* pageFrameTable;
-	int base; //Base logica
-	int limite;
+	uint32_t base; //Base logica
+	uint32_t limite;
 } segment;
 
 typedef struct{
