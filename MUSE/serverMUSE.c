@@ -168,9 +168,11 @@ void realizarRequest(void *buffer, int cliente){
 		int debe_crearse_segmento_flag = 0;
 		int se_pudo_reservar_flag = 0;
 
+		addressSpace* client_address_space = GET_ADDRESS_SPACE(cliente);
+
 		if(memory_left >= bytes_a_reservar) {
-			if(CLIENT_HAS_SEGMENT(cliente)) {
-				//El proceso que pide ya tiene segmento
+			if(THERE_ARE_EXISTING_HEAP_SEGMENTS(client_address_space)) {
+				//El proceso que pide ya tiene segmentos de heap
 				void intentar_usar_segmento(segment* un_segmento) {
 					if(!se_pudo_reservar_flag) {
 						void* pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata

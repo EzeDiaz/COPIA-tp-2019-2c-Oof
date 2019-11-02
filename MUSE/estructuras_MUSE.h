@@ -16,7 +16,7 @@
 typedef struct{
 	bool presenceBit;	//bit de presencia
 	bool modifiedBit;	//bit de modificado
-	int frame_number; //Si esta en memoria es el frame, si esta en swap la posicion
+	int frame_number; //Si esta en memoria es el frame, si esta en swap la posicion (presence)
 } pageFrame;
 
 typedef struct{	//Pesa SIEMPRE 5 bytes
@@ -25,9 +25,10 @@ typedef struct{	//Pesa SIEMPRE 5 bytes
 } heapMetadata;
 
 typedef struct{
+	bool isHeap;
 	t_list* pageFrameTable;
 	int base; //Base logica
-	//Tamanio es un atributo o es "calculable"
+	int limite;
 } segment;
 
 typedef struct{
@@ -40,6 +41,8 @@ typedef struct{
 	int clientSocket;
 } client;
 
+bool THERE_ARE_EXISTING_HEAP_SEGMENTS(addressSpace* an_address_space);
+addressSpace* GET_ADDRESS_SPACE(int client_socket);
 void FREE_FRAME(int frame_number);
 void* GET_FRAME_POINTER(int frame_number);
 int ASSIGN_FIRST_FREE_FRAME();
@@ -64,7 +67,6 @@ void WRITE_ADDRESSES_IN_SEGMENT(void* pointer, uint32_t size, segment* segment);
 void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size);
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_CLIENT_SEGMENTS(int a_client_socket);
-bool CLIENT_HAS_SEGMENT(int client);
 void CREATE_TABLES();
 void DESTROY_TABLES();
 
