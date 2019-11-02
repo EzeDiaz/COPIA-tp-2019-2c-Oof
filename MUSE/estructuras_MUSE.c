@@ -48,50 +48,12 @@ void SET_BITMAP(){
 	free(frames_vector);
 }
 
-void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
-
-	int segment_size = a_segment->pageFrameTable->elements_count * page_size;
-	int move_counter = 0;
-	void* pointer = a_segment->segmentPointer;
-
-	while(move_counter < segment_size) { //mientras este en mi segmento
-		heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer - 5);
-		if(new_metadata->isFree)
-			if(new_metadata->size >= intended_size)
-				return pointer;
-		pointer = pointer + new_metadata->size + 5;
-		move_counter+=new_metadata->size;
-		free(new_metadata);
-	}
-
-	return NULL;
-}
-
-t_list* GET_CLIENT_SEGMENTS(int a_client_socket) {
-	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
-
-	bool segmento_es_del_cliente(void *a_segment) {
-		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
-	}
-	return list_filter(segmentation_table, segmento_es_del_cliente);
-}
-
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
 	bool es_el_cli_de_ese_socket(void *a_client) {
 		return ((client*)a_client)->clientSocket == a_client_socket;
 	}
 
 	return list_find(client_list, es_el_cli_de_ese_socket); //Consigo el id segun el socket
-}
-
-bool CLIENT_HAS_SEGMENT(int a_client_socket) {
-	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
-
-	bool segmento_es_del_cliente(void *a_segment) {
-		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
-	}
-
-	return list_any_satisfy(segmentation_table, segmento_es_del_cliente);
 }
 
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
@@ -126,7 +88,7 @@ void CHECK_CONFIG(){
 
 void CHECK_FIELDS(){
 	if(config_has_property(config,"LISTEN_PORT") && config_has_property(config,"MEMORY_SIZE")
-		&&config_has_property(config,"PAGE_SIZE") && config_has_property(config,"SWAP_SIZE"))
+			&&config_has_property(config,"PAGE_SIZE") && config_has_property(config,"SWAP_SIZE"))
 		log_info(logger,"El config tiene los campos necesarios para operar");
 	else{
 		log_error(logger,"El config no tiene los campos necesarios para operar");
@@ -176,7 +138,7 @@ void CREATE_TABLES(){
 }
 
 void DESTROY_TABLES(){
-/*
+	/*
 	DESTROY_ELEMENTS(pageFrame* frame){
 		frame->
 	}
@@ -216,24 +178,44 @@ heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer){
 	return new_metadata;
 }
 
-segment* CREATE_NEW_EMPTY_SEGMENT(char* name){
-	segment* newSegment = (segment*)malloc(sizeof(segment));
-	newSegment->owner=(char*)malloc(strlen(name)+1);	//strlen no incluye el \0
-	memcpy(newSegment->owner,name,strlen(name)+1);
-	newSegment->pageFrameTable=list_create();
-	list_add(segmentation_table,newSegment);
+/* POTENTIALLY DEPRECATED FUNCTIONS
 
-	return newSegment;
+void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
+
+	int segment_size = a_segment->pageFrameTable->elements_count * page_size;
+	int move_counter = 0;
+	void* pointer = a_segment->segmentPointer;
+
+	while(move_counter < segment_size) { //mientras este en mi segmento
+		heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer - 5);
+		if(new_metadata->isFree)
+			if(new_metadata->size >= intended_size)
+				return pointer;
+		pointer = pointer + new_metadata->size + 5;
+		move_counter+=new_metadata->size;
+		free(new_metadata);
+	}
+
+	return NULL;
 }
 
-void WRITE_ADDRESSES_IN_SEGMENT(void* pointer, uint32_t size, segment* segment){
-	for(int i=0; i<size/page_size; i++){	//tamanio total/tamanio de pagina = cantidad de paginas y direcciones
-		pageFrame* newPageFrame = (pageFrame*)malloc(sizeof(pageFrame));
-		newPageFrame->modifiedBit=0;
-		newPageFrame->presenceBit=0;	//OJO CON ESTO, REVISA LA TEORIA
-		newPageFrame->pagePointer=pointer+(i*page_size);//1=0*32,2=1*32,3=2*32 OJO
-		list_add(segment->pageFrameTable,newPageFrame);
+t_list* GET_CLIENT_SEGMENTS(int a_client_socket) {
+	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
+
+	bool segmento_es_del_cliente(void *a_segment) {
+		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
 	}
+	return list_filter(segmentation_table, segmento_es_del_cliente);
+}
+
+bool CLIENT_HAS_SEGMENT(int a_client_socket) {
+	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
+
+	bool segmento_es_del_cliente(void *a_segment) {
+		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
+	}
+
+	return list_any_satisfy(segmentation_table, segmento_es_del_cliente);
 }
 
 void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size,char * name){
@@ -256,3 +238,26 @@ void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size,char 
 		//Que hacer si no queda espacio?
 	}
 }
+
+void WRITE_ADDRESSES_IN_SEGMENT(void* pointer, uint32_t size, segment* segment){
+	for(int i=0; i<size/page_size; i++){	//tamanio total/tamanio de pagina = cantidad de paginas y direcciones
+		pageFrame* newPageFrame = (pageFrame*)malloc(sizeof(pageFrame));
+		newPageFrame->modifiedBit=0;
+		newPageFrame->presenceBit=0;	//OJO CON ESTO, REVISA LA TEORIA
+		newPageFrame->pagePointer=pointer+(i*page_size);//1=0*32,2=1*32,3=2*32 OJO
+		list_add(segment->pageFrameTable,newPageFrame);
+	}
+}
+
+segment* CREATE_NEW_EMPTY_SEGMENT(char* name){
+	segment* newSegment = (segment*)malloc(sizeof(segment));
+	newSegment->owner=(char*)malloc(strlen(name)+1);	//strlen no incluye el \0
+	memcpy(newSegment->owner,name,strlen(name)+1);
+	newSegment->pageFrameTable=list_create();
+	list_add(segmentation_table,newSegment);
+
+	return newSegment;
+}
+
+}
+ */

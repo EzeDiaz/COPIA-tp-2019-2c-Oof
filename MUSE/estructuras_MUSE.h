@@ -40,10 +40,8 @@ typedef struct{
 	int clientSocket;
 } client;
 
-void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
-t_list* GET_CLIENT_SEGMENTS(int a_client_socket);
+void SET_BITMAP();
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket);
-bool CLIENT_HAS_SEGMENT(int client);
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket);
 void INITIALIZE_SEMAPHORES();
 void DESTROY_SEMAPHORES();
@@ -56,8 +54,13 @@ void CREATE_TABLES();
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status);
 heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer);
 void SUBSTRACT_MEMORY_LEFT(int size);
+
+//Potentially deprecated
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name);
 void WRITE_ADDRESSES_IN_SEGMENT(void* pointer, uint32_t size, segment* segment);
 void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size);
+void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
+t_list* GET_CLIENT_SEGMENTS(int a_client_socket);
+bool CLIENT_HAS_SEGMENT(int client);
 
 #endif /* ESTRUCTURAS_MUSE_H_ */
