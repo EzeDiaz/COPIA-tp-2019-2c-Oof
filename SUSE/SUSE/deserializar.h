@@ -8,6 +8,7 @@
 #ifndef DESERIALIZAR_H_
 #define DESERIALIZAR_H_
 #include <commons/log.h>
+
 t_log* logger_de_deserializacion;
 
 enum {
@@ -20,4 +21,25 @@ enum {
 	SUSE_CLOSE = 6,
 };
 
+void serializar_y_enviar_resultado(void*,int);
+
+void* descifrar_hilolay_init(void*);
+//void* hilolay_init(void*);
+
+void* descifrar_suse_create(void*);
+void* suse_create(hilolay_t*, hilolay_attr_t*, (void*), void* );
+
+void* descifrar_suse_scheduler_next(void*);
+void* suse_scheduler_next(void*);
+
+void* descifrar_suse_wait(void*);
+void* suse_wait(void*);
+
+void* descifrar_suse_signal(void*);
+void* suse_signal(void*);
+
+void* descifrar_suse_join(void*);
+void* suse_join(void*);
+
 #endif /* DESERIALIZAR_H_ */
+

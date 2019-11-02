@@ -101,7 +101,7 @@ void _suse_init(){
 
 }*/
 
-void* _suse_create(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*), void* argumento){
+void* suse_create(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*), void* argumento){
 
 	hilo=(hilolay_t*)malloc(sizeof(hilolay_t*));
 	pthread_t* hilo2;

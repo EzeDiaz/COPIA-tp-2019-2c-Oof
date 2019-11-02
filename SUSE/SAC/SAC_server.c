@@ -24,8 +24,8 @@ void* recibir_buffer(int* , int);
 t_log* log_servidor;
 
 int main(){
-
-	log_servidor = log_create("log_servidor","SAC_Servidor",0,LOG_LEVEL_DEBUG);
+	remove("log_servidor.log");
+	log_servidor = log_create("log_servidor.log","SAC_Servidor",0,LOG_LEVEL_DEBUG);
 	obtener_datos_del_config();
 	start_up();
 	struct sockaddr_in direccion_servidor;
@@ -34,10 +34,8 @@ int main(){
 	direccion_servidor.sin_port = htons(PUERTO_ESCUCHA);
 
 	int servidor = socket(AF_INET, SOCK_STREAM, 0);
-	sem_init(&mutex_log_servidor,0,1);
-	sem_wait(&mutex_log_servidor);
-	log_info(log_servidor, "Levantamos el servidor\n");
-	sem_post(&mutex_log_servidor);
+	log_info(log_servidor,"Levantamos el servidor\n");
+
 
 	int activado = 1;
 	setsockopt(servidor, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado));
@@ -51,9 +49,8 @@ int main(){
 	int cliente;
 	printf("Listos para escuchar\n");
 
-	sem_wait(&mutex_log_servidor);
 	log_info(log_servidor,"Servidor listo para recibir un cliente\n");
-	sem_post(&mutex_log_servidor);
+	inicializar_semaforos();
 
 	while(1){
 		listen(servidor, 100);
@@ -62,9 +59,7 @@ int main(){
 		unsigned tamanio_direccion = sizeof(struct sockaddr_in);
 		cliente = accept(servidor, (void*) &direccion_cliente, &tamanio_direccion);
 
-		sem_wait(&mutex_log_servidor);
 		log_info(log_servidor, "Recibimos un cliente\n");
-		sem_post(&mutex_log_servidor);
 		pthread_create(&hilo, NULL, (void*) atender_cliente, cliente);
 		pthread_detach(hilo);
 	}
@@ -80,10 +75,15 @@ int main(){
 
 
 }
+void inicializar_semaforos(){
+
+	sem_init(&mutex_log_servidor, 0, 1);
+
+}
 
 void start_up(){
 	char* comando = string_new();
-	string_append(&comando,"dd if=/dev/random iflag=fullblock of=");
+	string_append(&comando,"dd if=/dev/zero iflag=fullblock of=");
 	string_append(&comando,PUNTO_DE_MONTAJE);
 	string_append(&comando,"/");
 	string_append(&comando,NOMBRE_DEL_DISCO);

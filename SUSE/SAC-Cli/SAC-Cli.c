@@ -9,8 +9,36 @@
 #define _FILE_OFFSET_BITS  64
 #define FUSE_USE_VERSION 26
 
+#include "consola_tester.h"
 #include "SAC-Cli.h"
 #include <readline/readline.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <fuse.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+
+#define DEFAULT_FILE_PATH "/" DEFAULT_FILE_NAME
+
+struct t_runtime_options {
+	char* welcome_msg;
+} runtime_options;
+
+enum {
+	KEY_VERSION,
+	KEY_HELP,
+};
+
+static struct fuse_opt fuse_options[] = {
+		FUSE_OPT_KEY("-V", KEY_VERSION),
+		FUSE_OPT_KEY("--version", KEY_VERSION),
+		FUSE_OPT_KEY("-h", KEY_HELP),
+		FUSE_OPT_KEY("--help", KEY_HELP),
+		FUSE_OPT_END,
+};
+
 
 static struct fuse_operations fs_oper = {
 	//.getattr     = fs_getattr,
@@ -56,7 +84,27 @@ static struct fuse_operations fs_oper = {
 int main(int argc, char *argv[]){
 	config= leer_config();
 	conectar_SAC_SERVER(argc,argv);
-	return fuse_main(argc, argv, &fs_oper,NULL);
+	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+
+		// Limpio la estructura que va a contener los parametros
+		//memset(&runtime_options, 0, sizeof(struct t_runtime_options));
+
+		// Esta funcion de FUSE lee los parametros recibidos y los intepreta
+		//if (fuse_opt_parse(&args, &runtime_options, fuse_options, NULL) == -1){
+			/** error parsing options */
+			//perror("Invalid arguments!");
+			//return EXIT_FAILURE;
+		//}
+
+		consola();
+		// Si se paso el parametro --welcome-msg
+		// el campo welcome_msg deberia tener el
+		// valor pasado
+
+		// Esta es la funcion principal de FUSE, es la que se encarga
+		// de realizar el montaje, comuniscarse con el kernel, delegar todo
+		// en varios threads
+	return /*fuse_main(argc, argv, &fs_oper,NULL)*/ 0;
 }
 
 t_config* leer_config(){
@@ -68,7 +116,7 @@ t_config* leer_config(){
 
 void conectar_SAC_SERVER(int argc, char *argv[]) {
 
-		char* server_name=config_get_string_value(config,"IP_FS");
+		char* server_name=config_get_string_value(config,"IP");
 	    int server_port, socket_fd;
 	    struct hostent *server_host;
 	    struct sockaddr_in server_address;
@@ -79,7 +127,7 @@ void conectar_SAC_SERVER(int argc, char *argv[]) {
 	    /* Get server port from command line arguments or stdin. */
 	    server_port = argc > 2 ? atoi(argv[2]) : 0;
 	    if (!server_port) {
-	    	server_port=config_get_int_value(config,"PUERTO_FS");
+	    	server_port=config_get_int_value(config,"PUERTO_ESCUCHA");
 	    }
 
 	    /* Get server host from server name. */
@@ -108,6 +156,7 @@ void conectar_SAC_SERVER(int argc, char *argv[]) {
 	    socket_sac_server=socket_fd;
 
 }
+
 
 /*
 void handshake(int socket){

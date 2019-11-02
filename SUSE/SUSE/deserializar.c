@@ -1,5 +1,5 @@
 #include "deserializar.h"
-
+#include "SUSE.c"
 int determinar_protocolo(void* buffer){
 	int codigo_de_operacion;
 	int offset = 0;
@@ -72,4 +72,47 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	}
 	free(resultado);
 	free(paquete_descifrado);
+}
+
+void serializar_y_enviar_resultado(void* param1,int param2){
+	return NULL;
+}
+
+void* descifrar_hilolay_init(void*param){
+	return NULL;
+}
+void* hilolay_init(void*param){
+	return NULL;
+}
+
+void* descifrar_suse_create(void*param){
+	return NULL;
+}
+
+void* descifrar_suse_scheduler_next(void*param){
+	return NULL;
+}
+void* suse_scheduler_next(void*param){
+	return NULL;
+}
+
+void* descifrar_suse_wait(void*param){
+	return NULL;
+}
+void* suse_wait(void* param){
+	return NULL;
+}
+
+void* descifrar_suse_signal(void* param){
+	return NULL;
+}
+void* suse_signal(void* param){
+	return NULL;
+}
+
+void* descifrar_suse_join(void* param){
+	return NULL;
+}
+void* suse_join(void* param){
+	return NULL;
 }
