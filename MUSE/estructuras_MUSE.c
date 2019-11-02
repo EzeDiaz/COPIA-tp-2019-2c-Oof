@@ -32,6 +32,7 @@ int ASSIGN_FIRST_FREE_FRAME() {
 	for(int i=0;i<counter;i++){
 		if(!bitarray_test_bit(bitmap, i)){
 			bitarray_set_bit(bitmap,i);
+			SUBSTRACT_MEMORY_LEFT(page_size);
 			return i;
 		}
 	}
