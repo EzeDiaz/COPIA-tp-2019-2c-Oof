@@ -26,7 +26,7 @@
 void SET_BITMAP(){
 	FILE* archivo= fopen("bitmap.bin","w");
 
-	int number_of_frames = config_get_int_value(config,"MEMORY_SIZE") / config_get_int_value(config,"PAGE_SIZE");
+	int number_of_frames = memory_size / page_size;
 	//Lo "paso" a bits
 	if((number_of_frames % 8) == 0) {
 		number_of_frames = number_of_frames / 8;

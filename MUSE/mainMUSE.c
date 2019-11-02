@@ -36,7 +36,7 @@ int main(){
 		CHECK_FIELDS();
 		GET_CONFIG_VALUES();
 
-		//a verrr.. no pongo cemahforoz porque recien se levanta, ahora si activo los semaphores
+		SET_BITMAP();
 
 		INITIALIZE_SEMAPHORES();
 

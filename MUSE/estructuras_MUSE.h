@@ -13,25 +13,27 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 
-typedef struct{		//administracion de paginas
+typedef struct{
 	bool presenceBit;	//bit de presencia
 	bool modifiedBit;	//bit de modificado
-	void* pagePointer;		//puntero al inicio de pagina en memoria principal
-	//Numero de frame?
-} pageFrame;	//hay que ahorrar por la macrisis, asi que pongo bool y no algun tipo numerico
+	int frame_number; //Si esta en memoria es el frame, si esta en swap la posicion
+} pageFrame;
 
-typedef struct{	//estructura propuesta por la catedra para la memoria, pesa SIEMPRE 5B
+typedef struct{	//Pesa SIEMPRE 5 bytes
 	uint32_t size;
 	bool isFree;
 } heapMetadata;
 
 typedef struct{
-	char* owner; //para poder identificar de que proceso es el segmento - ?
 	t_list* pageFrameTable;
-	void* segmentPointer; //puntero al inicio del segmento (datos). - ?
-	//Base logica?
-	//Tamanio?
+	int base; //Base logica
+	//Tamanio es un atributo o es "calculable"
 } segment;
+
+typedef struct{
+	char* owner;
+	t_list* segment_table; //Como limito 2 a la 32 direcciones?
+} addressSpace;
 
 typedef struct{
 	char* clientProcessId;
