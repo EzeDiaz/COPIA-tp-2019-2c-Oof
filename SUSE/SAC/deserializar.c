@@ -63,7 +63,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case LISTAR_DIRECTORIO_Y_ARCHIVOS:
 		log_info(logger_de_deserializacion, "Es el codigo de 'listado de directorio', comenzando la deserializacion de parametros\n");
 		directorio_a_listar_t* directorio_a_listar=decifrar_directorio_a_listar(buffer);
-		resultado=listar_directorio_y_archivos(directorio_a_listar);
+		resultado=listar_directorio_y_archivos(directorio_a_listar->path,directorio_a_listar->string_nombre_de_archivos);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 	break;
 

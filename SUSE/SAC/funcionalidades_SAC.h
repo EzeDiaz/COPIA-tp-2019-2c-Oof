@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <commons/collections/list.h>
+#include "globales.h"
 
 //Funcionalidades con archivos
 bool crear_archivo();
@@ -23,9 +24,11 @@ bool agregar_metadata_de_archivo();
 
 //Funcionalidades con directorios
 bool crear_directorio();
-t_list* listar_directorio_y_archivos();
+void* listar_directorio_y_archivos(char*, char*);
 t_list* listar_metadata();
 bool eliminar_directorio();
 
-
+//funciones auxiliares
+nodo_t* encontrar_en_tabla_de_nodos(char* );
+void* paquetizar_metadata_de_directorio(t_list*);
 #endif /* FUNCIONALIDADES_SAC_H_ */

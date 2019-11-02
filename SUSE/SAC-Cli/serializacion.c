@@ -6,14 +6,17 @@
  */
 #include "serializacion.h"
 #include <fuse.h>
+#include "globales.h"
+#include <commons/collections/list.h>
+
 int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t puntero_a_funcion, off_t offset, struct fuse_file_info *fi){
 	void* paquete = serializar_paquete_para_leer_directorio(path, buffer ,puntero_a_funcion,offset,fi);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
-	free(resultado);
-	return resultado;
+	usar_y_liberar_resultado(resultado);
+	return 1;
 }
 
 int serializar_fs_mkdir(const char *path, mode_t mode){
@@ -106,5 +109,54 @@ void* recibir_resultado(int* alocador){
 char* leer_nombres_de_archivos_y_directorios(void* buffer){
 
 	return (char*) buffer;
+
+}
+
+void usar_y_liberar_resultado(void* resultado){
+	int cantidad_de_archivos;
+	int offset=0;
+	t_list * lista_de_nodos=list_create();
+	memcpy(&cantidad_de_archivos,resultado+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(&cantidad_de_archivos,resultado+offset,sizeof(int));
+	offset+=sizeof(int);
+	for(int i=0; i< cantidad_de_archivos;i++){
+
+		nodo_t* un_nodo= malloc(sizeof(nodo_t));
+
+		memcpy(un_nodo->estado,resultado+offset,1);//TODO esto puede romper
+		offset+=1;
+		memcpy(&un_nodo->fecha_de_creacion,resultado+offset,sizeof(long int));
+		offset+=sizeof(long int);
+		memcpy(&un_nodo->fecha_de_modificacion,resultado+offset,sizeof(long int));
+		offset+=sizeof(long int);
+		memcpy(&un_nodo->puntero_padre,resultado+offset,sizeof(int));
+		offset+=sizeof(int);
+		memcpy(un_nodo->tamanio_del_archivo,resultado+offset,sizeof(int));
+		offset+=sizeof(int);
+		memcpy(un_nodo->nombre_de_archivo,resultado+offset,72);
+		offset+=72;
+
+		list_add(lista_de_nodos,un_nodo);
+
+	}
+
+	printear_lista_de_nodos(lista_de_nodos);
+
+}
+
+
+void printear_lista_de_nodos(lista_de_nodos){
+
+	void printear_nodo(nodo_t* un_nodo){
+		printf("Miren... un nodo! \n");
+		printf("Su estado es: %s \n",un_nodo->estado);
+		printf("Su puntero padre es: %d \n",un_nodo->puntero_padre);
+		printf("Su fecha de creacion es: %d \n",un_nodo->fecha_de_creacion);
+		printf("Su fecha de modificacion es: %d \n",un_nodo->fecha_de_modificacion);
+		printf("Su nombre es: %s \n",un_nodo->nombre_de_archivo);
+		printf("Su tamanio es: %d \n",un_nodo->tamanio_del_archivo);
+	}
+	list_iterate(lista_de_nodos, printear_nodo);
 
 }

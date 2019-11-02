@@ -10,11 +10,20 @@
 
 #include <commons/collections/list.h>
 #include <commons/log.h>
+#include <semaphore.h>
 
+//variables globales
 t_log* log_servidor;
 int PUERTO_ESCUCHA;
 char* IP;
+char* PUNTO_DE_MONTAJE;
+t_list* tabla_de_nodos;
 
+//semaforos
+sem_t*mutex_tabla_de_nodos;
+
+
+//TADS
 typedef struct{
 	void* bloque;
 
@@ -28,6 +37,18 @@ typedef struct{
 	void* relleno;
 
 }estructura_header;
+
+typedef struct{
+
+	char*nombre_de_archivo;
+	char estado;
+	ptrGBloque* puntero_padre;
+	int tamanio_del_archivo;
+	long fecha_de_creacion;
+	long fecha_de_modificacion;
+	ptrGBloque punteros_indirectos_simples[1000];
+
+}nodo_t;
 
 typedef struct{
 
