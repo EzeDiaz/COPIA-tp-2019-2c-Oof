@@ -52,7 +52,6 @@ void CHECK_CONFIG();
 void CHECK_FIELDS();
 void GET_CONFIG_VALUES();
 void CHECK_MEMORY();
-void CREATE_TABLES();
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status);
 heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer);
 void SUBSTRACT_MEMORY_LEFT(int size);
@@ -64,6 +63,8 @@ void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size);
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_CLIENT_SEGMENTS(int a_client_socket);
 bool CLIENT_HAS_SEGMENT(int client);
+void CREATE_TABLES();
+void DESTROY_TABLES();
 
 
 

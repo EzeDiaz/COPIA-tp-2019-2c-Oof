@@ -23,6 +23,17 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+int ASSIGN_FIRST_FREE_FRAME() {
+	int counter = bitarray_get_max_bit(bitmap);
+	for(int i=0;i<counter;i++){
+		if(!bitarray_test_bit(bitmap, i)){
+			bitarray_set_bit(bitmap,i);
+			return i;
+		}
+	}
+	return "-1"; //Si no hay mas lugar devuelve -1
+}
+
 int CREATE_ADDRESS_SPACE(char* IP_ID) {
 	addressSpace* new_address_space = (addressSpace*)malloc(sizeof(addressSpace));
 	new_address_space->owner = (char*)malloc(sizeof(IP_ID));
@@ -145,19 +156,6 @@ void CHECK_MEMORY(){
 	}
 }
 
-void CREATE_TABLES(){
-	segmentation_table = list_create();
-}
-
-void DESTROY_TABLES(){
-	/*
-	DESTROY_ELEMENTS(pageFrame* frame){
-		frame->
-	}
-
-	list_destroy_and_destroy_elements(segmentation_table,);*/
-}
-
 void SUBSTRACT_MEMORY_LEFT(int size){
 	for(int i=0; i<size; i++){
 		memory_left--;
@@ -271,5 +269,17 @@ segment* CREATE_NEW_EMPTY_SEGMENT(char* name){
 	return newSegment;
 }
 
+void CREATE_TABLES(){
+	segmentation_table = list_create();
 }
+
+void DESTROY_TABLES(){
+
+	DESTROY_ELEMENTS(pageFrame* frame){
+		frame->
+	}
+
+	list_destroy_and_destroy_elements(segmentation_table,);
+}
+
  */
