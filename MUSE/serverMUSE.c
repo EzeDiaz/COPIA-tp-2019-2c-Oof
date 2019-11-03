@@ -187,6 +187,7 @@ void realizarRequest(void *buffer, int cliente){
 							memcpy(pointer - 5, &bytes_a_reservar, sizeof(uint32_t));
 							memcpy(pointer - 1, &false, sizeof(bool));
 							//Escribo la nueva metadata
+							bytes_sobrantes = bytes_que_habia - bytes_a_reservar - 5;
 							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
 							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
 							sem_post(&mp_semaphore);
@@ -208,6 +209,19 @@ void realizarRequest(void *buffer, int cliente){
 							} else {
 								frames_to_require = (bytes_a_reservar + 5) / page_size;
 							}
+
+							sem_wait(&mp_semaphore);
+							uint32_t bytes_que_habia;
+							uint32_t bytes_sobrantes;
+							memcpy(&bytes_que_habia, pointer - 5, sizeof(uint32_t));
+							//Sobreescribo la metadata
+							memcpy(pointer - 5, &bytes_a_reservar, sizeof(uint32_t));
+							memcpy(pointer - 1, &false, sizeof(bool));
+							//Escribo la nueva metadata
+							bytes_sobrantes = bytes_que_habia - bytes_a_reservar - 5;
+							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
+							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
+							sem_post(&mp_semaphore);
 
 							se_pudo_reservar_flag = 1;
 						}
