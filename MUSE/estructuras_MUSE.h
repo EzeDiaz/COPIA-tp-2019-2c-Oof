@@ -41,6 +41,9 @@ typedef struct{
 	int clientSocket;
 } client;
 
+void* GET_LAST_METADATA(segment* a_segment);
+bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace an_address_space, uint32_t intended_size);
+void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_HEAP_SEGMENTS(addressSpace* address_space);
 bool THERE_ARE_EXISTING_HEAP_SEGMENTS(addressSpace* an_address_space);
 addressSpace* GET_ADDRESS_SPACE(int client_socket);
@@ -66,7 +69,6 @@ void SUBSTRACT_MEMORY_LEFT(int size);
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name);
 void WRITE_ADDRESSES_IN_SEGMENT(void* pointer, uint32_t size, segment* segment);
 void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size);
-void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 void CREATE_TABLES();
 void DESTROY_TABLES();
 

@@ -167,6 +167,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		int debe_crearse_segmento_flag = 0;
 		int se_pudo_reservar_flag = 0;
+		void* pointer;
 
 		addressSpace* client_address_space = GET_ADDRESS_SPACE(cliente);
 
@@ -175,7 +176,7 @@ void realizarRequest(void *buffer, int cliente){
 				//El proceso que pide ya tiene segmentos de heap
 				void usar_segmento_si_tiene_espacio(segment* un_segmento) {
 					if(!se_pudo_reservar_flag) {
-						void* pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata
+						pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata
 						if(pointer != NULL) {
 							//El segmento tiene lugar
 							sem_wait(&mp_semaphore);
@@ -190,33 +191,47 @@ void realizarRequest(void *buffer, int cliente){
 							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
 							sem_post(&mp_semaphore);
 							se_pudo_reservar_flag = 1;
-						} else {
-							//El segmento no tiene lugar
-							if() {
-								//El segmento puede agrandarse
-								se_pudo_reservar_flag = 1;
-							} else {
-								//El segmento no puede agrandarse
-							}
 						}
 					}
 				}
+
+				void usar_segmento_si_se_puede_agrandar(segment* un_segmento) {
+					if(!se_pudo_reservar_flag) {
+						if(SEGMENT_CAN_BE_EXTENDED(un_segmento, client_address_space, bytes_a_reservar + 5)) {
+							//Puedo agrandar el segmento
+							void* last_metadata = GET_LAST_METADATA(un_segmento);
+							uint32_t internal_fragmentation;
+							memcpy(&internal_fragmentation, last_metadata, sizeof(uint32_t));
+							int frames_to_require;
+							if((bytes_a_reservar + 5) % page_size > 0) {
+								frames_to_require = ((bytes_a_reservar + 5) / page_size) + 1;
+							} else {
+								frames_to_require = (bytes_a_reservar + 5) / page_size;
+							}
+
+							se_pudo_reservar_flag = 1;
+						}
+					}
+				}
+
 				t_list* heap_segments_list = GET_HEAP_SEGMENTS(client_address_space);
 				list_iterate(heap_segments_list, usar_segmento_si_tiene_espacio);
-				if(!se_pudo_reservar_flag)
-					list_iterate(heap_segments_list, usar_segmento_si_tiene_espacio);
+
+				if(!se_pudo_reservar_flag) //Ningun segmento tenia espacio, trato de agrandar
+					list_iterate(heap_segments_list, usar_segmento_si_se_puede_agrandar);
+
 				debe_crearse_segmento_flag = !se_pudo_reservar_flag;
-				//borrar la segments_list (si hice filter o algo asi)
+				//borrar la heap_segments_list (porque es resultado de un filter)
 			} else {
 				//El proceso que pide no tiene segmento
 				debe_crearse_segmento_flag = 1;
 			}
-
 			if(debe_crearse_segmento_flag) {
 				//Crear nuevo segmento
 			}
 		} else {
 			//No pude escribir porque no hay memoria
+			//Existe esta condicion? O agarro y mando un frame a swap y chau?
 		}
 
 		/* Armamos el paquetito de respuesta

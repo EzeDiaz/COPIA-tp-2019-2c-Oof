@@ -23,6 +23,60 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void* GET_LAST_METADATA(segment* a_segment) {
+	int segment_size = a_segment->size;
+	int segment_move_counter = 0;
+	int page_move_counter = 0;
+	int page_number = 0;
+	t_list* page_frame_table = a_segment->pageFrameTable;
+	void* pointer;
+
+	while(segment_move_counter < segment_size && page_number < page_frame_table->elements_count) { //Mientras este en mi segmento
+		int current_frame = list_get(page_frame_table, page_number);
+		pointer = GET_FRAME_POINTER(current_frame);
+		while(page_move_counter < page_size) {
+			heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer);
+			if(new_metadata->isFree && page_number == (page_frame_table->elements_count - 1)) {
+				//Si estoy en la ultima pagina y la metadata esta free
+				free(new_metadata);
+				return pointer;
+			}
+			page_move_counter = page_move_counter + new_metadata->size + 5;
+			pointer = pointer + page_move_counter;
+			segment_move_counter = segment_move_counter + page_move_counter;
+			free(new_metadata);
+		}
+		page_number++;
+	}
+
+	return NULL; //No deberia caer nunca aca, pero lo pongo asi Eclipse no jode
+}
+
+bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace an_address_space, uint32_t intended_size) {
+	uint32_t real_size_needed;
+	t_list* segment_table = an_address_space->segment_table;
+	void* last_metadata = GET_LAST_METADATA(a_segment);
+	uint32_t internal_fragmentation;
+
+	memcpy(&internal_fragmentation, last_metadata, sizeof(uint32_t));
+
+	real_size_needed = intended_size - internal_fragmentation;
+
+	uint32_t intended_direction = a_segment->base + a_segment->size + real_size_needed;
+
+	if(intended_direction % page_size > 0)
+		intended_direction = ((intended_direction / page_size) + 1) * page_size;
+
+	bool la_direccion_pertenece_a_otro_segmento(void *one_segment) {
+		segment* iterative_segment = (segment*)one_segment;
+		bool cond_1 = (a_segment->base < iterative_segment->base) && intended_direction > iterative_segment->base;
+		bool cond_2 = intended_direction > iterative_segment->base && intended_direction < iterative_segment->base + iterative_segment->size;
+		return cond_1 || cond_2;
+	}
+
+	return list_count_satisfying(segment_table, la_direccion_pertenece_a_otro_segmento);
+}
+
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
 
 	int segment_size = a_segment->size;
@@ -43,6 +97,7 @@ void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
 			if(new_metadata->isFree)
 				if(new_metadata->size >= intended_size) {
 					pointer = pointer + 5;
+					free(new_metadata);
 					return pointer;
 				}
 			page_move_counter = page_move_counter + new_metadata->size + 5;
