@@ -23,6 +23,39 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
+
+	int segment_size = a_segment->size;
+	int segment_move_counter = 0;
+	int page_move_counter = 0;
+	int page_number = 0;
+	t_list* page_frame_table = a_segment->pageFrameTable;
+	void* pointer;
+
+	if(a_segment->size - 10 < intended_size) //Si el tamanio  (-2 metadatas) no me alcanza ni miro el resto
+		return NULL;
+
+	while(segment_move_counter < segment_size && page_number < page_frame_table->elements_count) { //Mientras este en mi segmento
+		int current_frame = list_get(page_frame_table, page_number);
+		pointer = GET_FRAME_POINTER(current_frame);
+		while(page_move_counter < page_size) {
+			heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer);
+			if(new_metadata->isFree)
+				if(new_metadata->size >= intended_size) {
+					pointer = pointer + 5;
+					return pointer;
+				}
+			page_move_counter = page_move_counter + new_metadata->size + 5;
+			pointer = pointer + page_move_counter;
+			segment_move_counter = segment_move_counter + page_move_counter;
+			free(new_metadata);
+		}
+		page_number++;
+	}
+
+	return NULL;
+}
+
 t_list* GET_HEAP_SEGMENTS(addressSpace* address_space) {
 	bool es_segmento_heap(void *a_segment) {
 		return ((segment*)a_segment)->isHeap;

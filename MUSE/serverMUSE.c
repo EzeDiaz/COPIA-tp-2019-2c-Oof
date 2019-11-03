@@ -173,7 +173,7 @@ void realizarRequest(void *buffer, int cliente){
 		if(memory_left >= bytes_a_reservar) {
 			if(THERE_ARE_EXISTING_HEAP_SEGMENTS(client_address_space)) {
 				//El proceso que pide ya tiene segmentos de heap
-				void intentar_usar_segmento(segment* un_segmento) {
+				void usar_segmento_si_tiene_espacio(segment* un_segmento) {
 					if(!se_pudo_reservar_flag) {
 						void* pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata
 						if(pointer != NULL) {
@@ -202,7 +202,9 @@ void realizarRequest(void *buffer, int cliente){
 					}
 				}
 				t_list* heap_segments_list = GET_HEAP_SEGMENTS(client_address_space);
-				list_iterate(heap_segments_list, intentar_usar_segmento);
+				list_iterate(heap_segments_list, usar_segmento_si_tiene_espacio);
+				if(!se_pudo_reservar_flag)
+					list_iterate(heap_segments_list, usar_segmento_si_tiene_espacio);
 				debe_crearse_segmento_flag = !se_pudo_reservar_flag;
 				//borrar la segments_list (si hice filter o algo asi)
 			} else {
