@@ -23,6 +23,14 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+t_list* GET_HEAP_SEGMENTS(addressSpace* address_space) {
+	bool es_segmento_heap(void *a_segment) {
+		return ((segment*)a_segment)->isHeap;
+	}
+
+	return list_filter(address_space->segment_table, es_segmento_heap);
+}
+
 bool THERE_ARE_EXISTING_HEAP_SEGMENTS(addressSpace* an_address_space) {
 	bool es_segmento_heap(void *a_segment) {
 		return ((segment*)a_segment)->isHeap;
@@ -239,15 +247,6 @@ void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
 	}
 
 	return NULL;
-}
-
-t_list* GET_CLIENT_SEGMENTS(int a_client_socket) {
-	client* the_client = FIND_CLIENT_BY_SOCKET(a_client_socket); //Consigo el id segun el socket
-
-	bool segmento_es_del_cliente(void *a_segment) {
-		return strcmp(((segment*)a_segment)->owner, the_client->clientProcessId) == 0;
-	}
-	return list_filter(segmentation_table, segmento_es_del_cliente);
 }
 
 void CREATE_NEW_SEGMENT_IN_MEMORY(void* pointer, void* info, uint32_t size,char * name){
