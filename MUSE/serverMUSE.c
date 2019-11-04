@@ -204,23 +204,41 @@ void realizarRequest(void *buffer, int cliente){
 							uint32_t internal_fragmentation;
 							memcpy(&internal_fragmentation, last_metadata, sizeof(uint32_t));
 							int frames_to_require;
-							if((bytes_a_reservar + 5) % page_size > 0) {
-								frames_to_require = ((bytes_a_reservar + 5) / page_size) + 1;
+							if((bytes_a_reservar + 5 - internal_fragmentation) % page_size > 0) {
+								frames_to_require = ((bytes_a_reservar + 5 - internal_fragmentation) / page_size) + 1;
 							} else {
-								frames_to_require = (bytes_a_reservar + 5) / page_size;
+								frames_to_require = (bytes_a_reservar + 5 - internal_fragmentation) / page_size;
 							}
 
 							sem_wait(&mp_semaphore);
 							uint32_t bytes_que_habia;
 							uint32_t bytes_sobrantes;
-							memcpy(&bytes_que_habia, pointer - 5, sizeof(uint32_t));
+							uint32_t bytes_que_quedan;
+							memcpy(&bytes_que_habia, last_metadata, sizeof(uint32_t));
 							//Sobreescribo la metadata
-							memcpy(pointer - 5, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(pointer - 1, &false, sizeof(bool));
+							memcpy(last_metadata, &bytes_a_reservar, sizeof(uint32_t));
+							memcpy(last_metadata + sizeof(uint32_t), &false, sizeof(bool));
+
+							bytes_que_quedan = bytes_a_reservar - internal_fragmentation;
+
+							pageFrame* last_page;
+
+							for(int i=0; i < frames_to_require; i++) {
+								int frame_number = ASSIGN_FIRST_FREE_FRAME();
+								pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
+								new_page->modifiedBit = 1; //Not sure
+								new_page->presenceBit = 1;
+								list_add(client_address_space->segment_table, new_page);
+								if(bytes_que_quedan - page_size > 0)
+									bytes_que_quedan = bytes_que_quedan - page_size;
+								last_page = new_page;
+							}
+
 							//Escribo la nueva metadata
-							bytes_sobrantes = bytes_que_habia - bytes_a_reservar - 5;
-							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
-							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
+							bytes_sobrantes = page_size - bytes_que_quedan - 5;
+							void* pointer = GET_FRAME_POINTER(last_page->frame_number);
+							memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
+							memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &true, sizeof(uint32_t));
 							sem_post(&mp_semaphore);
 
 							se_pudo_reservar_flag = 1;
