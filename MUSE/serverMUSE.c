@@ -211,9 +211,9 @@ void realizarRequest(void *buffer, int cliente){
 							}
 
 							sem_wait(&mp_semaphore);
-							uint32_t bytes_que_habia;
-							uint32_t bytes_sobrantes;
-							uint32_t bytes_que_quedan;
+							uint32_t bytes_que_habia = 0;
+							uint32_t bytes_sobrantes = 0;
+							uint32_t bytes_que_quedan = 0;
 							memcpy(&bytes_que_habia, last_metadata, sizeof(uint32_t));
 							//Sobreescribo la metadata
 							memcpy(last_metadata, &bytes_a_reservar, sizeof(uint32_t));
@@ -228,7 +228,7 @@ void realizarRequest(void *buffer, int cliente){
 								pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 								new_page->modifiedBit = 1; //Not sure
 								new_page->presenceBit = 1;
-								list_add(client_address_space->segment_table, new_page);
+								list_add(un_segmento->pageFrameTable, new_page);
 								if(bytes_que_quedan - page_size > 0)
 									bytes_que_quedan = bytes_que_quedan - page_size;
 								last_page = new_page;
@@ -260,6 +260,109 @@ void realizarRequest(void *buffer, int cliente){
 			}
 			if(debe_crearse_segmento_flag) {
 				//Crear nuevo segmento
+				if(client_address_space->segment_table->elements_count) {
+					//Ya hay segmentos
+					segment* new_segment = (segment*)malloc(sizeof(segment*));
+					new_segment->isHeap = true;
+					new_segment->pageFrameTable = list_create();
+					int frames_to_require;
+					if((bytes_a_reservar + 10) % page_size > 0) {
+						frames_to_require = ((bytes_a_reservar + 10) / page_size) + 1;
+					} else {
+						frames_to_require = (bytes_a_reservar + 10) / page_size;
+					}
+
+					sem_wait(&mp_semaphore);
+					pageFrame* last_page;
+					uint32_t bytes_que_quedan = bytes_a_reservar;
+					uint32_t bytes_sobrantes = 0;
+
+					for(int i=0; i < frames_to_require; i++) {
+						int frame_number = ASSIGN_FIRST_FREE_FRAME();
+						if(i == 0) {
+							//Escribo la primer metadata
+							void* pointer = GET_FRAME_POINTER(frame_number);
+							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
+							memcpy(pointer + sizeof(uint32_t), &false, sizeof(bool));
+						}
+						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
+						new_page->modifiedBit = 1; //Not sure
+						new_page->presenceBit = 1;
+						list_add(new_segment->pageFrameTable, new_page);
+						if(bytes_que_quedan - page_size > 0)
+							bytes_que_quedan = bytes_que_quedan - page_size;
+						last_page = new_page;
+					}
+
+					//Escribo la nueva metadata
+					bytes_sobrantes = page_size - bytes_que_quedan - 5;
+					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
+					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
+					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &true, sizeof(uint32_t));
+					sem_post(&mp_semaphore);
+
+					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
+					new_segment->base = 0;
+
+					int iterator = 0;
+					while(iterator < client_address_space->segment_table->elements_count) {
+						uint32_t intended_direction = (new_segment->base + new_segment->size);
+						segment* iterative_segment = list_get(client_address_space->segment_table, iterator);
+						bool cond_1 = new_segment->base == iterative_segment->base;
+						bool cond_2 = (new_segment->base < iterative_segment->base) && intended_direction > iterative_segment->base;
+						bool cond_3 = intended_direction > iterative_segment->base && intended_direction < iterative_segment->base + iterative_segment->size;
+						new_segment->base = iterative_segment->base + iterative_segment->size + 1;
+						if(!cond_1 && !cond_2 && !cond_3)
+							break;
+					}
+
+					list_add(client_address_space->segment_table, new_segment);
+				} else {
+					//Es el primer segmento
+					segment* new_segment = (segment*)malloc(sizeof(segment*));
+					new_segment->base = 0;
+					new_segment->isHeap = true;
+					new_segment->pageFrameTable = list_create();
+					int frames_to_require;
+					if((bytes_a_reservar + 10) % page_size > 0) {
+						frames_to_require = ((bytes_a_reservar + 10) / page_size) + 1;
+					} else {
+						frames_to_require = (bytes_a_reservar + 10) / page_size;
+					}
+
+					sem_wait(&mp_semaphore);
+					pageFrame* last_page;
+					uint32_t bytes_que_quedan = bytes_a_reservar;
+					uint32_t bytes_sobrantes = 0;
+
+					for(int i=0; i < frames_to_require; i++) {
+						int frame_number = ASSIGN_FIRST_FREE_FRAME();
+						if(i == 0) {
+							//Escribo la primer metadata
+							void* pointer = GET_FRAME_POINTER(frame_number);
+							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
+							memcpy(pointer + sizeof(uint32_t), &false, sizeof(bool));
+						}
+						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
+						new_page->modifiedBit = 1; //Not sure
+						new_page->presenceBit = 1;
+						list_add(new_segment->pageFrameTable, new_page);
+						if(bytes_que_quedan - page_size > 0)
+							bytes_que_quedan = bytes_que_quedan - page_size;
+						last_page = new_page;
+					}
+
+					//Escribo la nueva metadata
+					bytes_sobrantes = page_size - bytes_que_quedan - 5;
+					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
+					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
+					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &true, sizeof(uint32_t));
+					sem_post(&mp_semaphore);
+
+					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
+
+					list_add(client_address_space->segment_table, new_segment);
+				}
 			}
 		} else {
 			//No pude escribir porque no hay memoria
@@ -268,17 +371,13 @@ void realizarRequest(void *buffer, int cliente){
 
 		/* Armamos el paquetito de respuesta
 		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		buffer=(void*)malloc(sizeof(uint32_t));
+		memcpy(buffer,&resultado,sizeof(uint32_t));
+
+		send(socket_MUSE, buffer, sizeof(buffer),0);
 
 		free(buffer);
+		*/
 		break;
 
 		//free
