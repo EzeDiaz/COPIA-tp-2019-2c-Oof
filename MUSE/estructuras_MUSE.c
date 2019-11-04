@@ -23,6 +23,25 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space) {
+	int iterator = 0;
+	while(address_space->segment_table->elements_count > iterator) {
+		segment* a_segment = list_get(address_space->segment_table, iterator);
+		if(a_segment->base == base)
+			return a_segment;
+		iterator++;
+	}
+	return NULL;
+}
+
+int GET_OFFSET_FROM_POINTER(void* pointer) {
+	return (pointer - mp_pointer) % page_size;
+}
+
+int GET_FRAME_NUMBER_FROM_POINTER(void* pointer) {
+	return (pointer - mp_pointer) / page_size;
+}
+
 void* GET_LAST_METADATA(segment* a_segment) {
 	int segment_size = a_segment->size;
 	int segment_move_counter = 0;

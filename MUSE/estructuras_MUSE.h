@@ -41,6 +41,9 @@ typedef struct{
 	int clientSocket;
 } client;
 
+segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space);
+int GET_OFFSET_FROM_POINTER(void* pointer);
+int GET_FRAME_NUMBER_FROM_POINTER(void* pointer);
 void* GET_LAST_METADATA(segment* a_segment);
 bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace an_address_space, uint32_t intended_size);
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);

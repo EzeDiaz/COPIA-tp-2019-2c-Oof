@@ -139,7 +139,7 @@ void realizarRequest(void *buffer, int cliente){
 		buffer=(void*)malloc(sizeof(int));
 		memcpy(buffer,&resultado,sizeof(int));
 
-		send(socket_MUSE, buffer, sizeof(buffer),0);
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
 		break;
@@ -168,6 +168,7 @@ void realizarRequest(void *buffer, int cliente){
 		int debe_crearse_segmento_flag = 0;
 		int se_pudo_reservar_flag = 0;
 		void* pointer;
+		uint32_t segment_base;
 
 		addressSpace* client_address_space = GET_ADDRESS_SPACE(cliente);
 
@@ -192,6 +193,7 @@ void realizarRequest(void *buffer, int cliente){
 							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
 							sem_post(&mp_semaphore);
 							se_pudo_reservar_flag = 1;
+							segment_base = un_segmento->base;
 						}
 					}
 				}
@@ -201,6 +203,7 @@ void realizarRequest(void *buffer, int cliente){
 						if(SEGMENT_CAN_BE_EXTENDED(un_segmento, client_address_space, bytes_a_reservar + 5)) {
 							//Puedo agrandar el segmento
 							void* last_metadata = GET_LAST_METADATA(un_segmento);
+							pointer = last_metadata + 5;
 							uint32_t internal_fragmentation;
 							memcpy(&internal_fragmentation, last_metadata, sizeof(uint32_t));
 							int frames_to_require;
@@ -242,6 +245,7 @@ void realizarRequest(void *buffer, int cliente){
 							sem_post(&mp_semaphore);
 
 							se_pudo_reservar_flag = 1;
+							segment_base = un_segmento->base;
 						}
 					}
 				}
@@ -281,9 +285,10 @@ void realizarRequest(void *buffer, int cliente){
 						int frame_number = ASSIGN_FIRST_FREE_FRAME();
 						if(i == 0) {
 							//Escribo la primer metadata
-							void* pointer = GET_FRAME_POINTER(frame_number);
+							pointer = GET_FRAME_POINTER(frame_number);
 							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
 							memcpy(pointer + sizeof(uint32_t), &false, sizeof(bool));
+							pointer = pointer + 5;
 						}
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 						new_page->modifiedBit = 1; //Not sure
@@ -317,6 +322,7 @@ void realizarRequest(void *buffer, int cliente){
 					}
 
 					list_add(client_address_space->segment_table, new_segment);
+					segment_base = new_segment->base;
 				} else {
 					//Es el primer segmento
 					segment* new_segment = (segment*)malloc(sizeof(segment*));
@@ -342,6 +348,7 @@ void realizarRequest(void *buffer, int cliente){
 							void* pointer = GET_FRAME_POINTER(frame_number);
 							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
 							memcpy(pointer + sizeof(uint32_t), &false, sizeof(bool));
+							pointer = pointer + 5;
 						}
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 						new_page->modifiedBit = 1; //Not sure
@@ -362,22 +369,36 @@ void realizarRequest(void *buffer, int cliente){
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 
 					list_add(client_address_space->segment_table, new_segment);
+					segment_base = new_segment->base;
 				}
 			}
 		} else {
 			//No pude escribir porque no hay memoria
 			//Existe esta condicion? O agarro y mando un frame a swap y chau?
 		}
+		uint32_t displacement_until_page = 0;
+		uint32_t page_offset = GET_OFFSET_FROM_POINTER(pointer);
+		int frame_number = GET_FRAME_NUMBER_FROM_POINTER(pointer);
+		int iterator = 0;
+		uint32_t virtual_direction;
 
-		/* Armamos el paquetito de respuesta
+		segment* a_segment = GET_SEGMENT_FROM_BASE(segment_base, client_address_space);
+		while(a_segment->pageFrameTable->elements_count > iterator) {
+				pageFrame* a_page = list_get(a_segment->pageFrameTable, iterator);
+				if(a_page->frame_number == frame_number)
+					break;
+				iterator++;
+				displacement_until_page = displacement_until_page + page_size;
+			}
+		virtual_direction = a_segment->base + displacement_until_page + page_offset;
+
 		void* buffer;
 		buffer=(void*)malloc(sizeof(uint32_t));
-		memcpy(buffer,&resultado,sizeof(uint32_t));
+		memcpy(buffer, &virtual_direction, sizeof(uint32_t));
 
-		send(socket_MUSE, buffer, sizeof(buffer),0);
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
-		*/
 		break;
 
 		//free
