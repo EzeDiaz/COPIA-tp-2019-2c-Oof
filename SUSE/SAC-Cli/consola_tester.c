@@ -27,7 +27,7 @@ int consola(){
 		linea = readline(">");
 
 		if(!strncmp(linea, "mkdir",5)){
-			char* path=malloc(71);
+			char* path=(char*)malloc(71);
 			mode_t mode;
 			if(leer_parametros_mkdir(path,&mode, linea)){
 				if(serializar_fs_mkdir(path,mode)){
