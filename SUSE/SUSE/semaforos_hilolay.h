@@ -13,10 +13,9 @@
 
 //DICCIONARIOS
 t_dictionary* diccionario_de_valor_por_semaforo;
-t_dictionary* diccionario_hilos_bloqueados_por_semaforo;
 
 //PROTOTIPOS
-int wait(char*,int);
+bool wait(char*,int);
 int signal(char*,int);
 void bloquear_hilo(char*, hilo_t*);
 

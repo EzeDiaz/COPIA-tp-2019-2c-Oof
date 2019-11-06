@@ -11,18 +11,13 @@
 
 // SE CREA EL HILO
 
-hilo_t* suse_create(/*FUNCION*/){
 
-
-	return NULL;
-}
-
-void th_create()
+/*void th_create()
 {
-	hilo_t* hilo = suse_create(/*FUNCION*/); //t_hilo un struct hilo ¿con funcion y TID?
-
+	hilo_t* hilo = suse_create(/*FUNCION*/ //); //t_hilo un struct hilo ¿con funcion y TID?
+/*
 	queue_push(cola_new,hilo);
-}
+}*/
 
 
 /// ******************************************************************************************************** ///
@@ -80,25 +75,14 @@ void readyToExec(int PID)
 {
 	// Habria que chequear que entre UN SOLO thread a exec POR proceso
 
+	t_queue* cola_Exec = obtener_cola_exec_de(PID);
+
+	if(esta_vacia(cola_Exec)){
 	char* tiempo_inicio= temporal_get_string_time();
 	char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
 	int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
 
-
-	t_queue* cola_Ready = obtener_cola_ready_de(PID);
-	t_queue* cola_Exec = obtener_cola_exec_de(PID);
-	void sjf(hilo_t* un_hilo){
-		un_hilo->prioridad = calcular_sjf(un_hilo);
-	}
-
-	list_iterate(cola_Ready->elements,sjf);
-
-	bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
-		return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
-	}
-	list_sort(cola_Ready->elements,elemento_mas_grande);
-
-	hilo_t* hilo= list_remove(cola_Ready->elements,0);
+	hilo_t* hilo=suse_scheduler_next(PID);
 
 	sem_wait(&semaforo_diccionario_procesos_x_semaforo);
 	sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
@@ -118,9 +102,16 @@ void readyToExec(int PID)
 	sem_wait(&semaforo_log_colas);
 	log_info(log_colas,"Se paso el proceso a Exec \n");
 	sem_post(&semaforo_log_colas);
+	}
 
 }
 
+
+bool esta_vacia(t_queue* cola_Exec){
+
+	return queue_is_empty(cola_Exec);
+
+}
 void * estadoReady(int PID)
 {
 	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
@@ -171,7 +162,7 @@ void exec(hilo_t* hilo)
 
 		sem_post(&semaforo_log_colas);
 
-		exit_thread(hilo);
+		exec_to_exit(hilo);
 
 
 
@@ -195,6 +186,28 @@ void exec(hilo_t* hilo)
 	return NULL;
 }
 */
+
+void exec_to_exit(hilo_t* hilo){
+
+	char* clave=string_new();
+	string_append(&clave,string_itoa(hilo->PID));
+	string_append(&clave,string_itoa(hilo->hilo_informacion->tid));
+
+	t_list* bloqueados_por_join=dictionary_get(diccionario_bloqueados_por_semafaro,clave);
+
+	if(bloqueados_por_join->elements_count>0){
+		t_queue* cola_ready=obtener_cola_ready_de(hilo->PID);
+		void pusheador(hilo_t* un_hilo){
+
+		queue_push(cola_ready,un_hilo);
+
+	}
+
+	list_iterate(bloqueados_por_join,pusheador);
+	}
+
+}
+
 
 // ESTADO EXIT
 

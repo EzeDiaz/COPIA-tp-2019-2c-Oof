@@ -19,7 +19,7 @@ void bloquear_hilo(char* nombre_semaforo, hilo_t* hilo){
 
 }
 
-int wait(char*nombre_semaforo,int TID){
+bool wait(char*nombre_semaforo,int TID){
 
 	sem_wait(semaforo_diccionario_por_semaforo);
 	int value=dictionary_get(diccionario_de_valor_por_semaforo,nombre_semaforo);
@@ -53,7 +53,7 @@ int signal(char*nombre_semaforo, int TID){
 void desbloquear_hilo(char* nombre_semaforo, int TID){
 
 	sem_wait(semaforo_estado_blocked);
-	t_list* lista_bloqueados =dictionary_get(diccionario_hilos_bloqueados_por_semaforo,nombre_semaforo);
+	t_list* lista_bloqueados =dictionary_get(diccionario_bloqueados_por_semafaro,nombre_semaforo);
 	sem_post(semaforo_estado_blocked);
 	hilo_t* un_hilo = buscar_hilo_por_TID(TID);
 	t_queue* cola_ready = obtener_cola_ready_de(un_hilo->PID);

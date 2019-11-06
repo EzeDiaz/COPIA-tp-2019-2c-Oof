@@ -4,7 +4,7 @@
  *  Created on: 18 sep. 2019
  *      Author: utnso
  */
-
+#include "SUSE.h"
 #include "funciones_aux.h"
 #include "metricas.h"
 #include "colas.h"
@@ -21,9 +21,9 @@
 #include <commons/string.h>
 
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
-void* _suse_create(hilolay_t*, hilolay_attr_t*, void*(*funcion_main)(void*), void*);
-void funcion_test(char* );
 
+
+void funcion_test(char*);
 int main(){
 
 	//_suse_init();
@@ -32,7 +32,7 @@ int main(){
 
 	while(1){
 		printf("hacemos 1 hilo\n");
-		_suse_create(hiloprueba,NULL,funcion_test,NULL);
+		//suse_create(hiloprueba,NULL,funcion_test,NULL);
 		printf("%d \n",hiloprueba->tid);
 	}
 
@@ -101,43 +101,6 @@ void _suse_init(){
 
 }*/
 
-void* suse_create(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*), void* argumento){
-
-	hilo=(hilolay_t*)malloc(sizeof(hilolay_t*));
-	pthread_t* hilo2;
-	pthread_create(&hilo2, NULL, (void*)funcion_test, NULL);
-	//memcpy(&(hilo->tid),&hilo2,sizeof(pthread_t*));
-
-	hilo_t* nuevo_hilo= (hilo_t*)malloc(sizeof(hilo_t*)+sizeof(hilolay_t*));
-
-
-	proceso_t* proceso_correspondiente=dictionary_get(diccionario_de_procesos,getpid());
-
-	if(proceso_correspondiente->hilos_del_programa->elements_count<proceso_correspondiente->grado_de_multiprogramacion)
-	{
-		metricas_t* metricas=(metricas_t*)malloc(sizeof(metricas_t));
-		metricas->tiempo_de_ejecucion=0;
-		metricas->tiempo_de_espera=0;
-		metricas->tiempo_de_uso_del_cpu=0;
-		metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos=0;
-		nuevo_hilo->metricas=metricas;
-
-		nuevo_hilo->PID=getpid();
-		nuevo_hilo->estado_del_hilo=NEW;
-		nuevo_hilo->hilo_informacion=hilo;
-		nuevo_hilo->prioridad;
-		list_add(proceso_correspondiente->hilos_del_programa,nuevo_hilo);
-		hilo->tid=rand()%proceso_correspondiente->grado_de_multiprogramacion;
-		pthread_detach(hilo2);
-		return hilo;
-	}else{
-
-		log_info(logger,"El proceso esta al mango \n");
-	}
-
-
-	return 0;
-}
 
 
 
@@ -162,14 +125,131 @@ void aceptar_proceso(int PID){
 	sem_post(procesos_en_New);
 }
 
+hilo_t* suse_scheduler_next(int PID){
+
+	t_queue* cola_Ready = obtener_cola_ready_de(PID);
+
+	void sjf(hilo_t* un_hilo){
+			un_hilo->prioridad = calcular_sjf(un_hilo);
+		}
+
+		list_iterate(cola_Ready->elements,sjf);
+
+		bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
+			return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
+		}
+		list_sort(cola_Ready->elements,elemento_mas_grande);
+
+		return list_remove(cola_Ready->elements,0);
+
+
+}
 
 
 
 
+void* suse_join(int TID_que_quiero_ejecutar){
+
+	hilo_t* hilo_a_ejecutar=buscar_hilo_por_TID(TID_que_quiero_ejecutar);
+	int PID=hilo_a_ejecutar->PID;
+	t_queue* cola_exec= obtener_cola_exec_de(PID);
+	hilo_t* hilo_a_bloquear=list_get(cola_exec->elements,0);
+	char* clave=string_new();
+	string_append(&clave,string_itoa(PID));
+	string_append(&clave,string_itoa(TID_que_quiero_ejecutar));
+	//OPTIMIZABLE, OJO CON LOS LEAKS DE LOS STRINGS
+
+	bloquear_hilo(clave,hilo_a_bloquear);
+	queue_push(cola_exec,hilo_a_ejecutar);
+
+	free(clave);
+
+}
+
+
+bool suse_wait(semaforo_descifrado_t* semaforo){
+
+	return wait(semaforo->nombre_del_semaforo,semaforo->tid);
+}
+
+
+void* suse_signal(semaforo_descifrado_t* semaforo){
+	//TODO
+	//Genero una operacion signal sobre el semaforo dado
+	signal(semaforo->nombre_del_semaforo,semaforo->tid);
+	//no sabemos que retorna, revisar issue #22
+	return NULL;
+}
+
+void* suse_close(int TID){
+	// Con el TID que me pasan yo tengo que identificar al hilo en cuestion
+	// para poder mandarlo a EXIT
+	hilo_t* un_hilo;
+	un_hilo=buscar_hilo_por_TID(TID); //Esto esta matado
+	exit_thread(un_hilo);
+	return NULL;
+}
 
 
 
+void hilolay_init(void){
 
+}
+
+int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_routine)(void *), void *arg){
+	//TODO
+
+	thread=(hilolay_t*)malloc(sizeof(hilolay_t*));
+	pthread_t* hilo2;
+	pthread_create(&hilo2, NULL, (void*)funcion_test, NULL);
+	//memcpy(&(thread->tid),&hilo2,sizeof(pthread_t*));
+
+	hilo_t* nuevo_hilo= (hilo_t*)malloc(sizeof(hilo_t*)+sizeof(hilolay_t*));
+
+
+	proceso_t* proceso_correspondiente=dictionary_get(diccionario_de_procesos,getpid());
+
+	if(proceso_correspondiente->hilos_del_programa->elements_count<proceso_correspondiente->grado_de_multiprogramacion)
+	{
+		metricas_t* metricas=(metricas_t*)malloc(sizeof(metricas_t));
+		metricas->tiempo_de_ejecucion=0;
+		metricas->tiempo_de_espera=0;
+		metricas->tiempo_de_uso_del_cpu=0;
+		metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos=0;
+		nuevo_hilo->metricas=metricas;
+
+		nuevo_hilo->PID=getpid();
+		nuevo_hilo->estado_del_hilo=NEW;
+		nuevo_hilo->hilo_informacion=thread;
+		nuevo_hilo->prioridad;
+		list_add(proceso_correspondiente->hilos_del_programa,nuevo_hilo);
+		thread->tid=rand()%proceso_correspondiente->grado_de_multiprogramacion;
+		pthread_detach(hilo2);
+		return thread;
+	}else{
+
+		log_info(logger,"El proceso esta al mango \n");
+	}
+
+
+	return 0;
+
+
+}
+
+int hilolay_yield(void){
+	return 0;
+
+}
+
+int hilolay_join(hilolay_t *thread){
+	return 0;
+
+}
+
+int hilolay_get_tid(void){
+	return 0;
+}
 
 
 

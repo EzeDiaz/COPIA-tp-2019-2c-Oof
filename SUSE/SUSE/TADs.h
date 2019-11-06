@@ -36,6 +36,11 @@ typedef struct{
 
 }proceso_t;
 
+typedef struct{
+	char* nombre_del_semaforo;
+	int tid;
+}semaforo_descifrado_t;
+
 
 
 typedef struct{

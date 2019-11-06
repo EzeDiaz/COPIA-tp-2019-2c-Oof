@@ -8,7 +8,8 @@
 #ifndef DESERIALIZAR_H_
 #define DESERIALIZAR_H_
 #include <commons/log.h>
-
+#include <stdbool.h>
+#include "TADs.h"
 t_log* logger_de_deserializacion;
 
 enum {
@@ -21,13 +22,9 @@ enum {
 	SUSE_CLOSE = 6,
 };
 
-typedef struct{
-	char* nombre_del_semaforo;
-	int tid;
-}semaforo_descifrado_t;
 
-void serializar_y_enviar_resultado(void*,int);
-
+void enviar_resultado(void*,int);
+void* serializar_bool(bool);
 void* descifrar_hilolay_init(void*);
 //void* hilolay_init(void*);
 
@@ -35,19 +32,16 @@ void* descifrar_suse_create(void*);
 //void* suse_create(hilolay_t*, hilolay_attr_t*, (void*), void* );
 
 void* descifrar_suse_scheduler_next(void*);
-void* suse_scheduler_next(void*);
 
 void* descifrar_suse_wait(void*);
-void* suse_wait(semaforo_descifrado_t*);
 
 void* descifrar_suse_signal(void*);
-void* suse_signal(semaforo_descifrado_t*);
 
 void* descifrar_suse_join(void*);
-void* suse_join(void*);
+
 
 int descifrar_suse_close(void*);
-void* suse_close(int);
+
 
 #endif /* DESERIALIZAR_H_ */
 

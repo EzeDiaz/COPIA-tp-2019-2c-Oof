@@ -16,7 +16,8 @@
 
 //Prototipos
 void newToReady();
-
+void exit_thread(hilo_t*);
+bool esta_vacia(t_queue* );
 //Flags
 bool finDePlanificacion;//inicia en false en el main
 

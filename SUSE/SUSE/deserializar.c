@@ -1,7 +1,8 @@
 #include "deserializar.h"
-#include "SUSE.c"
+#include "SUSE.h"
 #include "TADs.h"
-#include "colas.c"
+#include "colas.h"
+#include <stdbool.h>
 
 int determinar_protocolo(void* buffer){
 	int codigo_de_operacion;
@@ -26,49 +27,49 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		log_info(logger_de_deserializacion, "Es el codigo de 'hilolay init', comenzando la deserializacion de parametros\n");
 		paquete_descifrado=descifrar_hilolay_init(buffer);
 		//resultado=hilolay_init(paquete_descifrado);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
 		paquete_descifrado=descifrar_suse_create(buffer);
 		//resultado=suse_create(paquete_descifrado);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
 		paquete_descifrado=descifrar_suse_scheduler_next(buffer);
 		resultado=suse_scheduler_next(paquete_descifrado);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_WAIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_wait', comenzando la deserializacion de parametros\n");
 		semaforo=descifrar_suse_wait(buffer);
-		resultado=suse_wait(semaforo);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		resultado=serializar_bool(suse_wait(semaforo));
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_SIGNAL:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
 		semaforo=descifrar_suse_signal(buffer);
 		resultado=suse_signal(semaforo);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_JOIN:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_join', comenzando la deserializacion de parametros\n");
 		paquete_descifrado=descifrar_suse_join(buffer);
 		resultado=suse_join(paquete_descifrado);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_CLOSE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_close', comenzando la deserializacion de parametros\n");
 		TID = descifrar_suse_close(buffer);
 		resultado = suse_close(TID);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	default:
@@ -79,8 +80,18 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	free(paquete_descifrado);
 }
 
-void serializar_y_enviar_resultado(void* param1,int param2){
-	return NULL;
+void enviar_resultado(void* param1,int param2){
+
+
+}
+
+void* serializar_bool(bool dato){
+
+	int peso_dato=sizeof(bool)+sizeof(int);
+	void* paquete= malloc(peso_dato +sizeof(int));
+	memcpy(paquete,&peso_dato ,sizeof(int));
+	memcpy(paquete, &dato, sizeof(int)); //NO SE SI VA EL & TODO, SI ROMPE MIREN ESTO
+	return paquete;
 }
 
 void* descifrar_hilolay_init(void*param){
@@ -98,37 +109,16 @@ void* descifrar_suse_create(void*param){
 void* descifrar_suse_scheduler_next(void*param){
 	return NULL;
 }
-void* suse_scheduler_next(void*param){
-	return NULL;
-}
 
 void* descifrar_suse_wait(void*param){
-	return NULL;
-}
-void* suse_wait(semaforo_descifrado_t* semaforo){
-
-	//Genero una operacion wait sobre el semaforo dado
-	wait(semaforo->nombre_del_semaforo,semaforo->tid);
-
-	//return el_hilo_pudo_obtener_semaforo(); //TODO
 	return NULL;
 }
 
 void* descifrar_suse_signal(void* param){
 	return NULL;
 }
-void* suse_signal(semaforo_descifrado_t* semaforo){
-
-	//Genero una operacion signal sobre el semaforo dado
-	signal(semaforo->nombre_del_semaforo,semaforo->tid);
-
-	return NULL;
-}
 
 void* descifrar_suse_join(void* param){
-	return NULL;
-}
-void* suse_join(void* param){
 	return NULL;
 }
 
@@ -141,11 +131,4 @@ int descifrar_suse_close(void* buffer){
 
 	return NULL;
 }
-void* suse_close(int TID){
-	// Con el TID que me pasan yo tengo que identificar al hilo en cuestion
-	// para poder mandarlo a EXIT
-	hilo_t* un_hilo;
-	TID = un_hilo->hilo_informacion->tid; //Esto esta matado
-	exit_thread(un_hilo);
-	return NULL;
-}
+
