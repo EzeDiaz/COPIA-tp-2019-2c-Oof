@@ -72,19 +72,19 @@ void _suse_init(){
 	/*INICIALIZO SEMAFOROS*/
 
 	/*Mutex*/
-	sem_init(&semaforo_log_colas,0,1);
-	sem_init(&semaforo_diccionario_de_procesos,0,1);
-	sem_init(&semaforo_diccionario_procesos_x_queues,0,1);
-	sem_init(&semaforo_diccionario_procesos_x_semaforo,0,1);
-	sem_init(&semaforo_lista_procesos_finalizados,0,1);
-	sem_init(&mutex_log_servidor,0,1);
+	sem_init(semaforo_log_colas,0,1);
+	sem_init(semaforo_diccionario_de_procesos,0,1);
+	sem_init(semaforo_diccionario_procesos_x_queues,0,1);
+	sem_init(semaforo_diccionario_procesos_x_semaforo,0,1);
+	sem_init(semaforo_lista_procesos_finalizados,0,1);
+	sem_init(mutex_log_servidor,0,1);
 
 	/*Contador*/
 
-	sem_init(&procesos_x_grado_de_multiprogramacion,0,0/*MULTIPROGRAMACION*/);
-	sem_init(&procesos_en_Ready,0,0);
-	sem_init(&procesos_en_New,0,0);
-	sem_init(&semaforo_lista_procesos_finalizados,0,0);
+	sem_init(procesos_x_grado_de_multiprogramacion,0,0/*MULTIPROGRAMACION*/);
+	sem_init(procesos_en_Ready,0,0);
+	sem_init(procesos_en_New,0,0);
+	sem_init(semaforo_lista_procesos_finalizados,0,0);
 
 }
 
@@ -117,13 +117,18 @@ void terminate_SUSE(){
 
 void aceptar_proceso(int PID){
 
-	sem_t* semaforo_exec;
-	sem_init(semaforo_exec,0,1);
+	sem_t semaforo_exec;
+	sem_init(&semaforo_exec,0,1);
+	agregar_al_diccionario(PID,&semaforo_exec);
+	sem_post(procesos_en_New);
+}
+
+void agregar_al_diccionario(int PID, sem_t* semaforo_exec){
 	sem_wait(semaforo_diccionario_procesos_x_semaforo);
 	dictionary_put(diccionario_de_procesos_x_semaforo,string_itoa(PID),semaforo_exec);
 	sem_post(semaforo_diccionario_procesos_x_semaforo);
-	sem_post(procesos_en_New);
 }
+
 
 hilo_t* suse_scheduler_next(int PID){
 
@@ -164,19 +169,20 @@ void* suse_join(int TID_que_quiero_ejecutar){
 
 	free(clave);
 
+	return NULL; //TODO
 }
 
 
-bool suse_wait(semaforo_descifrado_t* semaforo){
+bool suse_wait(char* semaforo, int PID){
 
-	return wait(semaforo->nombre_del_semaforo,semaforo->tid);
+	return wait(semaforo,PID);
 }
 
 
-void* suse_signal(semaforo_descifrado_t* semaforo){
+void* suse_signal(char* semaforo, int PID){
 	//TODO
 	//Genero una operacion signal sobre el semaforo dado
-	signal(semaforo->nombre_del_semaforo,semaforo->tid);
+	signal(semaforo,PID);
 	//no sabemos que retorna, revisar issue #22
 	return NULL;
 }
@@ -192,11 +198,11 @@ void* suse_close(int TID){
 
 
 
-void hilolay_init(void){
-
+void hilolay_init(){
+	_suse_init();
 }
 
-int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_routine)(void *), void *arg){
+int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_routine)(void *), void *arg, int socket){
 	//TODO
 
 	thread=(hilolay_t*)malloc(sizeof(hilolay_t*));
@@ -207,7 +213,7 @@ int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_rou
 	hilo_t* nuevo_hilo= (hilo_t*)malloc(sizeof(hilo_t*)+sizeof(hilolay_t*));
 
 
-	proceso_t* proceso_correspondiente=dictionary_get(diccionario_de_procesos,getpid());
+	proceso_t* proceso_correspondiente = obtener_proceso(socket);
 
 	if(proceso_correspondiente->hilos_del_programa->elements_count<proceso_correspondiente->grado_de_multiprogramacion)
 	{
@@ -236,6 +242,25 @@ int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_rou
 
 
 }
+
+proceso_t* obtener_proceso(int socket){
+
+	if(dictionary_has_key(diccionario_de_procesos,string_itoa(socket))){
+		return dictionary_get(diccionario_de_procesos,string_itoa(socket));
+	}
+
+	proceso_t* un_proceso = inicializar_proceso(socket);
+	dictionary_put(diccionario_de_procesos,string_itoa(socket),un_proceso);
+	return un_proceso;
+}
+
+proceso_t* inicializar_proceso(int socket){
+
+	proceso_t* un_proceso = malloc(sizeof(proceso_t));
+	un_proceso->hilos_del_programa = list_create();
+	return un_proceso;
+}
+
 
 int hilolay_yield(void){
 	return 0;

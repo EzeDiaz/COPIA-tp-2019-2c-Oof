@@ -8,16 +8,10 @@
 #ifndef GLOBALES_H_
 #define GLOBALES_H_
 
+#include <commons/config.h>
+
 int socket_suse_server;
 
-enum {
-	HILOLAY_INIT = 0,
-	SUSE_CREATE = 1,
-	SUSE_SCHEDULER_NEXT = 2,
-	SUSE_WAIT = 3,
-	SUSE_SIGNAL = 4,
-	SUSE_JOIN = 5,
-	SUSE_CLOSE = 6,
-};
+t_config* config;
 
 #endif /* GLOBALES_H_ */

@@ -9,7 +9,11 @@
 #define DESERIALIZAR_H_
 #include <commons/log.h>
 #include <stdbool.h>
-#include "TADs.h"
+#include <string.h>
+#include "SUSE.h"
+#include "colas.h"
+#include <sys/socket.h>
+#include <sys/types.h>
 t_log* logger_de_deserializacion;
 
 enum {
@@ -31,13 +35,12 @@ void* descifrar_hilolay_init(void*);
 void* descifrar_suse_create(void*);
 //void* suse_create(hilolay_t*, hilolay_attr_t*, (void*), void* );
 
-void* descifrar_suse_scheduler_next(void*);
 
-void* descifrar_suse_wait(void*);
+char* descifrar_suse_wait(void*);
 
-void* descifrar_suse_signal(void*);
+char* descifrar_suse_signal(void*);
 
-void* descifrar_suse_join(void*);
+int descifrar_suse_join(void*);
 
 
 int descifrar_suse_close(void*);

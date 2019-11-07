@@ -17,6 +17,6 @@ t_dictionary* diccionario_de_valor_por_semaforo;
 //PROTOTIPOS
 bool wait(char*,int);
 int signal(char*,int);
-void bloquear_hilo(char*, hilo_t*);
+void bloquear_hilo(char*, int);
 
 #endif /* SEMAFOROS_HILOLAY_H_ */

@@ -4,13 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../SUSE-Cli.c 
+../SUSE-Cli.c \
+../serializar.c 
 
 OBJS += \
-./SUSE-Cli.o 
+./SUSE-Cli.o \
+./serializar.o 
 
 C_DEPS += \
-./SUSE-Cli.d 
+./SUSE-Cli.d \
+./serializar.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

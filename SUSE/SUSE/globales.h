@@ -17,8 +17,8 @@
 #include <semaphore.h>
 #include <stdio.h>
 
-//////////////////PARA COSAS QUE SON COMUNES EN TODO EL PROYECTO\\\\\\\\\\\\\\\\\\
-//////////////////INICIALIZAR EN EL MAIN\\\\\\\\\\\\\\\\\\\\\\\ TODO
+//PARA COSAS QUE SON COMUNES EN TO DO EL PROYECTO
+//INICIALIZAR EN EL MAIN\\\\\\\\\\\\\\\\\\\\\\\ TODO
 
 //SEMAFOROS
 

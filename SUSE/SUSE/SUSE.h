@@ -35,11 +35,13 @@
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
 void* suse_close(int);
 void* suse_join(int);
-void* suse_signal(semaforo_descifrado_t*);
+void* suse_signal(char* semaforo, int PID);
 hilo_t* suse_scheduler_next(int);
-bool suse_wait(semaforo_descifrado_t*);
-int suse_create(hilolay_t *, const hilolay_attr_t *,void *(*start_routine)(void *), void *);
-
+bool suse_wait(char*, int );
+int suse_create(hilolay_t *, const hilolay_attr_t *,void *(*start_routine)(void *), void *, int);
+proceso_t* obtener_proceso(int);
+proceso_t* inicializar_proceso(int);
+void agregar_al_diccionario(int , sem_t*);
 
 
 #endif /* SUSE_H_ */

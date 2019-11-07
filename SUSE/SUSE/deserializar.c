@@ -1,8 +1,6 @@
+
 #include "deserializar.h"
-#include "SUSE.h"
-#include "TADs.h"
-#include "colas.h"
-#include <stdbool.h>
+
 
 int determinar_protocolo(void* buffer){
 	int codigo_de_operacion;
@@ -19,49 +17,49 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	void* resultado;
 	void* paquete_descifrado;
 	int TID;
-	semaforo_descifrado_t* semaforo;
+
 
 	switch(codigo_de_operacion){
 
 	case HILOLAY_INIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'hilolay init', comenzando la deserializacion de parametros\n");
-		paquete_descifrado=descifrar_hilolay_init(buffer);
-		//resultado=hilolay_init(paquete_descifrado);
-		enviar_resultado(resultado,cliente_socket);
+		hilolay_init();
+		enviar_resultado((void*)1,cliente_socket);//TODO, REVISAR ISSUE #25
 		break;
 
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
 		paquete_descifrado=descifrar_suse_create(buffer);
 		//resultado=suse_create(paquete_descifrado);
-		enviar_resultado(resultado,cliente_socket);
+		//enviar_resultado(resultado,cliente_socket);// TODO, REVISAR ISSUE #26
 		break;
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
-		paquete_descifrado=descifrar_suse_scheduler_next(buffer);
-		resultado=suse_scheduler_next(paquete_descifrado);
+		resultado=suse_scheduler_next(cliente_socket);
 		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_WAIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_wait', comenzando la deserializacion de parametros\n");
-		semaforo=descifrar_suse_wait(buffer);
-		resultado=serializar_bool(suse_wait(semaforo));
+		char* nombre_semaforo_wait=descifrar_suse_wait(buffer);
+		resultado=serializar_bool(suse_wait(nombre_semaforo_wait,cliente_socket));
 		enviar_resultado(resultado,cliente_socket);
+		free(nombre_semaforo_wait);
 		break;
 
 	case SUSE_SIGNAL:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
-		semaforo=descifrar_suse_signal(buffer);
-		resultado=suse_signal(semaforo);
+		char* nombre_semaforo_signal=descifrar_suse_signal(buffer);
+		resultado=suse_signal(nombre_semaforo_signal,cliente_socket);
 		enviar_resultado(resultado,cliente_socket);
+		free(nombre_semaforo_signal);
 		break;
 
 	case SUSE_JOIN:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_join', comenzando la deserializacion de parametros\n");
-		paquete_descifrado=descifrar_suse_join(buffer);
-		resultado=suse_join(paquete_descifrado);
+		TID=descifrar_suse_join(buffer);
+		resultado=suse_join(TID);
 		enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -106,29 +104,42 @@ void* descifrar_suse_create(void*param){
 }
 // El suse_create() esta en colas.c
 
-void* descifrar_suse_scheduler_next(void*param){
-	return NULL;
+
+
+char* descifrar_suse_wait(void*param){
+	int offset=(int)sizeof(int);
+	int longitud_nombre=0;
+	char* nombre;
+	memcpy(&longitud_nombre, param+offset,sizeof(int));
+	nombre= (char*) malloc(longitud_nombre);
+	offset+= sizeof(int);
+	memcpy(nombre, param+offset, longitud_nombre);
+	return nombre;
 }
 
-void* descifrar_suse_wait(void*param){
-	return NULL;
+char* descifrar_suse_signal(void* param){
+	int offset=(int)sizeof(int);
+	int longitud_nombre=0;
+	char* nombre;
+	memcpy(&longitud_nombre, param+offset,sizeof(int));
+	nombre= (char*) malloc(longitud_nombre);
+	offset+= sizeof(int);
+	memcpy(nombre, param+offset, longitud_nombre);
+	return nombre;
+
 }
 
-void* descifrar_suse_signal(void* param){
-	return NULL;
-}
-
-void* descifrar_suse_join(void* param){
-	return NULL;
+int descifrar_suse_join(void* param){
+	int offset=(int)sizeof(int);
+	int TID;
+	memcpy(&TID, param+offset,sizeof(int));
+	return TID;
 }
 
 int descifrar_suse_close(void* buffer){
-	int offset = sizeof(int);
-	int longitud_del_siguiente = 0;
-
-	memcpy(&longitud_del_siguiente, (buffer + offset), sizeof(int));
-	offset += sizeof(int);
-
-	return NULL;
+	int offset=(int)sizeof(int);
+	int TID;
+	memcpy(&TID, buffer+offset,sizeof(int));
+	return TID;
 }
 
