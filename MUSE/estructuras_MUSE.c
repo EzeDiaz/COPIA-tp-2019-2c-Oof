@@ -23,6 +23,24 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+uint32_t FIRST_FIT(t_list* segment_table, uint32_t base, uint32_t size) { //Te da la primer dir virtual donde entras
+	int iterator = 0;
+	uint32_t final_base = base;
+	while(iterator < segment_table->elements_count) {
+		uint32_t intended_direction = (final_base + size);
+		segment* iterative_segment = list_get(segment_table, iterator);
+		bool cond_1 = final_base == iterative_segment->base;
+		bool cond_2 = (final_base < iterative_segment->base) && intended_direction > iterative_segment->base;
+		bool cond_3 = intended_direction > iterative_segment->base && intended_direction < iterative_segment->base + iterative_segment->size;
+		final_base = iterative_segment->base + iterative_segment->size + 1;
+		iterator++;
+		if(!cond_1 && !cond_2 && !cond_3)
+			break;
+	}
+
+	return final_base;
+}
+
 segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space) {
 	int iterator = 0;
 	while(address_space->segment_table->elements_count > iterator) {

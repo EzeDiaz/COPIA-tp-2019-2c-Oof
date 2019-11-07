@@ -131,6 +131,7 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(IP_ID, (buffer + offset), longitudDelSiguiente);
 
+		//MUSE YO TE INVOCO
 		ADD_CLIENT_TO_LIST(IP_ID, cliente);
 
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
@@ -170,6 +171,7 @@ void realizarRequest(void *buffer, int cliente){
 		void* pointer;
 		uint32_t segment_base;
 
+		//MUSE YO TE INVOCO
 		addressSpace* client_address_space = GET_ADDRESS_SPACE(cliente);
 
 		if(memory_left >= bytes_a_reservar) {
@@ -307,19 +309,7 @@ void realizarRequest(void *buffer, int cliente){
 					sem_post(&mp_semaphore);
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
-					new_segment->base = 0;
-
-					int iterator = 0;
-					while(iterator < client_address_space->segment_table->elements_count) {
-						uint32_t intended_direction = (new_segment->base + new_segment->size);
-						segment* iterative_segment = list_get(client_address_space->segment_table, iterator);
-						bool cond_1 = new_segment->base == iterative_segment->base;
-						bool cond_2 = (new_segment->base < iterative_segment->base) && intended_direction > iterative_segment->base;
-						bool cond_3 = intended_direction > iterative_segment->base && intended_direction < iterative_segment->base + iterative_segment->size;
-						new_segment->base = iterative_segment->base + iterative_segment->size + 1;
-						if(!cond_1 && !cond_2 && !cond_3)
-							break;
-					}
+					new_segment->base = FIRST_FIT(client_address_space->segment_table, 0, new_segment->size);
 
 					list_add(client_address_space->segment_table, new_segment);
 					segment_base = new_segment->base;
@@ -518,7 +508,7 @@ void realizarRequest(void *buffer, int cliente){
 		int longitudDelSiguiente=0;
 		char* path;
 		size_t length;
-		int flags;
+		int flag;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
 		offset= offset+sizeof(int);
@@ -533,7 +523,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&flags, (buffer + offset), longitudDelSiguiente);
+		memcpy(&flag, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO

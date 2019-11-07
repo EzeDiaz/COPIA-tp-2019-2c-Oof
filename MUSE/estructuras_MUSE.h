@@ -41,6 +41,7 @@ typedef struct{
 	int clientSocket;
 } client;
 
+uint32_t FIRST_FIT(t_list* segment_table, uint32_t base, uint32_t size);
 segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space);
 int GET_OFFSET_FROM_POINTER(void* pointer);
 int GET_FRAME_NUMBER_FROM_POINTER(void* pointer);
