@@ -546,10 +546,12 @@ void realizarRequest(void *buffer, int cliente){
 			new_map->owner=(char*)malloc(sizeof(current_client->clientProcessId));
 			memcpy(new_map->owner, current_client->clientProcessId, sizeof(current_client->clientProcessId));
 			new_map->flag=flag;
+			new_map->length=length;
 			new_map->references = 1;
 
 			//Mapeo posta posta el archivo. Deberia chequear si existe?
 			int file_desc = open(path, O_RDWR, S_IRWXU, S_IWOTH, S_IROTH); //Los ultimos dos flags son para 'others'
+			new_map->file_desc = file_desc;
 			mapped_file = mmap(NULL, length, PROT_READ, PROT_WRITE, flag, file_desc, 0);
 			new_map->pointer = mapped_file;
 
@@ -578,6 +580,8 @@ void realizarRequest(void *buffer, int cliente){
 			list_add(new_segment->pageFrameTable, new_page);
 		}
 
+		new_segment->path = (char*)malloc(sizeof(path));
+		memcpy(new_segment->path, path, sizeof(path));
 		new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 		new_segment->base = FIRST_FIT(cli_address_space->segment_table, 0, new_segment->size);
 		list_add(client_address_space->segment_table, new_segment);
@@ -635,20 +639,31 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&direc, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
+		int resultado;
 
 		//MUSE YO TE INVOCO
+		addressSpace* addr_space = GET_ADDRESS_SPACE(cliente);
+		segment* a_segment = GET_SEGMENT_FROM_BASE(direc,addr_space);
+		//Controlar que la direccion que me pasan este OK
+		mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+		mapped_file->references--;
+		if(!mapped_file->references) {
+			close(mapped_file->file_desc);
+			munmap(mapped_file->pointer, mapped_file->length);
+			//Borrar entrada de la lista mapped_files
+			int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
+			list_remove_and_destroy_element(mapped_files, DESTROY_MAPPED_FILE);
+		}
 
-		/* Armamos el paquetito de respuesta
+		//Borro el segmento
+		int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segment->base);
+		list_remove_and_destroy_element(addr_space->segment_table, DESTROY_SEGMENT);
+
 		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		buffer=(void*)malloc(sizeof(uint32_t));
+		memcpy(buffer, &resultado, sizeof(uint32_t));
+
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
 		break;

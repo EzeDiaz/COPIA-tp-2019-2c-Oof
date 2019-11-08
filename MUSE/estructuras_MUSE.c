@@ -23,6 +23,49 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void DESTROY_SEGMENT(segment* a_segment) {
+	if(!a_segment->isHeap)
+		free(a_segment->path);
+	//Destruir a_segment->pageFrameTable => DESTROY_PAGE
+}
+
+int GET_SEGMENT_INDEX(t_list* segment_table, uint32_t a_base) {
+	int index;
+	int iterator=0;
+
+	void es_el_segmento(void *a_segment) {
+		if(((segment*)a_segment)->base == a_base)
+			index = iterator;
+
+		iterator++;
+	}
+
+	list_iterate(segment_table, es_el_segmento);
+	return index;
+}
+
+void DESTROY_MAPPED_FILE(mappedFile* mapped_file) {
+	free(mapped_file->path);
+	free(mapped_file->owner); //Quien lo tiene abierto
+	//free al pointer? mepa que no
+	free(mapped_file);
+}
+
+int GET_MAPPED_FILE_INDEX(char* path) {
+	int index;
+	int iterator=0;
+
+	void es_el_archivo(void *a_mapped_file) {
+		if(strcmp(((mappedFile*)a_mapped_file)->path, path) == 0)
+			index = iterator;
+
+		iterator++;
+	}
+
+	list_iterate(mapped_files, es_el_archivo);
+	return index;
+}
+
 mappedFile* GET_MAPPED_FILE(char* path) {
 	bool es_el_archivo(void *a_mapped_file) {
 		return strcmp(((mappedFile*)a_mapped_file)->path, path) == 0;
