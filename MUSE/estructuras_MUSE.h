@@ -26,6 +26,7 @@ typedef struct{	//Pesa SIEMPRE 5 bytes
 
 typedef struct{
 	bool isHeap; //Si esta en false quiere decir que es un segmento mmap
+	char* path; //Path del archivo mappeado. Solo se llena si es segmento de map
 	t_list* pageFrameTable;
 	uint32_t base; //Base logica
 	uint32_t size;
