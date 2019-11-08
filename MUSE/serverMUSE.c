@@ -27,6 +27,12 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+//More stuff
+#include <sys/mman.h> //Para manejo de memoria
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 void iniciarServidor(){
 
@@ -527,6 +533,27 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
+		client* current_client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
+		void* mapped_file = malloc(length); //Lo que tendra el return de mmap
+		new_map->path=(char*)malloc(sizeof(path));
+		memcpy(new_map->path, path, sizeof(path));
+		new_map->owner=(char*)malloc(sizeof(current_client->clientProcessId));
+		memcpy(new_map->owner, current_client->clientProcessId, sizeof(current_client->clientProcessId));
+		new_map->flag=flag;
+
+		//Mapeo posta posta el archivo. Deberia chequear si existe?
+		int file_desc = open(path, O_RDWR, S_IRWXU, S_IWOTH, S_IROTH); //Los ultimos dos flags son para 'others'
+		mapped_file = mmap(NULL, length, PROT_READ, PROT_WRITE, flag, file_desc, 0);
+		new_map->pointer = mapped_file;
+
+		list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
+
+		//Siguientes pasos:
+			//1. Rellenar el espacio que sobre del archivo con \0
+			//2. Crear el segmento... (FIRST_FIT)
+				//a. Tabla de paginas con todas en presence = 0
+
 
 		/* Armamos el paquetito de respuesta
 		void* buffer;

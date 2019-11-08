@@ -25,7 +25,7 @@ typedef struct{	//Pesa SIEMPRE 5 bytes
 } heapMetadata;
 
 typedef struct{
-	bool isHeap;
+	bool isHeap; //Si esta en false quiere decir que es un segmento mmap
 	t_list* pageFrameTable;
 	uint32_t base; //Base logica
 	uint32_t size;
@@ -40,6 +40,13 @@ typedef struct{
 	char* clientProcessId;
 	int clientSocket;
 } client;
+
+typedef struct{
+	char* path; //Path del archivo
+	char* owner; //Quien lo tiene abierto
+	void* pointer; //Puntero al archivo mapeado
+	int flag; //MAP_SHARED o MAP_PRIVATE
+} mappedFile; //Hay n por cada arch; n=cant de veces que esta el archivo abierto (1 por cada proceso)
 
 uint32_t FIRST_FIT(t_list* segment_table, uint32_t base, uint32_t size);
 segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space);

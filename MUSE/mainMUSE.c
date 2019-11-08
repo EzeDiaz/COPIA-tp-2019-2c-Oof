@@ -45,6 +45,7 @@ int main(){
 		bzero(mp_pointer,memory_size);	//limpiamos la memoria
 
 		all_address_spaces = list_create(); //Incializo el espacio de direcciones del sistema
+		mapped_files = list_create(); //Para controlar los archivos mapeados
 
 		/*
 		WRITE_HEAPMETADATA_IN_MEMORY(mp_pointer,memory_left,0);

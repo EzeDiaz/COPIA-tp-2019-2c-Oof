@@ -13,9 +13,10 @@
 void* mp_pointer;	//puntero a la memoria principal
 t_log* logger;	//hace falta que mencione esto?
 t_config* config;	//lo mismo que el de arriba pero para config
-t_list* all_address_spaces;	//tabla de segmentacion implementado a traves de una t_list*
-uint8_t* memory_controller;	//tal vez despues lo usamos
+t_list* all_address_spaces;
+uint8_t* memory_controller;	//tal vez despues lo usamos (will we? esta el bitmap)
 t_list* client_list;
+t_list* mapped_files;
 
 pthread_mutex_t mp_semaphore;
 pthread_mutex_t logger_semaphore;
