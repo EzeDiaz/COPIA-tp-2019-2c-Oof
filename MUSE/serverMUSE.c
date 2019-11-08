@@ -380,12 +380,12 @@ void realizarRequest(void *buffer, int cliente){
 
 		segment* a_segment = GET_SEGMENT_FROM_BASE(segment_base, client_address_space);
 		while(a_segment->pageFrameTable->elements_count > iterator) {
-				pageFrame* a_page = list_get(a_segment->pageFrameTable, iterator);
-				if(a_page->frame_number == frame_number)
-					break;
-				iterator++;
-				displacement_until_page = displacement_until_page + page_size;
-			}
+			pageFrame* a_page = list_get(a_segment->pageFrameTable, iterator);
+			if(a_page->frame_number == frame_number)
+				break;
+			iterator++;
+			displacement_until_page = displacement_until_page + page_size;
+		}
 		virtual_direction = a_segment->base + displacement_until_page + page_offset;
 
 		void* buffer;
@@ -533,9 +533,11 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		addressSpace* cli_address_space = GET_ADDRESS_SPACE(cliente);
+
 		mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
 		client* current_client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
-		void* mapped_file = malloc(length); //Lo que tendra el return de mmap
+		char* mapped_file = malloc(length); //Lo que tendra el return de mmap
 		new_map->path=(char*)malloc(sizeof(path));
 		memcpy(new_map->path, path, sizeof(path));
 		new_map->owner=(char*)malloc(sizeof(current_client->clientProcessId));
@@ -550,25 +552,38 @@ void realizarRequest(void *buffer, int cliente){
 		list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
 
 		//Siguientes pasos:
-			//1. Rellenar el espacio que sobre del archivo con \0
-			//2. Crear el segmento... (FIRST_FIT)
-				//a. Tabla de paginas con todas en presence = 0
+		//1. Rellenar el espacio que sobre del archivo con \0 (Esto no lo hace de por si mmap?) --> "https://stackoverflow.com/questions/47604431/why-we-can-mmap-to-a-file-but-exceed-the-file-size"
+		//2. Crear el segmento... (FIRST_FIT)
+		segment* new_segment = (segment*)malloc(sizeof(segment*));
+		new_segment->isHeap = false;
+		new_segment->pageFrameTable = list_create();
+		//a. Tabla de paginas con todas en presence = 0
+		int frames_to_require;
+		if(length % page_size > 0) {
+			frames_to_require = (length / page_size) + 1;
+		} else {
+			frames_to_require = length / page_size;
+		}
 
+		for(int i=0; i < frames_to_require; i++) {
+			int frame_number = ASSIGN_FIRST_FREE_FRAME(); //Ver issue #28
+			pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
+			new_page->modifiedBit = 1; //Not sure
+			new_page->presenceBit = 0;
+			list_add(new_segment->pageFrameTable, new_page);
+		}
 
-		/* Armamos el paquetito de respuesta
+		new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
+		new_segment->base = FIRST_FIT(cli_address_space->segment_table, 0, new_segment->size);
+		list_add(client_address_space->segment_table, new_segment);
+
 		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		buffer=(void*)malloc(sizeof(uint32_t));
+		memcpy(buffer, &new_segment->base, sizeof(uint32_t));
+
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
-		free(path);
 		break;
 
 		//sync

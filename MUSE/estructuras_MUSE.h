@@ -44,7 +44,7 @@ typedef struct{
 typedef struct{
 	char* path; //Path del archivo
 	char* owner; //Quien lo tiene abierto
-	void* pointer; //Puntero al archivo mapeado
+	char* pointer; //Puntero al archivo mapeado
 	int flag; //MAP_SHARED o MAP_PRIVATE
 } mappedFile; //Hay n por cada arch; n=cant de veces que esta el archivo abierto (1 por cada proceso)
 
