@@ -46,8 +46,11 @@ typedef struct{
 	char* owner; //Quien lo tiene abierto
 	char* pointer; //Puntero al archivo mapeado
 	int flag; //MAP_SHARED o MAP_PRIVATE
-} mappedFile; //Hay n por cada arch; n=cant de veces que esta el archivo abierto (1 por cada proceso)
+	int references;
+} mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
+mappedFile* GET_MAPPED_FILE(char* path);
+bool FILE_ALREADY_MAPPED(char* path);
 uint32_t FIRST_FIT(t_list* segment_table, uint32_t base, uint32_t size);
 segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space);
 int GET_OFFSET_FROM_POINTER(void* pointer);

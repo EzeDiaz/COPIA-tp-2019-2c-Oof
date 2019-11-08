@@ -23,6 +23,22 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+mappedFile* GET_MAPPED_FILE(char* path) {
+	bool es_el_archivo(void *a_mapped_file) {
+		return strcmp(((mappedFile*)a_mapped_file)->path, path) == 0;
+	}
+
+	return list_find(mapped_files, es_el_archivo);
+}
+
+bool FILE_ALREADY_MAPPED(char* path) {
+	bool es_el_archivo(void *a_mapped_file) {
+		return strcmp(((mappedFile*)a_mapped_file)->path, path) == 0;
+	}
+
+	return list_count_satisfying(mapped_files, es_el_archivo);
+}
+
 uint32_t FIRST_FIT(t_list* segment_table, uint32_t base, uint32_t size) { //Te da la primer dir virtual donde entras
 	int iterator = 0;
 	uint32_t final_base = base;

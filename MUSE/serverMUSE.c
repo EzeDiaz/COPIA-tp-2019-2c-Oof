@@ -534,22 +534,27 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 		addressSpace* cli_address_space = GET_ADDRESS_SPACE(cliente);
+		if(FILE_ALREADY_MAPPED(path)) {
+			mappedFile* mapped_file = GET_MAPPED_FILE(path);
+			mapped_file->references++;
+		} else {
+			mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
+			client* current_client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
+			char* mapped_file = malloc(length); //Lo que tendra el return de mmap
+			new_map->path=(char*)malloc(sizeof(path));
+			memcpy(new_map->path, path, sizeof(path));
+			new_map->owner=(char*)malloc(sizeof(current_client->clientProcessId));
+			memcpy(new_map->owner, current_client->clientProcessId, sizeof(current_client->clientProcessId));
+			new_map->flag=flag;
+			new_map->references = 1;
 
-		mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
-		client* current_client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
-		char* mapped_file = malloc(length); //Lo que tendra el return de mmap
-		new_map->path=(char*)malloc(sizeof(path));
-		memcpy(new_map->path, path, sizeof(path));
-		new_map->owner=(char*)malloc(sizeof(current_client->clientProcessId));
-		memcpy(new_map->owner, current_client->clientProcessId, sizeof(current_client->clientProcessId));
-		new_map->flag=flag;
+			//Mapeo posta posta el archivo. Deberia chequear si existe?
+			int file_desc = open(path, O_RDWR, S_IRWXU, S_IWOTH, S_IROTH); //Los ultimos dos flags son para 'others'
+			mapped_file = mmap(NULL, length, PROT_READ, PROT_WRITE, flag, file_desc, 0);
+			new_map->pointer = mapped_file;
 
-		//Mapeo posta posta el archivo. Deberia chequear si existe?
-		int file_desc = open(path, O_RDWR, S_IRWXU, S_IWOTH, S_IROTH); //Los ultimos dos flags son para 'others'
-		mapped_file = mmap(NULL, length, PROT_READ, PROT_WRITE, flag, file_desc, 0);
-		new_map->pointer = mapped_file;
-
-		list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
+			list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
+		}
 
 		//Siguientes pasos:
 		//1. Rellenar el espacio que sobre del archivo con \0 (Esto no lo hace de por si mmap?) --> "https://stackoverflow.com/questions/47604431/why-we-can-mmap-to-a-file-but-exceed-the-file-size"
