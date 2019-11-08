@@ -18,7 +18,9 @@
 #include <sys/types.h>
 #include <commons/collections/dictionary.h>
 #include <commons/collections/list.h>
+#include <commons/config.h>
 #include <commons/string.h>
+#include <readline/readline.h>
 
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
 
@@ -58,6 +60,9 @@ void _suse_init(){
 	incializar_logs_sistema();
 
 	/*SETEAR CONFIG*/
+
+	leer_config();
+
 	/*INICIALIZO DICCIONARIOS*/
 
 	diccionario_de_procesos = dictionary_create();
@@ -81,13 +86,27 @@ void _suse_init(){
 
 	/*Contador*/
 
-	sem_init(procesos_x_grado_de_multiprogramacion,0,0/*MULTIPROGRAMACION*/);
+	sem_init(grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
 	sem_init(procesos_en_Ready,0,0);
 	sem_init(procesos_en_New,0,0);
 	sem_init(semaforo_lista_procesos_finalizados,0,0);
 
 }
 
+void leer_config(){
+
+	char* nombre_del_config = readline("Ingresar ruta del config:");
+	t_config* un_config = config_create(nombre_del_config);
+
+	ALPHA_SJF = config_get_int_value(un_config,"ALPHA_SJF")/100;
+	PUERTO_ESCUCHA = config_get_int_value(un_config,"LISTEN_PORT");
+	IP = config_get_string_value(un_config, "IP");
+	METRICS_TIMER = config_get_int_value(un_config,"METRICS_TIMER");
+	MAX_MULTIPROG = config_get_int_value(un_config,"MAX_MULTIPROG");
+	SEM_IDS = config_get_array_value(un_config,"SEM_IDS");
+	SEM_INIT = config_get_array_value(un_config,"SEM_INIT");
+	SEM_MAX = config_get_array_value(un_config,"SEM_MAX");
+}
 /*int puesta_en_marcha_del_hilo(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*),void*  argumento){
 
 	const struct hilolay_attr_t* atributo_auxiliar = (struct hilolay_attr_t*) atributos_del_hilo;
@@ -215,7 +234,7 @@ int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_rou
 
 	proceso_t* proceso_correspondiente = obtener_proceso(socket);
 
-	if(proceso_correspondiente->hilos_del_programa->elements_count<proceso_correspondiente->grado_de_multiprogramacion)
+	if(proceso_correspondiente->hilos_del_programa->elements_count<MAX_MULTIPROG)
 	{
 		metricas_t* metricas=(metricas_t*)malloc(sizeof(metricas_t));
 		metricas->tiempo_de_ejecucion=0;
@@ -229,7 +248,7 @@ int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_rou
 		nuevo_hilo->hilo_informacion=thread;
 		nuevo_hilo->prioridad;
 		list_add(proceso_correspondiente->hilos_del_programa,nuevo_hilo);
-		thread->tid=rand()%proceso_correspondiente->grado_de_multiprogramacion;
+		thread->tid= list_size(proceso_correspondiente->hilos_del_programa);
 		pthread_detach(hilo2);
 		return thread;
 	}else{

@@ -33,7 +33,7 @@ sem_t* semaforo_estado_blocked;
 sem_t* semaforo_diccionario_por_semaforo;
 
 //Contador
-sem_t* procesos_x_grado_de_multiprogramacion;
+sem_t* grado_de_multiprogramacion_contador;
 sem_t* procesos_en_Ready;
 sem_t* procesos_en_New;
 sem_t* semaforo_lista_procesos_finalizados;
@@ -53,9 +53,13 @@ t_queue* cola_new;
 t_queue* cola_exit;
 
 //VARIABLES
-float alpha;
+float ALPHA_SJF;
 int PUERTO_ESCUCHA;
 char* IP;
-int PUNTO_MONTAJE;
+int METRICS_TIMER;
+int MAX_MULTIPROG;
+char** SEM_IDS;
+char** SEM_INIT;
+char** SEM_MAX;
 
 #endif /* GLOBALES_H_ */

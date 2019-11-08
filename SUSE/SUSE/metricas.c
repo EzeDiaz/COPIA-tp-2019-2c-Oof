@@ -27,73 +27,92 @@
 				- Porcentaje del tiempo de ejecución: tiempo de uso de CPU del hilo. (Es la sumatoria de
 				todos los tiempos de uso de CPU de todos los hilos del mismo proceso)*/
 
-void metrica_por_sistema(t_list* varios_semaforos){//Son mas de 1 semaforo TODO
 
-	void loguear_valores(char* un_semaforo){
 
-		int valor_string_id=string_length(un_semaforo);
-
-		int valor_actual=dictionary_get(diccionario_de_valor_por_semaforo,un_semaforo);
-		int valor_string_semaforo=string_length(string_itoa(valor_actual));
-		char* msj=(char*)malloc(32+valor_string_id+valor_string_semaforo);
-		msj=strcat("el semaforo ",string_itoa(un_semaforo));
-		msj=strcat(" tiene un valor de ",string_itoa(valor_actual));
-		loguear_mensaje(log_metricas_sistema,msj);
-		free(msj);
+void mostrar_metricas_cada_delta_t(){
+	while(1){
+		sleep(METRICS_TIMER);
+		mostrar_metricas();
 	}
-	list_iterate(varios_semaforos,loguear_valores);
-	//hay que agarrar todos los semaforos porque se pregunta cada cierto tiempo el valor de todos?
-
-
-}
-void metrica_por_programa(proceso_t *un_programa){
-
-	metrica_por_cantidad_de_hilos(un_programa);
-	metrica_por_grado_actual_de_multiprogramacion(un_programa);
-}
-
-void metrica_por_cantidad_de_hilos(proceso_t* un_proceso){
-
-
-
-
-	char* msj=(char*)malloc(43+string_length(string_itoa(un_proceso->hilos_del_programa->elements_count)));
-	msj=strcat("cantidad de hilos del programa",string_itoa(un_proceso->hilos_del_programa->elements_count));
-
-	loguear_mensaje(log_metricas_programa,msj);
-	free(msj);
-
-	//TODO no se sabe hasta que este hilolay
-
-
-}
-/*
-void destruir_log_sistema(){
-
-	log_destroy(log_metricas_sistema);//destruyo el log y borro el archivo
-	remove("log_sistema.log");//		no va a pasar como el tp anterior que tenias un log de 15 MB
-
-}
-void incializar_log_sistema(){
-
-	// hacer un remove("log_sistema.log"); TODO
-
-	log_metricas_sistema=log_create("log_sistema.log","log_sistema",0,LOG_LEVEL_INFO);
-
-}
-*/
-void metrica_por_grado_actual_de_multiprogramacion(proceso_t* un_proceso){
-
-	char* msj=(char*)malloc(43+string_length(string_itoa(un_proceso->hilos_del_programa->elements_count)));
-	msj=strcat("se cambio el grado de multiprogramacion a ",string_itoa(un_proceso->hilos_del_programa->elements_count));//potencial SEGFAULT
-	loguear_mensaje(log_metricas_programa,msj);
-	free(msj);//TODO hacerlo sin sarna
 
 }
 
-void loguear_mensaje(t_log* un_log, char* msj){
+void mostrar_metricas(){
 
-	log_info(un_log,msj);
-
+	metricas_por_sistema();
+	metricas_por_programa();
+	metricas_por_hilo();
 
 }
+
+void metricas_por_sistema(){//Son mas de 1 semaforo TODO
+
+	int grado_multiprogramacion;
+	sem_getvalue(grado_de_multiprogramacion_contador,&grado_multiprogramacion);
+	log_info(log_metricas_sistema,"grado de programacion actual: %d \n",grado_multiprogramacion);
+
+	void loguear_semaforo(char* nombre_del_semaforo, int valor){
+		log_info(log_metricas_sistema,"el semaforo %s",nombre_del_semaforo);
+		log_info(log_metricas_sistema," tiene un valor de %d \n",valor);
+	}
+
+	dictionary_iterator(diccionario_de_valor_por_semaforo,loguear_semaforo);
+}
+
+void metricas_por_programa(){
+
+	void loguear_metricas_de_proceso(char* PID_string, proceso_t* un_proceso){
+		metricas_de_hilos_por_estado(PID_string,un_proceso);
+	}
+	dictionary_iterator(diccionario_de_procesos,loguear_metricas_de_proceso);
+}
+
+
+void metricas_de_hilos_por_estado(char* PID,proceso_t* un_proceso){
+	int acumulador_hilos;
+	log_info(log_metricas_programa,"El programa con PID %s tiene los siguientes hilos en estos estados: \n",PID);
+	acumulador_hilos= hilos_en_ready(un_proceso->hilos_del_programa,NEW);
+	log_info(log_metricas_programa,"NEW---> %d hilos\n",acumulador_hilos);
+	acumulador_hilos= hilos_en_ready(un_proceso->hilos_del_programa,READY);
+	log_info(log_metricas_programa,"READY---> %d hilos\n",acumulador_hilos);
+	acumulador_hilos= hilos_en_ready(un_proceso->hilos_del_programa,EXECUTE);
+	log_info(log_metricas_programa,"EXECUTE---> %d hilos\n",acumulador_hilos);
+	acumulador_hilos= hilos_en_ready(un_proceso->hilos_del_programa,BLOCKED);
+	log_info(log_metricas_programa,"BLOCKED---> %d hilos\n",acumulador_hilos);
+
+}
+
+int hilos_en_ready(t_list* hilos, int estado){
+
+	bool hilos_en_ready(hilo_t* un_hilo){
+		return un_hilo->estado_del_hilo==estado;
+	}
+	return list_count_satisfying(hilos,hilos_en_ready);
+}
+
+void metricas_por_hilo(){
+
+	void por_cada_proceso(char* PID_string, proceso_t* un_proceso){
+		int tiempo_total_de_ejecucion= 0;
+
+		void calcular_tiempo(hilo_t* un_hilo){
+		tiempo_total_de_ejecucion+=	un_hilo->metricas->tiempo_de_ejecucion;
+
+		}
+		list_iterate(un_proceso->hilos_del_programa,calcular_tiempo);
+		void loguear_hilo(hilo_t* un_hilo){
+			un_hilo->metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos=un_hilo->metricas->tiempo_de_uso_del_cpu/tiempo_total_de_ejecucion;
+			log_info(log_metricas_hilo,"Al hilo %d le corresponden las siguientes metricas: \n",un_hilo->hilo_informacion->tid);
+			log_info(log_metricas_hilo,"TIEMPO DE EJECUCION--> \n",un_hilo->metricas->tiempo_de_ejecucion);
+			log_info(log_metricas_hilo,"TIEMPO DE ESPERA--> \n",un_hilo->metricas->tiempo_de_espera);
+			log_info(log_metricas_hilo,"TIEMPO DE USO DE CPU--> \n",un_hilo->metricas->tiempo_de_uso_del_cpu);
+			log_info(log_metricas_hilo,"PORCENTAJE DE TIEMPO DE EJECUCION--> \n",un_hilo->metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos);
+
+		}
+		list_iterate(un_proceso->hilos_del_programa,loguear_hilo);
+	}
+	dictionary_iterator(diccionario_de_procesos,por_cada_proceso);
+}
+
+
+

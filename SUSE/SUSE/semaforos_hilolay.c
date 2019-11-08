@@ -14,8 +14,9 @@ void bloquear_hilo(char* nombre_semaforo, int PID){
 	hilo_t* hilo=queue_pop(cola_exec);
 	sem_wait(semaforo_estado_blocked);
 	t_list* lista_bloqueados = dictionary_get(diccionario_bloqueados_por_semafaro,nombre_semaforo);
-	sem_post(semaforo_estado_blocked);
 	list_add(lista_bloqueados,hilo);
+	hilo->estado_del_hilo = BLOCKED;
+	sem_post(semaforo_estado_blocked);
 
 }
 
@@ -30,7 +31,7 @@ bool wait(char*nombre_semaforo,int PID){
 		sem_post(semaforo_diccionario_por_semaforo);
 	}else{
 		hilo_t* hilo=queue_pop(obtener_cola_exec_de(PID));
-		bloquear_hilo(nombre_semaforo,hilo);
+		bloquear_hilo(nombre_semaforo,hilo->PID);
 	}
 
 	return (bool)value;
@@ -41,7 +42,8 @@ int signal(char*nombre_semaforo, int PID){
 
 	sem_wait(semaforo_diccionario_por_semaforo);
 	int value=dictionary_get(diccionario_de_valor_por_semaforo,nombre_semaforo);
-	dictionary_put(diccionario_de_valor_por_semaforo,nombre_semaforo,value-1);
+	value--;
+	dictionary_put(diccionario_de_valor_por_semaforo,nombre_semaforo,value);
 	sem_post(semaforo_diccionario_por_semaforo);
 	desbloquear_hilo(nombre_semaforo, PID);
 

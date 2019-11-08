@@ -42,6 +42,7 @@ int suse_create(hilolay_t *, const hilolay_attr_t *,void *(*start_routine)(void 
 proceso_t* obtener_proceso(int);
 proceso_t* inicializar_proceso(int);
 void agregar_al_diccionario(int , sem_t*);
+void leer_config();
 
 
 #endif /* SUSE_H_ */

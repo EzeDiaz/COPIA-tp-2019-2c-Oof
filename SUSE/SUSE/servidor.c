@@ -87,9 +87,6 @@ int iniciar_servidor(void){
 	log_info(logger, "Cerro el servidor\n");
 	sem_post(&mutex_log_servidor);
 	printf("Cerro el servidor \n");
-	free(PUERTO_ESCUCHA);
-	free(PUNTO_MONTAJE);
-
 	log_destroy(logger);
 
 

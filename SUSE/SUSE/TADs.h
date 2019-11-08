@@ -10,6 +10,7 @@
 
 #include <commons/collections/list.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "globales.h"
 #include <hilolay/hilolay.h>
 
@@ -32,7 +33,7 @@ enum estado{
 typedef struct{
 
 	t_list* hilos_del_programa;//lista de hilos_t*
-	int grado_de_multiprogramacion;
+
 
 }proceso_t;
 

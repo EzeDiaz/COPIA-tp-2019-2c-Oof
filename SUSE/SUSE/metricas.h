@@ -13,7 +13,9 @@
 #include <commons/string.h>
 #include "semaforos_hilolay.h"
 
+typedef struct{
 
+};
 
 /*VARIABLES GLOBALES DE LAS METRICAS*/
 t_log* log_metricas_sistema;
@@ -21,7 +23,7 @@ t_log* log_metricas_programa;
 t_log* log_metricas_hilo;
 
 				/*PROTOTIPOS*/
-void metrica_por_sistema(t_list*);
+void metrica_por_sistema();
 void metrica_por_programa(proceso_t*);
 void metrica_por_cantidad_de_hilos(proceso_t*);
 void metrica_por_grado_actual_de_multiprogramacion(proceso_t*);

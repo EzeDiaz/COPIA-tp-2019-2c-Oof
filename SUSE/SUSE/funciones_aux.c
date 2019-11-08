@@ -11,7 +11,7 @@
 
 float calcular_sjf(hilo_t*un_hilo){
 
-return ( (1-alpha)* un_hilo->prioridad + alpha * un_hilo->metricas->tiempo_de_ejecucion);
+return ( (1-ALPHA_SJF)* un_hilo->prioridad + ALPHA_SJF * un_hilo->metricas->tiempo_de_ejecucion);
 
 }
 
