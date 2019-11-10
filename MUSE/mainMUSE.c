@@ -26,28 +26,35 @@
 
 int main(){
 	remove("MUSE_logger.log");
-		logger = log_create("MUSE_logger.log","main_server", 0, LOG_LEVEL_DEBUG);	//hacemo' el log
+	logger = log_create("MUSE_logger.log","main_server", 0, LOG_LEVEL_DEBUG);	//hacemo' el log
 
-		CHECK_LOGGER();
+	CHECK_LOGGER();
 
-		config = config_create("MUSE_config.config"); //abrimo' el archivo config
+	config = config_create("MUSE_config.config"); //abrimo' el archivo config
 
-		CHECK_CONFIG();
-		CHECK_FIELDS();
-		GET_CONFIG_VALUES();
+	CHECK_CONFIG();
+	CHECK_FIELDS();
+	GET_CONFIG_VALUES();
 
-		SET_BITMAP();
+	SET_BITMAP();
 
-		INITIALIZE_SEMAPHORES();
+	INITIALIZE_SEMAPHORES();
 
-		mp_pointer=malloc(memory_size);
-		CHECK_MEMORY();	//checkeo si
-		bzero(mp_pointer,memory_size);	//limpiamos la memoria
+	mp_pointer=malloc(memory_size);
+	CHECK_MEMORY();	//checkeo si
+	bzero(mp_pointer,memory_size);	//limpiamos la memoria
 
-		all_address_spaces = list_create(); //Incializo el espacio de direcciones del sistema
-		mapped_files = list_create(); //Para controlar los archivos mapeados
+	all_address_spaces = list_create(); //Incializo el espacio de direcciones del sistema
+	mapped_files = list_create(); //Para controlar los archivos mapeados
 
-		/*
+	//Inicializo las cuestiones del clock
+	clock_pointer = 0;
+	//No se que tan necesario es esto
+	for(int i=0;i<memory_size/page_size;i++){
+		clock_table[i]=  (pageFrame*) malloc(sizeof(pageFrame));
+	}
+
+	/*
 		WRITE_HEAPMETADATA_IN_MEMORY(mp_pointer,memory_left,0);
 		READ_HEAPMETADATA_IN_MEMORY(mp_pointer);
 		printf("hola maude! \n");
@@ -57,9 +64,9 @@ int main(){
 		printf("Nombre del primer segmento : %s",new->owner);
 
 		free(mp_pointer);
-		*/
-		DESTROY_SEMAPHORES();
-		return 0;
+	 */
+	DESTROY_SEMAPHORES();
+	return 0;
 
 	iniciar_servidor();
 

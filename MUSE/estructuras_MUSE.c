@@ -23,6 +23,88 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+int CLOCK() {
+	int counter = bitarray_get_max_bit(bitmap);
+	for(int i=0;i<counter;i++){
+		if(!bitarray_test_bit(bitmap, i)){
+			bitarray_set_bit(bitmap,i);
+			SUBSTRACT_MEMORY_LEFT(page_size);
+			return i;
+		}
+	}
+	//No consegui frames libres, tengo que ejecutar el algoritmo
+	int initial_position = clock_pointer;
+	int frame_found=-1;
+	int iterations=0;
+	pageFrame* page_to_replace;
+	//Busco uso=0, modificado=0
+	while(frame_found < 0 && iterations < counter) {
+		pageFrame* page_frame = clock_table[initial_position];
+		if(page_frame->useBit == 0 && page_frame->modifiedBit == 0) {
+			frame_found = initial_position;
+			clock_pointer = frame_found + 1;
+			page_to_replace = page_frame;
+			if(clock_pointer > counter)
+				clock_pointer = 0;
+		}
+		initial_position++;
+		if(initial_position > counter)
+			initial_position = 0;
+	}
+	//Busco uso=0, modificado=1 (pongo uso en 0)
+	initial_position = clock_pointer;
+	while(frame_found < 0 && iterations < counter) {
+		pageFrame* page_frame = clock_table[initial_position];
+		if(page_frame->useBit == 0 && page_frame->modifiedBit == 1) {
+			frame_found = initial_position;
+			clock_pointer = frame_found + 1;
+			page_to_replace = page_frame;
+			if(clock_pointer > counter)
+				clock_pointer = 0;
+		}
+		page_frame->useBit = 0;
+		initial_position++;
+		if(initial_position > counter)
+			initial_position = 0;
+	}
+	//Repito 0,0
+	initial_position = clock_pointer;
+	while(frame_found < 0 && iterations < counter) {
+		pageFrame* page_frame = clock_table[initial_position];
+		if(page_frame->useBit == 0 && page_frame->modifiedBit == 0) {
+			frame_found = initial_position;
+			clock_pointer = frame_found + 1;
+			page_to_replace = page_frame;
+			if(clock_pointer > counter)
+				clock_pointer = 0;
+		}
+		initial_position++;
+		if(initial_position > counter)
+			initial_position = 0;
+	}
+	//Repito 0,1
+	initial_position = clock_pointer;
+	while(frame_found < 0 && iterations < counter) {
+		pageFrame* page_frame = clock_table[initial_position];
+		if(page_frame->useBit == 0 && page_frame->modifiedBit == 1) {
+			frame_found = initial_position;
+			clock_pointer = frame_found + 1;
+			page_to_replace = page_frame;
+			if(clock_pointer > counter)
+				clock_pointer = 0;
+		}
+		initial_position++;
+		if(initial_position > counter)
+			initial_position = 0;
+	}
+
+	//Escribo en swap las cosas del frame que estoy entregando
+	//Seteo el page frame con presence=0 y la direccion de swap donde esta la info
+
+	return frame_found;
+
+}
+
 void DESTROY_SEGMENT(segment* a_segment) {
 	if(!a_segment->isHeap)
 		free(a_segment->path);
@@ -244,18 +326,6 @@ void FREE_FRAME(int frame_number) {
 
 void* GET_FRAME_POINTER(int frame_number) {
 	return mp_pointer + frame_number * page_size;
-}
-
-int ASSIGN_FIRST_FREE_FRAME() {
-	int counter = bitarray_get_max_bit(bitmap);
-	for(int i=0;i<counter;i++){
-		if(!bitarray_test_bit(bitmap, i)){
-			bitarray_set_bit(bitmap,i);
-			SUBSTRACT_MEMORY_LEFT(page_size);
-			return i;
-		}
-	}
-	return "-1"; //Si no hay mas lugar devuelve -1
 }
 
 int CREATE_ADDRESS_SPACE(char* IP_ID) {

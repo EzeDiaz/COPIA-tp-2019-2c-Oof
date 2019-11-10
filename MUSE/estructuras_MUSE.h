@@ -15,6 +15,7 @@
 
 typedef struct{
 	bool presenceBit;	//bit de presencia
+	bool useBit; 		//bit de uso
 	bool modifiedBit;	//bit de modificado
 	int frame_number; //Si esta en memoria es el frame, si esta en swap la posicion (presence)
 } pageFrame;
@@ -52,6 +53,8 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
+
+int CLOCK();
 int GET_SEGMENT_INDEX(t_list* segment_table, uint32_t a_base);
 void DESTROY_MAPPED_FILE(mappedFile* mapped_file);
 int GET_MAPPED_FILE_INDEX(char* path);
@@ -69,7 +72,6 @@ bool THERE_ARE_EXISTING_HEAP_SEGMENTS(addressSpace* an_address_space);
 addressSpace* GET_ADDRESS_SPACE(int client_socket);
 void FREE_FRAME(int frame_number);
 void* GET_FRAME_POINTER(int frame_number);
-int ASSIGN_FIRST_FREE_FRAME();
 int CREATE_ADDRESS_SPACE(char* IP_ID);
 void SET_BITMAP();
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket);
