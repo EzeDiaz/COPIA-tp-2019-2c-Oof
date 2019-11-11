@@ -86,6 +86,10 @@ void CHECK_MEMORY();
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status);
 heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer);
 void SUBSTRACT_MEMORY_LEFT(int size);
+segment* GET_SEGMENT_WITH_ADDRESS(uint32_t address, addressSpace* address_space);
+int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment);
+void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment);
+void FREE_USED_FRAME(uint32_t address, addressSpace* address_space);
 
 //Potentially deprecated
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name);
