@@ -9,6 +9,19 @@
 #include "globales.h"
 #include <commons/collections/list.h>
 
+int serializar_fs_rmdir(char* path){
+	void* paquete = serializar_paquete_para_eliminar_directorio(path);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	usar_y_liberar_resultado(resultado);
+	return 0;
+
+
+}
+
+
 int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t puntero_a_funcion, off_t offset, struct fuse_file_info *fi){
 	void* paquete = serializar_paquete_para_leer_directorio(path, buffer ,puntero_a_funcion,offset,fi);
 	void* resultado = enviar_paquete(paquete);
@@ -16,7 +29,7 @@ int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t punter
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
 	usar_y_liberar_resultado(resultado);
-	return 1;
+	return 0;
 }
 
 int serializar_fs_mkdir(const char *path, mode_t mode){
@@ -30,6 +43,68 @@ int serializar_fs_mkdir(const char *path, mode_t mode){
 
 }
 
+
+int serializar_fs_open(const char *pathname,
+		int flags, mode_t mode){
+	void* paquete = serializar_paquete_para_abrir_archivo(pathname,flags,mode);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	free(resultado);
+	return resultado;
+
+
+}
+int serializar_fs_read(int fd, void *buf, size_t count){
+	void* paquete = serializar_paquete_para_leer_archivo(fd,buf,count);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	free(resultado);
+	return resultado;
+
+
+}
+int serializar_fs_write(int fd, const void *buf, size_t count){
+	// TODO esto quizas esta medio mal, el prototipo de FUSE me dice algo y la syscall otra cosa
+	void* paquete = serializar_paquete_para_escribir_archivo(fd,buf,count);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	free(resultado);
+	return resultado;
+
+}
+
+
+
+
+
+
+void* serializar_paquete_para_eliminar_directorio(char* path){
+
+	int peso_path = string_length(path)+1;
+	int peso=peso_path+ 2* sizeof(int);
+	int desplazamiento=0;
+	int codigo_de_operacion = ELIMINAR_DIRECTORIO;
+	void*paquete = malloc(peso+sizeof(int));
+
+	memcpy(paquete,&peso,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,path,peso_path);
+
+	return paquete;
+
+
+
+}
 void* serializar_paquete_para_leer_directorio(const char *path, void *buffer, fuse_fill_dir_t puntero_a_funcion, off_t offset, struct fuse_file_info *fi){
 
 	char* nombres_de_archivos=leer_nombres_de_archivos_y_directorios(buffer);
@@ -79,6 +154,103 @@ void* serializar_paquete_para_crear_directorio(char* path,mode_t mode){
 
 	return paquete;
 }
+
+
+void* serializar_paquete_para_leer_archivo(int fd, void *buf, size_t count){
+	int peso=0;
+	int peso_buffer=sizeof(&buf);//hay que checkear esto TODO
+	int peso_count= sizeof(count);
+	peso=peso_count+peso_buffer + 4* sizeof(int);
+	int offset=0;
+	int codigo_de_operacion= LEER_ARCHIVO;
+	void*paquete=malloc(peso+sizeof(int));
+
+	memcpy(paquete,&peso,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&fd,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&peso_buffer,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,buf,peso_buffer);
+	offset+=peso_buffer;
+	memcpy(paquete+offset,&peso_count,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&count,peso_count);
+	offset+=peso_count;
+
+	return paquete;
+
+
+
+}
+void* serializar_paquete_para_escribir_archivo(int fd,const void *buf, size_t count){
+
+	int peso=0;
+	int peso_buffer=sizeof(&buf);//hay que checkear esto TODO
+	int peso_count= sizeof(count);
+	peso=peso_count+peso_buffer + 4* sizeof(int);
+	int offset=0;
+	int codigo_de_operacion= ESCRIBIR_ARCHIVO;
+	void*paquete=malloc(peso+sizeof(int));
+
+	memcpy(paquete,&peso,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&fd,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&peso_buffer,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,buf,peso_buffer);
+	offset+=peso_buffer;
+	memcpy(paquete+offset,&peso_count,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&count,peso_count);
+	offset+=peso_count;
+
+	return paquete;
+
+
+
+
+
+}
+void* serializar_paquete_para_abrir_archivo(const char *pathname,
+		int flags, mode_t mode){
+	int peso=0;
+	int peso_path=string_length(pathname)+1;
+	int peso_mode= sizeof(mode);
+	peso=peso_mode+peso_path + 4* sizeof(int);
+	int offset=0;
+	int codigo_de_operacion= ABRIR_ARCHIVO;
+	void*paquete=malloc(peso+sizeof(int));
+
+	memcpy(paquete,&peso,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&flags,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&peso_mode,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&mode,peso_mode);
+	offset+=peso_mode;
+	memcpy(paquete+offset,&peso_path,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,pathname,peso_path);
+	offset+=peso_path;	return paquete;
+
+
+
+
+
+
+}
+
+
+//RECIBIR Y ENVIAR A SAC_SERVER
 void* enviar_paquete(void*paquete){
 
 	int peso;
