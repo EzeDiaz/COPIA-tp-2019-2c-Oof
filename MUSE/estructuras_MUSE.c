@@ -498,10 +498,10 @@ segment* GET_SEGMENT_FROM_ADDRESS(uint32_t address, addressSpace* address_space)
 int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment){
 	int page_number = 0;
 	t_list* page_frame_table = a_segment->pageFrameTable;
-	page_size_plus_base = a_segment->base;
+	uint32_t page_size_plus_base = a_segment->base;
 
 	while(page_frame_table->elements_count > page_number && page_size_plus_base < address){
-		page_size_plus_base = page_size + a_segment->base // Estoy sumando un int y un uint32 ¿Se puede?
+		page_size_plus_base = page_size + a_segment->base; // Estoy sumando un int y un uint32 ¿Se puede?
 		if(page_size_plus_base > address){
 		int current_frame = list_get(page_frame_table, page_number);
 		return current_frame; //No seria current_frame->frame_number???
@@ -517,6 +517,7 @@ int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment){
 
 void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 	int page_move_counter = 0;
+	int new_page_move_counter = 0;
 	int page_number = 0;
 	heapMetadata* current_metadata;
 	heapMetadata* next_metadata;
@@ -553,7 +554,7 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 
 				if(next_metadata->isFree){ // si la proxima metadata que esta en otro frame esta libre
 					uint32_t total_size = current_metadata->size + next_metadata->size + 5;
-					page_move_counter = page_move_counter - current_metadata->size - 5
+					page_move_counter = page_move_counter - current_metadata->size - 5;
 					WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata, total_size, 1);
 					page_number--;
 				}
@@ -579,7 +580,7 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 
 
 void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
-	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(address, address_space)
+	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(address, address_space);
 			if(a_segment != NULL && a_segment->isHeap){
 				int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
 				if(frame != NULL){
@@ -591,7 +592,7 @@ void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 
 				} else log_error(logger,"La pagina no se encuentra en memoria"); // generar page fault y swappear
 			} else log_error(logger,"El segmento no se encuentra en memoria");
-	free(frame_metadata);
+	//free(frame_metadata); De donde viene este frame_metadata?
 }
 
 
