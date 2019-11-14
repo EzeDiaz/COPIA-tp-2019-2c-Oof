@@ -23,6 +23,17 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+int GET_FREE_SWAP_FRAME() {
+	int counter = bitarray_get_max_bit(bitmap_swap);
+	for(int i=0;i<counter;i++){
+		if(!bitarray_test_bit(bitmap_swap, i)){
+			bitarray_set_bit(bitmap_swap,i);
+			return i;
+		}
+	}
+	return -1; //Si no hay mas lugar en swap muere un gatito
+}
+
 void SET_BITMAP_SWAP(){
 	int number_of_frames = swap_size / page_size;
 	//Lo "paso" a bits
@@ -494,13 +505,13 @@ heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer){
 
 segment* GET_SEGMENT_FROM_ADDRESS(uint32_t address, addressSpace* address_space){
 	int iterator = 0;
-		while(address_space->segment_table->elements_count > iterator) {
-			segment* a_segment = list_get(address_space->segment_table, iterator);
-			if(address >= a_segment->base && address <= a_segment->size)
+	while(address_space->segment_table->elements_count > iterator) {
+		segment* a_segment = list_get(address_space->segment_table, iterator);
+		if(address >= a_segment->base && address <= a_segment->size)
 			return a_segment;
-			iterator++;
-		}
-		return NULL;
+		iterator++;
+	}
+	return NULL;
 }
 
 
@@ -512,8 +523,8 @@ int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment){
 	while(page_frame_table->elements_count > page_number && page_size_plus_base < address){
 		page_size_plus_base = page_size + a_segment->base; // Estoy sumando un int y un uint32 ¿Se puede?
 		if(page_size_plus_base > address){
-		int current_frame = list_get(page_frame_table, page_number);
-		return current_frame; //No seria current_frame->frame_number???
+			int current_frame = list_get(page_frame_table, page_number);
+			return current_frame; //No seria current_frame->frame_number???
 		}
 		page_number++;
 	}
@@ -590,17 +601,17 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 
 void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(address, address_space);
-			if(a_segment != NULL && a_segment->isHeap){
-				int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
-				if(frame != NULL){
-					void* ptr_to_frame = GET_FRAME_POINTER(frame);
-					void* ptr_to_metadata = ptr_to_frame - 5;
-					heapMetadata* frame_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata);
-					WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_metadata, frame_metadata->size, 1);
-					MERGE_CONSECUTIVES_FREE_BLOCKS(a_segment);
+	if(a_segment != NULL && a_segment->isHeap){
+		int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
+		if(frame != NULL){
+			void* ptr_to_frame = GET_FRAME_POINTER(frame);
+			void* ptr_to_metadata = ptr_to_frame - 5;
+			heapMetadata* frame_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata);
+			WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_metadata, frame_metadata->size, 1);
+			MERGE_CONSECUTIVES_FREE_BLOCKS(a_segment);
 
-				} else log_error(logger,"La pagina no se encuentra en memoria"); // generar page fault y swappear
-			} else log_error(logger,"El segmento no se encuentra en memoria");
+		} else log_error(logger,"La pagina no se encuentra en memoria"); // generar page fault y swappear
+	} else log_error(logger,"El segmento no se encuentra en memoria");
 	//free(frame_metadata); De donde viene este frame_metadata?
 }
 
