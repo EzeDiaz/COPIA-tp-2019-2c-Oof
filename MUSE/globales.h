@@ -21,7 +21,7 @@ char* swap_file; //Archivo utilizado para swapear de memoria a disco y viceversa
 t_bitarray* bitmap_memory; //Estructura de control para los frames
 int clock_pointer; //Desde que frame arranca la proxima iteracion del clock
 pageFrame* clock_table[]; //Array donde se guardan las paginas
-//Necesitamos una estructura de control para el archivo de swap?
+t_bitarray* bitmap_swap; //Estructura de control para el area de swap
 
 pthread_mutex_t mp_semaphore;
 pthread_mutex_t logger_semaphore;

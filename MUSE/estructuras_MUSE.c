@@ -23,6 +23,23 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void SET_BITMAP_SWAP(){
+	int number_of_frames = swap_size / page_size;
+	//Lo "paso" a bits
+	if((number_of_frames % 8) == 0) {
+		number_of_frames = number_of_frames / 8;
+	} else {
+		number_of_frames = (number_of_frames / 8) + 1;
+	}
+
+	char* frames_vector=(char*)malloc(number_of_frames);
+	frames_vector=string_repeat('\0',number_of_frames);
+
+	bitmap_swap = bitarray_create_with_mode(frames_vector, number_of_frames, LSB_FIRST);
+
+	free(frames_vector); //Esto se libera o tiene que vivir porque esta el bitmap?
+}
+
 int CLOCK() {
 	int counter = bitarray_get_max_bit(bitmap_memory);
 	for(int i=0;i<counter;i++){

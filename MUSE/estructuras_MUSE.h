@@ -53,7 +53,7 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
-
+void SET_BITMAP_SWAP();
 int CLOCK();
 int GET_SEGMENT_INDEX(t_list* segment_table, uint32_t a_base);
 void DESTROY_MAPPED_FILE(mappedFile* mapped_file);
