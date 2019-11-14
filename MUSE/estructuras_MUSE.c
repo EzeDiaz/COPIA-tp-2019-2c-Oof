@@ -24,10 +24,10 @@
 // --> Estan en el .h
 
 int CLOCK() {
-	int counter = bitarray_get_max_bit(bitmap);
+	int counter = bitarray_get_max_bit(bitmap_memory);
 	for(int i=0;i<counter;i++){
-		if(!bitarray_test_bit(bitmap, i)){
-			bitarray_set_bit(bitmap,i);
+		if(!bitarray_test_bit(bitmap_memory, i)){
+			bitarray_set_bit(bitmap_memory,i);
 			SUBSTRACT_MEMORY_LEFT(page_size);
 			return i;
 		}
@@ -316,9 +316,9 @@ addressSpace* GET_ADDRESS_SPACE(int client_socket) {
 }
 
 void FREE_FRAME(int frame_number) {
-	int limit = bitarray_get_max_bit(bitmap);
+	int limit = bitarray_get_max_bit(bitmap_memory);
 	if(frame_number < limit) { //Menor estricto o amplio?
-		bitarray_clean_bit(bitmap, frame_number);
+		bitarray_clean_bit(bitmap_memory, frame_number);
 	} else {
 		//Estas queriendo liberar un numero de frame que no existe
 	}
@@ -340,9 +340,7 @@ int CREATE_ADDRESS_SPACE(char* IP_ID) {
 	return 0; //En que caso podria retornar -1?
 }
 
-void SET_BITMAP(){
-	FILE* archivo= fopen("bitmap.bin","w");
-
+void SET_BITMAP_MEMORY(){
 	int number_of_frames = memory_size / page_size;
 	//Lo "paso" a bits
 	if((number_of_frames % 8) == 0) {
@@ -353,16 +351,10 @@ void SET_BITMAP(){
 
 	char* frames_vector=(char*)malloc(number_of_frames);
 	frames_vector=string_repeat('\0',number_of_frames);
-	fwrite(frames_vector,number_of_frames,1,archivo);
-	fclose(archivo);
 
-	int file_desc_bitmap = open("bitmap.bin", O_RDWR, S_IRUSR | S_IWUSR);
+	bitmap_memory = bitarray_create_with_mode(frames_vector, number_of_frames, LSB_FIRST);
 
-	char* bit_array = mmap(NULL, number_of_frames, PROT_READ | PROT_WRITE, MAP_SHARED, file_desc_bitmap, 0);
-
-	bitmap = bitarray_create_with_mode(bit_array,number_of_frames,LSB_FIRST);
-
-	free(frames_vector);
+	free(frames_vector); //Esto se libera o tiene que vivir porque esta el bitmap?
 }
 
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {

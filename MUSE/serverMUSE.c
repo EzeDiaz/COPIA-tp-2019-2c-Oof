@@ -407,7 +407,7 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
 
-
+		addressSpace* address_space = GET_ADDRESS_SPACE(cliente);
 		FREE_USED_FRAME(dir , address_space); // de donde saco el address_space
 
 		//MUSE YO TE INVOCO

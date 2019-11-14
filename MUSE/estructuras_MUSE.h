@@ -73,7 +73,7 @@ addressSpace* GET_ADDRESS_SPACE(int client_socket);
 void FREE_FRAME(int frame_number);
 void* GET_FRAME_POINTER(int frame_number);
 int CREATE_ADDRESS_SPACE(char* IP_ID);
-void SET_BITMAP();
+void SET_BITMAP_MEMORY();
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket);
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket);
 void INITIALIZE_SEMAPHORES();

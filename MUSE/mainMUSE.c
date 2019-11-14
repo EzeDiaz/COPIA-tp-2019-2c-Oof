@@ -36,7 +36,7 @@ int main(){
 	CHECK_FIELDS();
 	GET_CONFIG_VALUES();
 
-	SET_BITMAP();
+	SET_BITMAP_MEMORY();
 
 	INITIALIZE_SEMAPHORES();
 
@@ -65,10 +65,9 @@ int main(){
 
 		free(mp_pointer);
 	 */
-	DESTROY_SEMAPHORES();
-	return 0;
 
 	iniciar_servidor();
 
+	DESTROY_SEMAPHORES();
 	return 0;
 }
