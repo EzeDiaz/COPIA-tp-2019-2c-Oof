@@ -16,7 +16,7 @@
 //Funcionalidades con archivos
 bool crear_archivo(){
 	bool flag = false;
-
+	//falta meterlo en el bitmap y todas esas cosas TODO
 	flag=agregar_metadata_de_archivo();
 	return flag;
 }
@@ -38,12 +38,13 @@ t_list* leer_archivo(){
 
 bool borrar_archivo(){
 	bool flag = false;
+	//sirve? no es lo mismo que el rmdir?
 	return flag;
 }
 
 bool agregar_metadata_de_archivo(){
 	bool flag= false;
-
+//TODO
 
 	return flag;
 
@@ -54,8 +55,8 @@ bool agregar_metadata_de_archivo(){
 bool crear_directorio(char* path, mode_t mode){
 	bool flag = false;
 	mkdir(path, mode);
-	if(errno!=EEXIST)
-		flag=true;
+	//falta meterlo en el bitmap y todas esas cosas TODO
+	flag=errno!=EEXIST;
 	return flag;
 }
 
@@ -87,8 +88,14 @@ void* listar_directorio_y_archivos(char*path, char*string_de_archivos){
 	return paquetizar_metadata_de_directorio(lista_de_retorno);
 }
 
-bool eliminar_directorio(){
+bool eliminar_directorio(char* path){
 	bool flag = false;
+	if(verificar_path_este_permitido(path)){
+	remove(path);
+	//falta meterlo en el bitmap y todas esas cosas TODO
+	flag=true;
+	}
+	free(path);
 	return flag;
 }
 
@@ -134,4 +141,15 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 	list_iterate(lista, paquetizar);
 
 	return retorno;
+}
+
+
+//FUNCIONES AUXILIARES
+
+
+int verificar_path_este_permitido(char*path){
+
+	//puede mejorar TODO
+	return string_contains(path, PUNTO_DE_MONTAJE);
+
 }

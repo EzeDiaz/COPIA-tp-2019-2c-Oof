@@ -69,8 +69,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case ELIMINAR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'eliminacion de directorios', comenzando la deserializacion de parametros\n");
-		paquete_decifrado=decifrar_directorio_a_borrar(buffer);
-		resultado=eliminar_directorio(paquete_decifrado);
+		char* path=decifrar_directorio_a_borrar(buffer);
+		resultado=eliminar_directorio(path);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -147,7 +147,7 @@ void* decifrar_archivo_a_leer(void*buffer){
 }
 void* decifrar_archivo_a_borrar(void*buffer){
 
-	return NULL;
+	return NULL;//creo que el borrar directorio tambien borra Archivos TODO
 }
 directorio_a_crear_t* decifrar_directorio_a_crear(void*buffer){
 	directorio_a_crear_t* directorio = malloc(sizeof(directorio_a_crear_t));
