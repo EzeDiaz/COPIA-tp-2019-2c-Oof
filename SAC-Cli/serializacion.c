@@ -21,6 +21,18 @@ int serializar_fs_rmdir(char* path){
 
 }
 
+int serializar_fs_opendir(const char* path){
+
+	void* paquete = serializar_paquete_para_abrir_directorio(path);
+		void* resultado = enviar_paquete(paquete);
+		free(paquete);
+		int retorno;
+		memcpy(&retorno,resultado,sizeof(int));
+		usar_y_liberar_resultado(resultado);
+
+	return 0;
+}
+
 
 int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t puntero_a_funcion, off_t offset, struct fuse_file_info *fi){
 	void* paquete = serializar_paquete_para_leer_directorio(path, buffer ,puntero_a_funcion,offset,fi);
@@ -132,7 +144,7 @@ void* serializar_paquete_para_leer_directorio(const char *path, void *buffer, fu
 	return paquete;
 }
 
-void* serializar_paquete_para_crear_directorio(char* path,mode_t mode){
+void* serializar_paquete_para_crear_directorio(const char* path,mode_t mode){
 
 	int peso=0;
 	int peso_path=string_length(path)+1;
@@ -240,10 +252,32 @@ void* serializar_paquete_para_abrir_archivo(const char *pathname,
 	memcpy(paquete+offset,&peso_path,sizeof(int));
 	offset+=sizeof(int);
 	memcpy(paquete+offset,pathname,peso_path);
-	offset+=peso_path;	return paquete;
+	offset+=peso_path;
+	return paquete;
 
 
 
+
+
+
+}
+
+void* serializar_paquete_para_abrir_directorio(const char* path){
+	int peso_path = string_length(path)+1;
+		int peso=peso_path+ 2* sizeof(int);
+		int desplazamiento=0;
+		int codigo_de_operacion = ABRIR_DIRECTORIO;
+		void*paquete = malloc(peso+sizeof(int));
+
+		memcpy(paquete,&peso,sizeof(int));
+		desplazamiento+=sizeof(int);
+		memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
+		desplazamiento+=sizeof(int);
+		memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
+		desplazamiento+=sizeof(int);
+		memcpy(paquete+desplazamiento,path,peso_path);
+
+		return paquete;
 
 
 

@@ -30,55 +30,73 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		paquete_decifrado=decifrar_archivo_a_crear(buffer);
 		resultado=crear_archivo(paquete_decifrado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case ESCRIBIR_ARCHIVO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'escribir de archivos', comenzando la deserializacion de parametros\n");
 		paquete_decifrado=decifrar_archivo_a_escribir(buffer);
 		resultado=escribir_archivo(paquete_decifrado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case LEER_ARCHIVO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'lectura de archivos', comenzando la deserializacion de parametros\n");
 		paquete_decifrado=decifrar_archivo_a_leer(buffer);
 		resultado=leer_archivo(paquete_decifrado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case BORRAR_ARCHIVO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'eliminacion de archivos', comenzando la deserializacion de parametros\n");
 		paquete_decifrado=decifrar_archivo_a_borrar(buffer);
 		resultado=borrar_archivo(paquete_decifrado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case CREAR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'creacion de direcorio', comenzando la deserializacion de parametros\n");
 		directorio_a_crear_t* directorio=decifrar_directorio_a_crear(buffer);
 		resultado=crear_directorio(directorio->path,directorio->mode);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case LISTAR_DIRECTORIO_Y_ARCHIVOS:
 		log_info(logger_de_deserializacion, "Es el codigo de 'listado de directorio', comenzando la deserializacion de parametros\n");
 		directorio_a_listar_t* directorio_a_listar=decifrar_directorio_a_listar(buffer);
 		resultado=listar_directorio_y_archivos(directorio_a_listar->path,directorio_a_listar->string_nombre_de_archivos);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case ELIMINAR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'eliminacion de directorios', comenzando la deserializacion de parametros\n");
 		paquete_decifrado=decifrar_directorio_a_borrar(buffer);
 		resultado=eliminar_directorio(paquete_decifrado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
-	break;
+		break;
 
 	case LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS:
 		log_info(logger_de_deserializacion, "Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros\n");
 		paquete_decifrado=listar_metadata_directorio_y_archivos(buffer);
 		resultado=listar_metadata(paquete_decifrado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
+		break;
+
+	case ABRIR_ARCHIVO:
+
+		log_info(logger_de_deserializacion, "Es el codigo de 'Abrir Archivo', comenzando la deserializacion de parametros\n");
+		paquete_decifrado=decifrar_abrir_archivos(buffer);//estoy en duda con esta funcion TODO
+		resultado=listar_metadata(paquete_decifrado);
+		serializar_y_enviar_resultado(resultado,cliente_socket);
+
+		break;
+
+	case ABRIR_DIRECTORIO:
+
+		log_info(logger_de_deserializacion, "Es el codigo de 'Abrir Directorio', comenzando la deserializacion de parametros\n");
+		paquete_decifrado=decifrar_abrir_directorios(buffer);//estoy en duda con esta funcion TODO
+		resultado=listar_metadata(paquete_decifrado);
+		serializar_y_enviar_resultado(resultado,cliente_socket);
+
 		break;
 
 	default:
@@ -95,9 +113,33 @@ void* decifrar_archivo_a_crear(void*buffer){
 
 	return NULL;
 }
-void* decifrar_archivo_a_escribir(void*buffer){
+archivo_descifrado_escritura* decifrar_archivo_a_escribir(void*paquete){
 
-	return NULL;
+	archivo_descifrado_escritura* archivo= malloc(sizeof(archivo_descifrado_escritura));
+	int offset=0;
+	int peso_buffer;
+	void* buf;
+	int fd;
+	int peso_count;
+	size_t count;
+	offset+=sizeof(int);
+	memcpy(&fd,paquete+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(&peso_buffer,paquete+offset,sizeof(int));
+	offset+=sizeof(int);
+	buf= malloc(peso_buffer);
+	memcpy(buf,paquete+offset,peso_buffer);
+	offset+=peso_buffer;
+	memcpy(&peso_count,paquete+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(&count,paquete+offset,peso_count);//si rompe aca quizas hay que alocar el count, aunque creo que no
+	offset+=peso_count;
+
+	archivo->fd=fd;
+	archivo->buf=buf;
+	archivo->count=count;
+	return archivo;
+
 }
 void* decifrar_archivo_a_leer(void*buffer){
 
@@ -136,9 +178,19 @@ directorio_a_listar_t* decifrar_directorio_a_listar(void*buffer){
 
 	return retorno;
 }
-void* decifrar_directorio_a_borrar(void*buffer){
 
-	return NULL;
+char* decifrar_directorio_a_borrar(void*buffer){
+	int desplazamiento=0;
+	int longitud_a_copiar=0;
+	char* nombre_del_path;
+
+	desplazamiento+=sizeof(int);
+	memcpy(&longitud_a_copiar,buffer+desplazamiento,sizeof(int));
+	desplazamiento+=sizeof(int);
+	nombre_del_path= malloc(longitud_a_copiar);
+	memcpy(nombre_del_path,buffer+desplazamiento,longitud_a_copiar);
+
+	return nombre_del_path;
 }
 
 void* listar_metadata_directorio_y_archivos(void*buffer){
@@ -149,10 +201,11 @@ void* listar_metadata_directorio_y_archivos(void*buffer){
 }
 
 void serializar_y_enviar_resultado(void* resultado,int cliente_socket){
-/* ESTO QUEDO MUY BONITO, HAY QUE TESTEARLO. DESCONFIO DEMASIADO TODO
- *
- *
- * */
+	/* ESTO QUEDO MUY BONITO, HAY QUE TESTEARLO. DESCONFIO DEMASIADO TODO
+	 *DESPUES DE UNA BUENA REVISADA, SI NO ANDA ES PROQUE ALGUIEN HIZO CHANCHADAS ANTES
+	 *IGUAL ESTARIA BUENO PERGARLE UNA TESTEADA
+	 *
+	 */
 
 	/*DECLARO VARIABLES LOCALES*/
 	int peso_total= sizeof(*resultado);
