@@ -507,7 +507,7 @@ heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer){
 
 	return new_metadata;
 }
-// Despues te lo paso a ingles ...
+
 
 segment* GET_SEGMENT_FROM_ADDRESS(uint32_t address, addressSpace* address_space){
 	int iterator = 0;
@@ -549,8 +549,8 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 	heapMetadata* next_metadata;
 	t_list* page_frame_table = a_segment->pageFrameTable;
 	int current_frame = list_get(page_frame_table, page_number);
-	void* ptr_to_current_frame = GET_FRAME_POINTER(current_frame); //Esto apunta directo a la metadata? si es asi entonces hay que cambiar cosas
-	void* ptr_to_current_metadata = ptr_to_current_frame - 5;
+	void* ptr_to_current_frame = GET_FRAME_POINTER(current_frame);
+	void* ptr_to_current_metadata = ptr_to_current_frame;
 
 	while(page_frame_table->elements_count > page_number){
 
@@ -575,7 +575,7 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 				page_number++;
 				int current_frame = list_get(page_frame_table, page_number);
 				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame - 5;
+				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
 				next_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_first_metadata_new_frame);
 
 				if(next_metadata->isFree){ // si la proxima metadata que esta en otro frame esta libre
@@ -583,6 +583,10 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 					page_move_counter = page_move_counter - current_metadata->size - 5;
 					WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata, total_size, 1);
 					page_number--;
+				} else{ // si no esta libre
+					ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
+					page_move_counter = new_page_move_counter;
+
 				}
 			}
 		} else{ // si no esta free... me paro en el proximo y se vuelve mi actual
@@ -592,11 +596,13 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 				void* ptr_to_next_metadata = ptr_to_current_metadata + current_metadata->size + 5;
 				ptr_to_current_metadata = ptr_to_next_metadata;
 			} else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
+				new_page_move_counter = page_move_counter - page_size;
 				page_number++;
 				int current_frame = list_get(page_frame_table, page_number);
 				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame - 5;
+				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
 				ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
+				page_move_counter = new_page_move_counter;
 			}
 
 		}
