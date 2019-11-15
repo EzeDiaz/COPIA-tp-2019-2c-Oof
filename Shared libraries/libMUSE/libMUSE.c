@@ -130,12 +130,15 @@ int muse_get(void* dst, uint32_t src, size_t n){
     free(paquete_get);
 
     void* var_recepcion;
-	int tamanio_recepcion = sizeof(int);
+	int tamanio_recepcion = n; //MUSE me manda la cantidad de bytes que le pedi
 	var_recepcion = malloc(tamanio_recepcion);
 	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
-	int resultado;
-	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	memcpy(dst, var_recepcion, tamanio_recepcion);
 	free(var_recepcion);
+
+	int resultado = 0;
+	//En que caso devuelvo -1?
+	//Tendria que, entonces, recibir los bytes y ademas un int con exito/fracaso?
 
     return resultado; //Si falla --> return -1
 }
