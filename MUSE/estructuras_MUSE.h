@@ -35,7 +35,7 @@ typedef struct{
 
 typedef struct{
 	char* owner;
-	t_list* segment_table; //Como limito 2 a la 32 direcciones?
+	t_list* segment_table;
 } addressSpace;
 
 typedef struct{
@@ -53,7 +53,10 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
-void FREE_SWAP_FRAME(int frame_number);
+void DESTROY_ADDRESS_SPACE(addressSpace* an_address_space);
+void DESTROY_PAGE(pageFrame* a_page);
+void CLIENT_LEFT_THE_SYSTEM(int client);
+void FREE_SWAP_FRAME_BITMAP(int frame_number);
 void SWAP_INIT();
 int GET_FREE_SWAP_FRAME();
 void SET_BITMAP_SWAP();
@@ -73,7 +76,7 @@ void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_HEAP_SEGMENTS(addressSpace* address_space);
 bool THERE_ARE_EXISTING_HEAP_SEGMENTS(addressSpace* an_address_space);
 addressSpace* GET_ADDRESS_SPACE(int client_socket);
-void FREE_FRAME(int frame_number);
+void FREE_MEMORY_FRAME_BITMAP(int frame_number);
 void* GET_FRAME_POINTER(int frame_number);
 int CREATE_ADDRESS_SPACE(char* IP_ID);
 void SET_BITMAP_MEMORY();

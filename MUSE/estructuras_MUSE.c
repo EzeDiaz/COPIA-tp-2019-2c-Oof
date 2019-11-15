@@ -23,7 +23,78 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
-void FREE_SWAP_FRAME(int frame_number) {
+void DESTROY_CLIENT(client* a_client) {
+	free(a_client->clientProcessId);
+	free(a_client);
+}
+
+void DESTROY_ADDRESS_SPACE(addressSpace* an_address_space) {
+	free(an_address_space->owner);
+	list_destroy_and_destroy_elements(an_address_space->segment_table, DESTROY_SEGMENT);
+	free(an_address_space);
+}
+
+void DESTROY_PAGE(pageFrame* a_page) {
+	free(a_page);
+}
+
+void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
+	/* NOTA
+		El clock_table no hace falta tocarlo. Ej: se va un proceso, libera el frame 1 nadie va a pasar por
+		clock_table[1] porque antes se le va a asignar el frame 1 segun el bitmap_memory y,cuando esto
+		ocurra, ese proceso va a hacer clock_table[1]=su_nueva_pagina. Por este motivo, en ningun
+		momento quedan posiciones del clock_table "corruptas".
+	 */
+
+	//Hay que:
+	//	1)Liberar los frames ocupados por el proceso (bitmap_memory o bitmap_swap)
+	//	2)Limpiar las estructuras administrativas asociadas al proceso
+	//		a)Limpio la segment_table
+	//		b)free del owner
+	//		c)Lo saco de all_address_spaces
+	//		d)Lo saco de la lista de clientes
+
+	addressSpace* client_ad_sp = GET_ADDRESS_SPACE(client_socket);
+	void liberar_frames(segment* a_segment) {
+		void iterar_paginas(pageFrame* a_page) {
+			if(a_page->presenceBit) {
+				FREE_MEMORY_FRAME_BITMAP()(a_page->frame_number);
+			} else if (a_segment->isHeap) {
+				FREE_SWAP_FRAME_BITMAP(a_page->frame_number);
+			} else {
+				//(COPIADO DEL UNMAP)
+				//Controlar que la direccion que me pasan este OK
+				mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+				mapped_file->references--;
+				if(!mapped_file->references) {
+					close(mapped_file->file_desc);
+					munmap(mapped_file->pointer, mapped_file->length);
+					//Borrar entrada de la lista mapped_files
+					int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
+					list_remove_and_destroy_element(mapped_files, DESTROY_MAPPED_FILE);
+				}
+			}
+		}
+		list_iterate(a_segment->pageFrameTable, iterar_paginas);
+	}
+
+	client* a_client = FIND_CLIENT_BY_SOCKET(client_socket);
+
+	bool el_address_spaces_es_del_cliente(void *an_address_space) {
+		return strcmp(((addressSpace*)an_address_space)->owner, a_client->clientProcessId) == 0;
+	}
+
+	bool es_el_cliente(void* certain_client) {
+		return strcmp(((client*)certain_client)->clientProcessId, a_client->clientProcessId) == 0;
+	}
+
+	//Libero los frames ocupados tanto en bitmap_memory como en bitmap_swap
+	list_iterate(client_ad_sp->segment_table, liberar_frames);
+	list_remove_and_destroy_by_condition(all_address_spaces, el_address_spaces_es_del_cliente, DESTROY_ADDRESS_SPACE);
+	list_remove_and_destroy_by_condition(client_list, es_el_cliente, DESTROY_CLIENT);
+}
+
+void FREE_SWAP_FRAME_BITMAP(int frame_number) {
 	int limit = bitarray_get_max_bit(bitmap_swap);
 	if(frame_number < limit) { //Menor estricto o amplio?
 		bitarray_clean_bit(bitmap_swap, frame_number);
@@ -158,7 +229,8 @@ int CLOCK() {
 void DESTROY_SEGMENT(segment* a_segment) {
 	if(!a_segment->isHeap)
 		free(a_segment->path);
-	//Destruir a_segment->pageFrameTable => DESTROY_PAGE
+	list_destroy_and_destroy_elements(a_segment->pageFrameTable, DESTROY_PAGE);
+	free(a_segment);
 }
 
 int GET_SEGMENT_INDEX(t_list* segment_table, uint32_t a_base) {
@@ -365,7 +437,7 @@ addressSpace* GET_ADDRESS_SPACE(int client_socket) {
 	return list_find(all_address_spaces, el_address_spaces_es_del_cliente);
 }
 
-void FREE_FRAME(int frame_number) {
+void FREE_MEMORY_FRAME_BITMAP(int frame_number) {
 	int limit = bitarray_get_max_bit(bitmap_memory);
 	if(frame_number < limit) { //Menor estricto o amplio?
 		bitarray_clean_bit(bitmap_memory, frame_number);

@@ -153,13 +153,8 @@ void realizarRequest(void *buffer, int cliente){
 
 		//close
 	case 101:
-		//Habria que:
-		//	1)Liberar los frames ocupados por el proceso (bitmap)
-		//	2)Limpiar las estructuras administrativas asociadas al proceso
-		//		a)Limpio la segment_table
-		//		b)free del owner
-		//		c)Lo saco de all_address_spaces
-		//		d)Lo saco de la lista de clientes
+		CLIENT_LEFT_THE_SYSTEM(cliente);
+
 		break;
 
 		//alloc
