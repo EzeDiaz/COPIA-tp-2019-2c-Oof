@@ -143,8 +143,14 @@ int CLOCK() {
 
 	//Escribo en swap las cosas del frame que estoy entregando
 	void* frame_pointer = GET_FRAME_POINTER(page_to_replace->frame_number);
+	int swap_position = GET_FREE_SWAP_FRAME();
+	//Juega a algo el bit de modificado a la hora de escribir?
+	for(int i = 0; i < page_size; i++) { //Escribo en swap, byte a byte
+		swap_file[swap_position + i] = *(frame_pointer + i);
+	}
 	//Seteo el page frame con presence=0 y la direccion de swap donde esta la info
-
+	page_to_replace->presenceBit=0;
+	page_to_replace->frame_number=swap_position;
 	return frame_found;
 
 }
