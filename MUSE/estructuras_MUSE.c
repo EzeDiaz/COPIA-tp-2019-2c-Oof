@@ -23,6 +23,12 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void SWAP_INIT() {
+	int fd_swap = open("SWAP_FILE", O_RDWR | O_CREAT, S_IRUSR | S_IRGRP | S_IROTH); //https://stackoverflow.com/questions/2395465/create-a-file-in-linux-using-c
+	swap_file = (char*) malloc(swap_size);
+	swap_file = mmap(NULL, swap_size, PROT_READ, PROT_WRITE, MAP_SHARED, fd_swap, 0);
+}
+
 int GET_FREE_SWAP_FRAME() {
 	int counter = bitarray_get_max_bit(bitmap_swap);
 	for(int i=0;i<counter;i++){

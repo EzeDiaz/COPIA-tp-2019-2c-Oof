@@ -39,6 +39,8 @@ int main(){
 	SET_BITMAP_MEMORY();
 	SET_BITMAP_SWAP();
 
+	SWAP_INIT();
+
 	INITIALIZE_SEMAPHORES();
 
 	mp_pointer=malloc(memory_size);
