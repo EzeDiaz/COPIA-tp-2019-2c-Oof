@@ -23,6 +23,15 @@
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
 
+void FREE_SWAP_FRAME(int frame_number) {
+	int limit = bitarray_get_max_bit(bitmap_swap);
+	if(frame_number < limit) { //Menor estricto o amplio?
+		bitarray_clean_bit(bitmap_swap, frame_number);
+	} else {
+		//Estas queriendo liberar un numero de frame que no existe
+	}
+}
+
 void SWAP_INIT() {
 	int fd_swap = open("SWAP_FILE", O_RDWR | O_CREAT, S_IRUSR | S_IRGRP | S_IROTH); //https://stackoverflow.com/questions/2395465/create-a-file-in-linux-using-c
 	swap_file = (char*) malloc(swap_size);
@@ -133,6 +142,7 @@ int CLOCK() {
 	}
 
 	//Escribo en swap las cosas del frame que estoy entregando
+	void* frame_pointer = GET_FRAME_POINTER(page_to_replace->frame_number);
 	//Seteo el page frame con presence=0 y la direccion de swap donde esta la info
 
 	return frame_found;

@@ -576,9 +576,10 @@ void realizarRequest(void *buffer, int cliente){
 		}
 
 		for(int i=0; i < frames_to_require; i++) {
-			int frame_number = ASSIGN_FIRST_FREE_FRAME(); //Ver issue #28
+			int frame_number = CLOCK(); //Ver issue #28
 			pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
-			new_page->modifiedBit = 1; //Not sure
+			new_page->modifiedBit = 0; //Casi seguro que es 0
+			new_page->useBit = 0;
 			new_page->presenceBit = 0;
 			list_add(new_segment->pageFrameTable, new_page);
 		}
