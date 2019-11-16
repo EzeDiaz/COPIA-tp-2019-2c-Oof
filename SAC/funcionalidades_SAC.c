@@ -16,6 +16,8 @@
 #include<sys/types.h>
 #include<sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
+#include <string.h>
 
 
 //Funcionalidades con archivos
@@ -163,8 +165,10 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 	offset+=sizeof(int);
 	memcpy(retorno+offset,&lista->elements_count,sizeof(int));
 	offset+=sizeof(int);
+
 	void paquetizar(nodo_t* un_nodo){
-		memcpy(retorno+offset,un_nodo->estado,1);//TODO esto puede romper
+
+		memcpy(retorno+offset ,&un_nodo->estado,1);//TODO esto puede romper
 		offset+=1;
 		memcpy(retorno+offset,&un_nodo->fecha_de_creacion,sizeof(long int));
 		offset+=sizeof(long int);
@@ -172,7 +176,7 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 		offset+=sizeof(long int);
 		memcpy(retorno+offset,&un_nodo->puntero_padre,sizeof(int));
 		offset+=sizeof(int);
-		memcpy(retorno+offset,un_nodo->tamanio_del_archivo,sizeof(int));
+		memcpy(retorno+offset,&un_nodo->tamanio_del_archivo,sizeof(int));
 		offset+=sizeof(int);
 		memcpy(retorno+offset,un_nodo->nombre_de_archivo,72);
 		offset+=72;
@@ -187,7 +191,7 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 //FUNCIONES AUXILIARES
 
 
-int verificar_path_este_permitido(char*path){
+bool verificar_path_este_permitido(char*path){
 
 	//puede mejorar TODO
 	return string_contains(path, PUNTO_DE_MONTAJE);
@@ -220,7 +224,7 @@ void crear_vector_de_punteros(ptrGBloque array_de_bloques[], int n){
 
 ptrGBloque* obtener_puntero_padre(char* path){
 
-	ptrGBloque* retorno;
+
 	char** vector= string_split(path, "/");
 
 	int i =0;
@@ -230,7 +234,8 @@ ptrGBloque* obtener_puntero_padre(char* path){
 
 	char* nombre_nodo_padre=vector[i-2];
 
-	return encontrar_en_tabla_de_nodos(nombre_nodo_padre);
+	nodo_t* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
+	return nodo_padre->punteros_indirectos_simples;
 
 
 }
@@ -263,20 +268,17 @@ void leer_cada_archivo_y_borrar(char* path){
 			if(!strcmp(dir->d_name,"..") || !strcmp(dir->d_name, ".")){
 
 			}else{
-				liberar_eliminar_archivo(strcat(path,dir->d_name));
+				borrar_archivo(strcat(path,dir->d_name));
 			}
 		}
 	}
 }
 
 
-void liberar_eliminar_archivo(char*path){
 
-
-}
 void liberar_bloque(char* path){
 
-
+//TODO
 
 
 }

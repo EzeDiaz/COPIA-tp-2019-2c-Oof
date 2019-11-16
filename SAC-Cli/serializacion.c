@@ -24,11 +24,24 @@ int serializar_fs_rmdir(char* path){
 int serializar_fs_opendir(const char* path){
 
 	void* paquete = serializar_paquete_para_abrir_directorio(path);
-		void* resultado = enviar_paquete(paquete);
-		free(paquete);
-		int retorno;
-		memcpy(&retorno,resultado,sizeof(int));
-		usar_y_liberar_resultado(resultado);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	usar_y_liberar_resultado(resultado);
+
+	return 0;
+}
+
+int serializar_fs_create(const char *path, struct fuse_file_info *fi){
+
+
+	void* paquete = serializar_paquete_para_crear_archivo(path);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	usar_y_liberar_resultado(resultado);
 
 	return 0;
 }
@@ -91,10 +104,29 @@ int serializar_fs_write(int fd, const void *buf, size_t count){
 
 }
 
+void* serializar_paquete_para_crear_archivo(const char *path){
+
+
+	int peso_path = string_length(path)+1;
+	int peso=peso_path+ 2* sizeof(int);
+	int desplazamiento=0;
+	int codigo_de_operacion = CREAR_ARCHIVO;
+	void*paquete = malloc(peso+sizeof(int));
+
+	memcpy(paquete,&peso,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,path,peso_path);
+
+	return paquete;
 
 
 
 
+}
 
 void* serializar_paquete_para_eliminar_directorio(char* path){
 
@@ -264,20 +296,20 @@ void* serializar_paquete_para_abrir_archivo(const char *pathname,
 
 void* serializar_paquete_para_abrir_directorio(const char* path){
 	int peso_path = string_length(path)+1;
-		int peso=peso_path+ 2* sizeof(int);
-		int desplazamiento=0;
-		int codigo_de_operacion = ABRIR_DIRECTORIO;
-		void*paquete = malloc(peso+sizeof(int));
+	int peso=peso_path+ 2* sizeof(int);
+	int desplazamiento=0;
+	int codigo_de_operacion = ABRIR_DIRECTORIO;
+	void*paquete = malloc(peso+sizeof(int));
 
-		memcpy(paquete,&peso,sizeof(int));
-		desplazamiento+=sizeof(int);
-		memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
-		desplazamiento+=sizeof(int);
-		memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
-		desplazamiento+=sizeof(int);
-		memcpy(paquete+desplazamiento,path,peso_path);
+	memcpy(paquete,&peso,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,path,peso_path);
 
-		return paquete;
+	return paquete;
 
 
 

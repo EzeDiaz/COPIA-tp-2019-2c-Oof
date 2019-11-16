@@ -37,5 +37,7 @@ char* obtener_nombre_de_archivo(char* );
 void leer_cada_archivo_y_borrar(char*);
 void liberar_bloque(char*);
 void liberar_eliminar_archivo(char*);
+bool verificar_path_este_permitido(char*);
+void crear_vector_de_punteros(ptrGBloque[],int);
 
 #endif /* FUNCIONALIDADES_SAC_H_ */

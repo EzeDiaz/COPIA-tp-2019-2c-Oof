@@ -48,7 +48,7 @@ int serializar_fs_read(int , void *, size_t );
 int serializar_fs_open(const char *,int, mode_t );
 int serializar_fs_write(int , const void *, size_t );
 int serializar_fs_opendir(const char* path);
-
+int serializar_fs_create(const char *, struct fuse_file_info *);
 
 //envios a SAC_SERVER
 void* serializar_paquete_para_leer_directorio(const char*, void*, fuse_fill_dir_t, off_t, struct fuse_file_info*);
@@ -60,6 +60,8 @@ void* serializar_paquete_para_abrir_archivo(const char *,int, mode_t );
 void* enviar_paquete(void*);
 void* recibir_resultado(int* );
 void* serializar_paquete_para_abrir_directorio(const char*);
+void* serializar_paquete_para_crear_archivo(const char *path);
+
 
 
 
