@@ -40,7 +40,7 @@ void* armar_paquete(void* , int );
 void* descifrar_hilolay_init(void*);
 //void* hilolay_init(void*);
 
-void* descifrar_suse_create(void*);
+int descifrar_suse_create(void*);
 //void* suse_create(hilolay_t*, hilolay_attr_t*, (void*), void* );
 
 

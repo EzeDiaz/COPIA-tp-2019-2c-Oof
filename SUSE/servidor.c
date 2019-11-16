@@ -18,12 +18,6 @@ void eliminar_semaforos();
 void* recibir_buffer(int* , int );
 
 
-
-int levantar_servidor(void){
-
-}
-
-
 int iniciar_servidor(void){
 
 	remove("log_Servidor.log");

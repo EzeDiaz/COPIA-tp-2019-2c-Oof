@@ -290,6 +290,7 @@ int suse_create(int tid, int socket){
 
 	encolar_en_new(hilo);
 
+	return tid;
 }
 
 proceso_t* obtener_proceso(int socket){
@@ -309,24 +310,3 @@ proceso_t* inicializar_proceso(int socket){
 	un_proceso->hilos_del_programa = list_create();
 	return un_proceso;
 }
-
-
-int hilolay_yield(void){
-	return 0;
-
-}
-
-int hilolay_join(hilolay_t *thread){
-	return 0;
-
-}
-
-int hilolay_get_tid(void){
-	return 0;
-}
-
-
-
-
-
-
