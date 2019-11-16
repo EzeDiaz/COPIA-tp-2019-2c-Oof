@@ -453,7 +453,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 
-		//Traer_direccion(src,n)
+		//TODO: Armar paquete
 
 		/* Armamos el paquetito de respuesta
 		void* buffer;
