@@ -639,7 +639,7 @@ int GET_PAGE_NUMBER_FROM_ADDRESS(uint32_t address, segment* a_segment){
 	}
 	return NULL;
 }
-
+//TODO: Hacer frees de current metadata y next metadata
 //TODO: Si la ultima pagina esta toda free -> remove de la tdp
 // Cada vez que hago un Free() invoco esta funcion que recorre toda la TDP mergeando las metadatas libres
 
@@ -786,10 +786,75 @@ char* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar){
 	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(dst, address_space);
 	t_list* page_frame_table = a_segment->pageFrameTable;
+	int page_move_counter = 0;
+	int page_number = GET_PAGE_NUMBER_FROM_ADDRESS(dst, a_segment);
+	heapMetadata* current_metadata;
 
+	if(a_segment != NULL){
+		if(a_segment->isHeap){
+			pageFrame* current_page = list_get(page_frame_table, page_number);
+			page_move_counter = page_move_counter + dst;
+			void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
+			void* ptr_to_metadata = ptr_to_frame + dst - 5;
+			current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata);
+
+			if(current_page->presenceBit){
+
+			} else{ // Busca en swap
+
+			}
+		}
+	}
 
 
 }
+
+heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_table){
+	heapMetadata* current_metadata;
+	int page_number = 0;
+	pageFrame* current_page = list_get(page_frame_table, 0);
+	int new_page_move_counter = 0;
+	int page_move_counter = 0;
+	int global_move_counter = 0;
+	int offset = 0;
+	void* ptr_to_LA_metadata;
+	void* ptr_to_current_metadata = GET_FRAME_POINTER(current_page->frame_number);
+
+	while(global_move_counter < address){
+		current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata);
+		page_move_counter = new_page_move_counter;
+
+		while(page_move_counter < page_size && global_move_counter < address){ // mientras sigo en mi pagina
+			page_move_counter = page_move_counter + current_metadata->size + 5;
+			global_move_counter = global_move_counter + page_move_counter;
+			if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
+				void* ptr_to_next_metadata = ptr_to_current_metadata + current_metadata->size + 5;
+				ptr_to_LA_metadata = ptr_to_current_metadata;
+				free(current_metadata);
+				current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_next_metadata);
+			} else{ // cambio de pagina
+				page_number++;
+				new_page_move_counter = page_move_counter - page_size;
+				global_move_counter = global_move_counter + page_move_counter;
+				pageFrame* next_page = list_get(page_frame_table, page_number);
+				ptr_to_LA_metadata = ptr_to_current_metadata;
+				free(current_metadata);
+				if(next_page != NULL)
+					void* ptr_to_new_frame = GET_FRAME_POINTER(next_page->frame_number);
+					ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+			}
+
+		}
+	}
+
+	return READ_HEAPMETADATA_IN_MEMORY(ptr_to_LA_metadata);
+}
+
+
+
+
+
+
 
 
 
