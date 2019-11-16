@@ -37,7 +37,10 @@ void newToReady(){
 
 	hilo->estado_del_hilo = READY;
 
-	sem_post(&procesos_en_Ready);
+	sem_wait(semaforo_diccionario_de_procesos);
+	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,hilo->PID);
+	sem_post(semaforo_diccionario_de_procesos);
+	sem_post(&un_proceso->procesos_en_Ready);
 
 	sem_wait(&semaforo_log_colas);
 
@@ -83,6 +86,7 @@ void readyToExec(int PID)
 	t_queue* cola_Exec = obtener_cola_exec_de(PID);
 
 	while(1){
+
 		if(esta_vacia(cola_Exec)){
 			char* tiempo_inicio= temporal_get_string_time();
 			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
@@ -130,7 +134,12 @@ void * estadoReady(int PID)
 	{
 		if(!finDePlanificacion)
 		{
-			sem_wait(&procesos_en_Ready);
+			sem_wait(semaforo_diccionario_de_procesos);
+			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,PID);
+			sem_post(semaforo_diccionario_de_procesos);
+
+			sem_wait(&un_proceso->procesos_en_Ready);
+
 
 			readyToExec(PID);
 
@@ -151,13 +160,6 @@ void exec(hilo_t* hilo)
 	char* tiempo_inicio= temporal_get_string_time();
 	char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
 	int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
-
-	//TODO SEMAFOROS PROPIOS PARA ECHAR A LOS HILOS A BLOCKED
-	//sem_wait(&semaforo_diccionario_de_procesos);
-
-	//dictionary_put(diccionario_de_procesos,proceso,comandos); // vuelvo a meter la lista de comandos que no ejecutaron en el diccionario
-
-	//sem_post(&semaforo_diccionario_de_procesos);
 
 	ejecutar_funcion(hilo);
 
@@ -238,20 +240,4 @@ void exit_thread(hilo_t* hilo){
 
 }
 
-
-
-// ESTADO BLOCKED
-
-void blocked(char* nombre_semaforo, hilo_t* un_hilo)
-{
-	// espera a que el recurso que lo metio aca sea liberado, es decir que el respectivo semaforo que lo metio lo deje salir
-	while(/*semaforo_ocupado(nombre_semaforo) TODO  */ 1){
-
-		//esto puede ser un wait de un semaforo posta y nos olvidamos de la espera activa del wait TODO
-	}
-
-	t_queue* cola_ready= obtener_cola_ready_de(un_hilo->PID);
-	queue_push(cola_ready,un_hilo);
-
-}
 

@@ -26,9 +26,17 @@ enum {
 	SUSE_CLOSE = 6,
 };
 
+enum{
+
+	BOOLEAN=0,
+	INT = 1,
+	CHAR = 2,
+	LONG = 3,
+};
 
 void enviar_resultado(void*,int);
 void* serializar_bool(bool);
+void* armar_paquete(void* , int );
 void* descifrar_hilolay_init(void*);
 //void* hilolay_init(void*);
 

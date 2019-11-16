@@ -95,7 +95,18 @@ void* serializar_suse_wait(char*semaforo){
 	return paquete;
 }
 
-void* serializar_suse_create(hilolay_t *thread, const hilolay_attr_t * attr,void *(*start_routine)(void *), void *arg){
-	return NULL; //TODO
+void* serializar_suse_create(int tid){
+	int peso_total_paquete = sizeof(int)*3;
+	int codigo_de_operacion = SUSE_CREATE;
+	int offset = 0;
+	void* paquete = malloc(peso_total_paquete);
+
+	memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
+	offset += sizeof(int);
+	memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
+	offset += sizeof(int);
+	memcpy(paquete + offset,&tid,sizeof(int));
+
+	return paquete;
 }
 

@@ -60,9 +60,11 @@ t_queue* obtener_cola_de(int PID, int cola){
 
 void incializar_logs_sistema(){
 
+	log_metricas_programa = log_create("log_metricas_programa.log","log_metricas_programa",0,LOG_LEVEL_INFO);
+	log_metricas_hilo = log_create("log_metricas_hilo.log","log_metricas_hilo",0,LOG_LEVEL_INFO);
 	log_metricas_sistema = log_create("log_metricas.log","log_metricas",0,LOG_LEVEL_INFO);
 	log_colas = log_create("log_colas.log","log_colas",0,LOG_LEVEL_INFO);
-
+	logger = log_create("logger.log","logger",0,LOG_LEVEL_INFO);
 
 }
 

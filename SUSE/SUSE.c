@@ -43,6 +43,39 @@ void suse_init(){
 	pthread_create(hilo_new_to_ready,NULL,estadoNew(),NULL);
 	pthread_detach(hilo_new_to_ready);
 
+	/*INICIALIZO VARIABLES GLOBALES*/
+
+	//Mutex
+	sem_t* semaforo_log_colas;
+	sem_t* semaforo_diccionario_de_procesos;
+	sem_t* semaforo_diccionario_procesos_x_queues;
+	sem_t* semaforo_diccionario_procesos_x_semaforo;
+	sem_t* mutex_log_servidor;
+	sem_t* semaforo_lista_procesos_finalizados;
+	sem_t* semaforo_estado_blocked;
+	sem_t* semaforo_diccionario_por_semaforo;
+
+	//Contador
+	sem_t* grado_de_multiprogramacion_contador;
+	sem_t* procesos_en_New;
+
+	//LOGS
+	t_log* log_colas;
+	t_log* logger;
+	t_log* log_metricas_sistema;
+	t_log* log_metricas_programa;
+	t_log* log_metricas_hilo;
+
+	//DICCIONARIOS
+	t_dictionary* diccionario_de_procesos;
+	t_dictionary* diccionario_procesos_x_queues; // Va a ser una tupla de (PID;VectorDeColas)
+	t_dictionary* diccionario_de_procesos_x_semaforo;
+	t_dictionary* diccionario_bloqueados_por_semafaro;
+
+	//COLAS
+	t_queue* cola_new;
+	t_queue* cola_exit;
+
 
 	/*INICIALIZO RECURSOS*/
 
@@ -61,6 +94,7 @@ void suse_init(){
 	diccionario_de_procesos = dictionary_create();
 	diccionario_procesos_x_queues = dictionary_create();
 	diccionario_de_procesos_x_semaforo = dictionary_create();
+	diccionario_bloqueados_por_semafaro = dictionary_create();
 
 	/*INICIALIZO COLAS*/
 
@@ -76,11 +110,11 @@ void suse_init(){
 	sem_init(semaforo_diccionario_procesos_x_semaforo,0,1);
 	sem_init(semaforo_lista_procesos_finalizados,0,1);
 	sem_init(mutex_log_servidor,0,1);
+	sem_init(semaforo_estado_blocked,0,1);
+	sem_init(semaforo_diccionario_por_semaforo,0,1);
 
 	/*Contador*/
-
 	sem_init(grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
-	sem_init(procesos_en_Ready,0,0);
 	sem_init(procesos_en_New,0,0);
 	sem_init(semaforo_lista_procesos_finalizados,0,0);
 
@@ -174,14 +208,14 @@ void* suse_join(int TID_que_quiero_ejecutar){
 	char* clave=string_new();
 	string_append(&clave,string_itoa(PID));
 	string_append(&clave,string_itoa(TID_que_quiero_ejecutar));
-	//OPTIMIZABLE, OJO CON LOS LEAKS DE LOS STRINGS
+	//OPTIMIZABLE, OJO CON LOS LEAKS DE LOS STRINGS Todo
 
 	bloquear_hilo(clave,hilo_a_bloquear);
 	queue_push(cola_exec,hilo_a_ejecutar);
 
 	free(clave);
 
-	return NULL; //TODO
+	return 1;
 }
 
 
@@ -218,7 +252,7 @@ void hilolay_init(){
 }
 
 int suse_create(int tid, int socket){
-	//TODO
+
 	hilo_t* hilo = malloc(sizeof(hilo_t));
 	hilo->PID = socket;
 	hilo->hilo_informacion=malloc(sizeof(hilolay_t));
@@ -246,7 +280,7 @@ int suse_create(int tid, int socket){
 		dictionary_put(diccionario_procesos_x_queues,socket, vector_queues);
 
 		hilo_t* un_hilo;
-		pthread_create(un_hilo, NULL, readyToExec(socket), NULL);
+		pthread_create(un_hilo, NULL, estadoReady(socket), NULL);
 		pthread_detach(un_hilo);
 
 	}

@@ -61,8 +61,8 @@ void suse_wait(char* semaforo){
 	void* paquete = serializar_suse_wait(semaforo);
 	enviar_paquete(paquete);
 }
-void suse_create(hilolay_t *thread, const hilolay_attr_t* attr,void *(*start_routine)(void *), void *arg){
-	void* paquete = serializar_suse_create(thread, attr,(*start_routine),arg);
+void suse_create(int tid){
+	void* paquete = serializar_suse_create(tid);
 	enviar_paquete(paquete);
 }
 

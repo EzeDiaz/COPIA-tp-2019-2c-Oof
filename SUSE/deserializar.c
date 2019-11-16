@@ -1,5 +1,6 @@
 
 #include "deserializar.h"
+#include <stdbool.h>
 
 
 int determinar_protocolo(void* buffer){
@@ -21,29 +22,24 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	switch(codigo_de_operacion){
 
-	case HILOLAY_INIT:
-		log_info(logger_de_deserializacion, "Es el codigo de 'hilolay init', comenzando la deserializacion de parametros\n");
-		hilolay_init();
-		enviar_resultado((void*)1,cliente_socket);//TODO, REVISAR ISSUE #25
-		break;
-
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
-		paquete_descifrado=descifrar_suse_create(buffer);
-		//resultado=suse_create(paquete_descifrado);
-		//enviar_resultado(resultado,cliente_socket);// TODO, REVISAR ISSUE #26
+		int tid=descifrar_suse_create(buffer);
+		resultado=armar_paquete(suse_create(tid,cliente_socket),BOOLEAN);
+		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
-		resultado=suse_scheduler_next(cliente_socket);
+		resultado=suse_scheduler_next(cliente_socket);//TODO
 		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_WAIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_wait', comenzando la deserializacion de parametros\n");
 		char* nombre_semaforo_wait=descifrar_suse_wait(buffer);
-		resultado=serializar_bool(suse_wait(nombre_semaforo_wait,cliente_socket));
+		bool paquete=suse_wait(nombre_semaforo_wait ,cliente_socket);
+		resultado=armar_paquete((void*)paquete,BOOLEAN );
 		enviar_resultado(resultado,cliente_socket);
 		free(nombre_semaforo_wait);
 		break;
@@ -51,7 +47,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case SUSE_SIGNAL:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
 		char* nombre_semaforo_signal=descifrar_suse_signal(buffer);
-		resultado=suse_signal(nombre_semaforo_signal,cliente_socket);
+		resultado=armar_paquete(suse_signal(nombre_semaforo_signal,cliente_socket),BOOLEAN);
 		enviar_resultado(resultado,cliente_socket);
 		free(nombre_semaforo_signal);
 		break;
@@ -59,14 +55,14 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case SUSE_JOIN:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_join', comenzando la deserializacion de parametros\n");
 		TID=descifrar_suse_join(buffer);
-		resultado=suse_join(TID);
+		resultado=armar_paquete(suse_join(TID),BOOLEAN);
 		enviar_resultado(resultado,cliente_socket);
 		break;
 
 	case SUSE_CLOSE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_close', comenzando la deserializacion de parametros\n");
 		TID = descifrar_suse_close(buffer);
-		resultado = suse_close(TID);
+		resultado = armar_paquete(suse_close(TID),BOOLEAN);
 		enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -93,13 +89,11 @@ void* serializar_bool(bool dato){
 }
 
 void* descifrar_hilolay_init(void*param){
-	return NULL;
-}/*
-void* hilolay_init(void*param){
-	return NULL;
-}*/
-
+	return NULL;//TODO
+}
 void* descifrar_suse_create(void*param){
+	//todo
+
 	return NULL;
 }
 // El suse_create() esta en colas.c
@@ -143,3 +137,37 @@ int descifrar_suse_close(void* buffer){
 	return TID;
 }
 
+void* armar_paquete(void* dato, int tipo_de_dato){
+
+	void* paquete;
+	int size;
+
+	switch(tipo_de_dato){
+	case BOOLEAN:
+		size=(sizeof(bool));
+		paquete=malloc(sizeof(bool)+sizeof(int));
+		memcpy(paquete,&size,sizeof(int));
+		memcpy(paquete+ sizeof(bool),dato,sizeof(bool));
+		break;
+	case INT:
+		size=(sizeof(int));
+		paquete=malloc(sizeof(int)+sizeof(int));
+		memcpy(paquete,&size,sizeof(int));
+		memcpy(paquete+ sizeof(int),dato,sizeof(int));
+		break;
+	case CHAR:
+		size=(sizeof(char));
+		paquete=malloc(sizeof(char)+sizeof(int));
+		memcpy(paquete,&size,sizeof(int));
+		memcpy(paquete+ sizeof(char),dato,sizeof(char));
+		break;
+	case LONG:
+		size=(sizeof(long));
+		paquete=malloc(sizeof(long)+sizeof(int));
+		memcpy(paquete,&size,sizeof(int));
+		memcpy(paquete+ sizeof(long),dato,sizeof(long));
+		break;
+	}
+
+	return paquete;
+}

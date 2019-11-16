@@ -38,7 +38,7 @@ void* serializar_suse_join(int);
 void* serializar_suse_signal(char*);
 void* serializar_suse_scheduler_next();
 void* serializar_suse_wait(char*);
-void* serializar_suse_create(hilolay_t *, const hilolay_attr_t *,void *(*start_routine)(void *), void *);
+void* serializar_suse_create(int);
 
 
 

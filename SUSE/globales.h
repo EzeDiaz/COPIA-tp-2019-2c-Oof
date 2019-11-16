@@ -17,8 +17,6 @@
 #include <semaphore.h>
 #include <stdio.h>
 
-//PARA COSAS QUE SON COMUNES EN TO DO EL PROYECTO
-//INICIALIZAR EN EL MAIN\\\\\\\\\\\\\\\\\\\\\\\ TODO
 
 //SEMAFOROS
 
@@ -34,13 +32,15 @@ sem_t* semaforo_diccionario_por_semaforo;
 
 //Contador
 sem_t* grado_de_multiprogramacion_contador;
-sem_t* procesos_en_Ready;
 sem_t* procesos_en_New;
 sem_t* semaforo_lista_procesos_finalizados;
 
 //LOGS
 t_log* log_colas;
 t_log* logger;
+t_log* log_metricas_sistema;
+t_log* log_metricas_programa;
+t_log* log_metricas_hilo;
 
 //DICCIONARIOS
 t_dictionary* diccionario_de_procesos;

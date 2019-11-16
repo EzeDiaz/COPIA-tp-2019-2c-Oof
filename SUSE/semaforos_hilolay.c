@@ -34,7 +34,7 @@ bool wait(char*nombre_semaforo,int PID){
 		bloquear_hilo(nombre_semaforo,hilo->PID);
 	}
 
-	return (bool)value;
+	return dictionary_has_key(diccionario_de_valor_por_semaforo,nombre_semaforo);
 }
 
 
@@ -59,7 +59,6 @@ void desbloquear_hilo(char* nombre_semaforo, int PID){
 	sem_post(semaforo_estado_blocked);
 	t_queue* cola_ready = obtener_cola_ready_de(PID);
 	queue_push(cola_ready,list_take(lista_bloqueados,1));
-	// TODO revisar si el get y el take me genera efecto de lado
 
 }
 
