@@ -11,25 +11,21 @@
 #include <commons/collections/list.h>
 #include <commons/log.h>
 #include <semaphore.h>
+#include <stdint.h>
 
-//variables globales
-int PUERTO_ESCUCHA;
-char* IP;
-char* PUNTO_DE_MONTAJE;
-t_list* tabla_de_nodos;
-int BLOCK_SIZE;
-int CANT_MAX_BLOQUES;
-char* NOMBRE_DEL_DISCO;
-
-//semaforos
-sem_t*mutex_tabla_de_nodos;
 
 
 //TADS
 typedef struct{
 	void* bloque;
 
+}Bloque_datos;
+
+typedef struct{
+	Bloque_datos bloques[1024];
+
 }ptrGBloque;
+
 
 typedef struct{
 	char* identificador;
@@ -43,7 +39,7 @@ typedef struct{
 typedef struct{
 
 	char*nombre_de_archivo;
-	char estado;
+	uint8_t estado;
 	ptrGBloque* puntero_padre;
 	int tamanio_del_archivo;
 	long fecha_de_creacion;
@@ -67,7 +63,28 @@ typedef struct{
 
 }estructura_file_system;
 
+enum {
+
+	BORRADO=0,
+	OCUPADO=1,
+	DIRECTORIO=2
+
+}estado_nodo;
+
 //Semaforos
 sem_t* mutex_log_servidor;
+sem_t*mutex_tabla_de_nodos;
+
+
+//variables globales
+int PUERTO_ESCUCHA;
+char* IP;
+char* PUNTO_DE_MONTAJE;
+nodo_t* tabla_de_nodos[1024];
+int BLOCK_SIZE;
+int CANT_MAX_BLOQUES;
+char* NOMBRE_DEL_DISCO;
+
+
 
 #endif /* GLOBALES_H_ */
