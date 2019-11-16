@@ -34,7 +34,8 @@ enum codigo_de_operacion{
 	LISTAR_DIRECTORIO_Y_ARCHIVOS=6,
 	ELIMINAR_DIRECTORIO=7,
 	ABRIR_DIRECTORIO=8,
-	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=9
+	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=9,
+	GET_ATTRIBUTES=10
 };
 
 
@@ -48,19 +49,22 @@ int serializar_fs_read(int , void *, size_t );
 int serializar_fs_open(const char *,int, mode_t );
 int serializar_fs_write(int , const void *, size_t );
 int serializar_fs_opendir(const char* path);
-int serializar_fs_create(const char *, struct fuse_file_info *);
+int serializar_fs_create(const char *, mode_t  , struct fuse_file_info * );
+int serializar_fs_getattr(const char *, struct stat *);
+
 
 //envios a SAC_SERVER
-void* serializar_paquete_para_leer_directorio(const char*, void*, fuse_fill_dir_t, off_t, struct fuse_file_info*);
+void* serializar_paquete_para_leer_directorio(const char*, void*);
 void* serializar_paquete_para_crear_directorio(const char* ,mode_t );
 void* serializar_paquete_para_eliminar_directorio(char* );
+void* serializar_paquete_para_obtener_atributos(const char*);
 void* serializar_paquete_para_leer_archivo(int , void *, size_t );
 void* serializar_paquete_para_escribir_archivo(int , const void *, size_t );
 void* serializar_paquete_para_abrir_archivo(const char *,int, mode_t );
 void* enviar_paquete(void*);
 void* recibir_resultado(int* );
 void* serializar_paquete_para_abrir_directorio(const char*);
-void* serializar_paquete_para_crear_archivo(const char *path);
+void* serializar_paquete_para_crear_archivo(const char *path,mode_t);
 
 
 
