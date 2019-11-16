@@ -625,7 +625,7 @@ void realizarRequest(void *buffer, int cliente){
 		//MUSE YO TE INVOCO
 		addressSpace* address_space_client = GET_ADDRESS_SPACE(cliente);
 		segment* segment_requested = GET_SEGMENT_WITH_ADDRESS(addr, address_space_client);
-		int writen_bytes = 0;
+		int writen_pages = 0;
 
 		if(segment_requested != NULL) {
 			if(segment_requested->isHeap) {
@@ -636,11 +636,26 @@ void realizarRequest(void *buffer, int cliente){
 					//escribo tutti lo que puedo y luego rompo? No escribo nada y rompo?
 					//escribo lo que pueda y no chillo?
 				} else {
-					//Do your task buddy...
+					//Do your job buddy...
+					int pages_to_write;
+					if(len % page_size > 0) {
+						pages_to_write = (len / page_size) + 1;
+					} else {
+						pages_to_write = (len / page_size);
+					}
+					//Las paginas que no estan presentes, las salteo
+					//A las que copio al archivo, les pongo el bit de modificado en 0
+					//Bit de uso en 1?
 					mappedFile* mapped_file = GET_MAPPED_FILE(segment_requested->path);
 					int offset = addr - segment_requested->base;
-					while(writen_bytes < len) {
-						GET_FRAME_FROM_ADDRESS(addr, segment_requested);
+					while(writen_pages < pages_to_write) {
+						int bytes_traveled = offset;
+						int current_frame = GET_FRAME_FROM_ADDRESS(addr, segment_requested);
+						void* pointer = GET_FRAME_POINTER(current_frame);
+						while(1) {
+							//Nos agarro una embooolia (Issue #31)
+						}
+						writen_pages++;
 					}
 				}
 			}
