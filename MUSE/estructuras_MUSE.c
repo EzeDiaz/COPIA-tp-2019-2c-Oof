@@ -716,7 +716,7 @@ void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 
 
 
-char* GET_N_BYTES_DATA_FROM_MUSE(adressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
+char* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
 	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(src, address_space);
 	t_list* page_frame_table = a_segment->pageFrameTable;
 	int page_move_counter = 0;
@@ -727,7 +727,7 @@ char* GET_N_BYTES_DATA_FROM_MUSE(adressSpace* address_space, uint32_t src, size_
 
 	if(a_segment != NULL){
 		if(a_segment->isHeap){
-			int current_frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
+			int current_frame = GET_FRAME_FROM_ADDRESS(src, a_segment);
 			void* ptr_to_frame = GET_FRAME_POINTER(frame);
 			void* ptr_to_data = ptr_to_frame + src; // va a donde empieza la data a copiar creo (se saltea la metadata)
 
