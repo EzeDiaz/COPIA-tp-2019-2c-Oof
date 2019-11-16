@@ -448,6 +448,8 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 
+		//TODO: Armar paquete
+
 		/* Armamos el paquetito de respuesta
 		void* buffer;
 		int peso=0;
