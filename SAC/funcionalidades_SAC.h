@@ -31,4 +31,11 @@ bool eliminar_directorio();
 //funciones auxiliares
 nodo_t* encontrar_en_tabla_de_nodos(char* );
 void* paquetizar_metadata_de_directorio(t_list*);
+nodo_t* buscar_nodo_libre();
+ptrGBloque* obtener_puntero_padre(char*);
+char* obtener_nombre_de_archivo(char* );
+void leer_cada_archivo_y_borrar(char*);
+void liberar_bloque(char*);
+void liberar_eliminar_archivo(char*);
+
 #endif /* FUNCIONALIDADES_SAC_H_ */

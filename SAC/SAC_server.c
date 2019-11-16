@@ -93,10 +93,15 @@ void start_up(){
 	string_append(&comando,string_itoa(CANT_MAX_BLOQUES));
 	int retorno = system(comando);
 	//FILE* fd = popen(comando,"w");
+	free(comando);
 	if(retorno<0){
 		printf("No podemos levantar el FileSystem\n");
 		exit(1);
 	}
+	system(strcat("./sac-format",NOMBRE_DEL_DISCO));
+	system(strcat("./sac-dump ",NOMBRE_DEL_DISCO));
+
+
 
 }
 

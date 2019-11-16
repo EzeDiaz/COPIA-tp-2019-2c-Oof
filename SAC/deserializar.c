@@ -81,24 +81,6 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
-	case ABRIR_ARCHIVO:
-
-		log_info(logger_de_deserializacion, "Es el codigo de 'Abrir Archivo', comenzando la deserializacion de parametros\n");
-		paquete_decifrado=decifrar_abrir_archivos(buffer);//estoy en duda con esta funcion TODO
-		resultado=listar_metadata(paquete_decifrado);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
-
-		break;
-
-	case ABRIR_DIRECTORIO:
-
-		log_info(logger_de_deserializacion, "Es el codigo de 'Abrir Directorio', comenzando la deserializacion de parametros\n");
-		paquete_decifrado=decifrar_abrir_directorios(buffer);//estoy en duda con esta funcion TODO
-		resultado=listar_metadata(paquete_decifrado);
-		serializar_y_enviar_resultado(resultado,cliente_socket);
-
-		break;
-
 	default:
 		send(cliente_socket, "Codigo Invalido", 16, 0);
 		log_info(logger_de_deserializacion, "Nos llego un codigo invalido\n");
