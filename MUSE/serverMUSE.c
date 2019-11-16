@@ -621,6 +621,30 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		addressSpace* address_space_client = GET_ADDRESS_SPACE(cliente);
+		segment* segment_requested = GET_SEGMENT_WITH_ADDRESS(addr, address_space_client);
+		int writen_bytes = 0;
+
+		if(segment_requested != NULL) {
+			if(segment_requested->isHeap) {
+				//ERROR: no es un segmento de map
+			} else {
+				if(addr + len > segment_requested->base + segment_requested->size) {
+					//Quiere escribir mas bytes del tamanio del archivo/segmento
+					//escribo tutti lo que puedo y luego rompo? No escribo nada y rompo?
+					//escribo lo que pueda y no chillo?
+				} else {
+					//Do your task buddy...
+					mappedFile* mapped_file = GET_MAPPED_FILE(segment_requested->path);
+					int offset = addr - segment_requested->base;
+					while(writen_bytes < len) {
+						GET_FRAME_FROM_ADDRESS(addr, segment_requested);
+					}
+				}
+			}
+		} else {
+			//seg_fault porque la direccion pedida no es valida
+		}
 
 		/* Armamos el paquetito de respuesta
 		void* buffer;
