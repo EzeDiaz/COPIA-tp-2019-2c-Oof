@@ -24,20 +24,9 @@
 
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
 
-
-void funcion_test(char*);
 int main(){
 
-	//_suse_init();
-
-	hilolay_t* hiloprueba;
-
-	while(1){
-		printf("hacemos 1 hilo\n");
-		//suse_create(hiloprueba,NULL,funcion_test,NULL);
-		printf("%d \n",hiloprueba->tid);
-	}
-
+	suse_init();
 
 	/*DESARROLLO*/
 
@@ -45,11 +34,15 @@ int main(){
 	return 0;
 }
 
-void funcion_test(char* cosa){
-	printf("saraza");
-}
 
-void _suse_init(){
+void suse_init(){
+
+	/*INICIALIZO HILOS*/
+
+	hilo_t* hilo_new_to_ready;
+	pthread_create(hilo_new_to_ready,NULL,estadoNew(),NULL);
+	pthread_detach(hilo_new_to_ready);
+
 
 	/*INICIALIZO RECURSOS*/
 
@@ -154,17 +147,17 @@ hilo_t* suse_scheduler_next(int PID){
 	t_queue* cola_Ready = obtener_cola_ready_de(PID);
 
 	void sjf(hilo_t* un_hilo){
-			un_hilo->prioridad = calcular_sjf(un_hilo);
-		}
+		un_hilo->prioridad = calcular_sjf(un_hilo);
+	}
 
-		list_iterate(cola_Ready->elements,sjf);
+	list_iterate(cola_Ready->elements,sjf);
 
-		bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
-			return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
-		}
-		list_sort(cola_Ready->elements,elemento_mas_grande);
+	bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
+		return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
+	}
+	list_sort(cola_Ready->elements,elemento_mas_grande);
 
-		return list_remove(cola_Ready->elements,0);
+	return list_remove(cola_Ready->elements,0);
 
 
 }
@@ -218,47 +211,50 @@ void* suse_close(int TID){
 
 
 void hilolay_init(){
-	_suse_init();
+
+	suse_init();
+
+
 }
 
-int suse_create(hilolay_t *thread, const hilolay_attr_t *attr, void *(*start_routine)(void *), void *arg, int socket){
+int suse_create(int tid, int socket){
 	//TODO
+	hilo_t* hilo = malloc(sizeof(hilo_t));
+	hilo->PID = socket;
+	hilo->hilo_informacion=malloc(sizeof(hilolay_t));
+	hilo->hilo_informacion->tid = tid;
+	hilo->estado_del_hilo = NEW;
+	hilo->prioridad = 0;
+	hilo->metricas = malloc(sizeof(metricas_t));
+	proceso_t* un_proceso;
 
-	thread=(hilolay_t*)malloc(sizeof(hilolay_t*));
-	pthread_t* hilo2;
-	pthread_create(&hilo2, NULL, (void*)funcion_test, NULL);
-	//memcpy(&(thread->tid),&hilo2,sizeof(pthread_t*));
+	if(dictionary_has_key(diccionario_de_procesos, socket)){
 
-	hilo_t* nuevo_hilo= (hilo_t*)malloc(sizeof(hilo_t*)+sizeof(hilolay_t*));
+		un_proceso = dictionary_get(diccionario_de_procesos, socket);
 
 
-	proceso_t* proceso_correspondiente = obtener_proceso(socket);
-
-	if(proceso_correspondiente->hilos_del_programa->elements_count<MAX_MULTIPROG)
-	{
-		metricas_t* metricas=(metricas_t*)malloc(sizeof(metricas_t));
-		metricas->tiempo_de_ejecucion=0;
-		metricas->tiempo_de_espera=0;
-		metricas->tiempo_de_uso_del_cpu=0;
-		metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos=0;
-		nuevo_hilo->metricas=metricas;
-
-		nuevo_hilo->PID=getpid();
-		nuevo_hilo->estado_del_hilo=NEW;
-		nuevo_hilo->hilo_informacion=thread;
-		nuevo_hilo->prioridad;
-		list_add(proceso_correspondiente->hilos_del_programa,nuevo_hilo);
-		thread->tid= list_size(proceso_correspondiente->hilos_del_programa);
-		pthread_detach(hilo2);
-		return thread;
 	}else{
 
-		log_info(logger,"El proceso esta al mango \n");
+		proceso_t* un_proceso;
+		un_proceso =malloc(sizeof(proceso_t));
+		un_proceso->hilos_del_programa=list_create();
+
+		dictionary_put(diccionario_de_procesos, socket,un_proceso);
+		t_queue* vector_queues[2];
+		vector_queues[COLA_READY]=queue_create();
+		vector_queues[COLA_EXEC]=queue_create();
+		dictionary_put(diccionario_procesos_x_queues,socket, vector_queues);
+
+		hilo_t* un_hilo;
+		pthread_create(un_hilo, NULL, readyToExec(socket), NULL);
+		pthread_detach(un_hilo);
+
 	}
 
 
-	return 0;
+	list_add(un_proceso->hilos_del_programa,hilo);
 
+	encolar_en_new(hilo);
 
 }
 

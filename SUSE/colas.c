@@ -26,9 +26,7 @@
 
 
 //NO SE SUPONE QUE VOY A TENER VARIOS DE ESTOS ESTADOS READY?
-void newToReady()
-{
-
+void newToReady(){
 
 	sem_wait(grado_de_multiprogramacion_contador);
 	hilo_t*  hilo = queue_pop(cola_new);
@@ -68,6 +66,10 @@ void * estadoNew()
 	return NULL;
 }
 
+void encolar_en_new(hilo_t* hilo){
+
+	queue_push(cola_new,hilo);
+}
 
 /// ******************************************************************************************************** ///
 /// ************************************* PASAR THREADS DE READY A EXEC ************************************ ///
@@ -80,33 +82,35 @@ void readyToExec(int PID)
 
 	t_queue* cola_Exec = obtener_cola_exec_de(PID);
 
-	if(esta_vacia(cola_Exec)){
-		char* tiempo_inicio= temporal_get_string_time();
-		char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-		int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
+	while(1){
+		if(esta_vacia(cola_Exec)){
+			char* tiempo_inicio= temporal_get_string_time();
+			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+			int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
 
-		hilo_t* hilo=suse_scheduler_next(PID);
+			hilo_t* hilo=suse_scheduler_next(PID);
 
-		sem_wait(&semaforo_diccionario_procesos_x_semaforo);
-		sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
-		sem_post(&semaforo_diccionario_procesos_x_semaforo);
+			sem_wait(&semaforo_diccionario_procesos_x_semaforo);
+			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
+			sem_post(&semaforo_diccionario_procesos_x_semaforo);
 
-		sem_wait(&semaforo_exec_x_proceso);
-		queue_push(cola_Exec,hilo);
+			sem_wait(&semaforo_exec_x_proceso);
+			queue_push(cola_Exec,hilo);
 
-		hilo->estado_del_hilo = EXECUTE;
+			hilo->estado_del_hilo = EXECUTE;
 
-		char* tiempo_fin= temporal_get_string_time();
-		char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-		int milisegundos_final= string_itoa(tiempo_fin_separado_por_dos_puntos[3]);
+			char* tiempo_fin= temporal_get_string_time();
+			char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+			int milisegundos_final= string_itoa(tiempo_fin_separado_por_dos_puntos[3]);
 
-		hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
+			hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
 
-		sem_post(&semaforo_exec_x_proceso);
+			sem_post(&semaforo_exec_x_proceso);
 
-		sem_wait(&semaforo_log_colas);
-		log_info(log_colas,"Se paso el proceso a Exec \n");
-		sem_post(&semaforo_log_colas);
+			sem_wait(&semaforo_log_colas);
+			log_info(log_colas,"Se paso el proceso a Exec \n");
+			sem_post(&semaforo_log_colas);
+		}
 	}
 
 }
