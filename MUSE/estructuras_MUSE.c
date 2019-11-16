@@ -733,6 +733,7 @@ void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 }
 
 
+//TODO: La parte del swap
 
 char* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
 	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(src, address_space);
@@ -781,6 +782,15 @@ char* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 
 		return data;
 	}
+
+void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar){
+	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(dst, address_space);
+	t_list* page_frame_table = a_segment->pageFrameTable;
+
+
+
+}
+
 
 
 
