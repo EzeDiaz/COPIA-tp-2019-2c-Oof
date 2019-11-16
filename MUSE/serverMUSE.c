@@ -410,7 +410,7 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
 
 		addressSpace* address_space = GET_ADDRESS_SPACE(cliente);
-		FREE_USED_FRAME(dir , address_space); // de donde saco el address_space
+		FREE_USED_FRAME(dir , address_space);
 
 		//MUSE YO TE INVOCO
 
@@ -454,6 +454,8 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
+		char* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
 
 		//TODO: Armar paquete
 
