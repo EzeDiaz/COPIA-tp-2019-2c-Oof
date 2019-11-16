@@ -109,14 +109,21 @@ void* recibirBuffer(int* alocador, int cliente){
 
 	void* buffer;
 
-	if(recv(cliente, alocador, 4, MSG_WAITALL)!=0){
+	int recv_result = recv(cliente, alocador, 4, MSG_WAITALL);
+
+	if(recv_result > 0){
 		buffer = malloc(*alocador);
 		recv(cliente, buffer,*alocador, MSG_WAITALL);
 		return buffer;
-	}else{
+	} else {
 		*alocador=0;
 		return buffer;
 	}
+
+	//Si da menor a 0 es porque el cliente se desconecto mal (seg_fault o algo asi).
+	//Entonces, lo saco de prepo del sistema. Deberia chequear si, en una de esas, no salio antes?
+	if(recv_result < 0)
+		CLIENT_LEFT_THE_SYSTEM(cliente);
 }
 
 void realizarRequest(void *buffer, int cliente){
