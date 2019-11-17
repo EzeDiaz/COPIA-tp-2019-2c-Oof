@@ -6,6 +6,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include <commons/config.h>
 #include <commons/log.h>
@@ -13,12 +14,14 @@
 #include <commons/collections/dictionary.h>
 #include <string.h>
 #include <semaphore.h>
+#include <pthread.h>
 #include "globales.h"
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdint.h>
+#include "estructuras_MUSE.h"
 
 //ESTRUCTURAS DE DATOS
 // --> Estan en el .h
@@ -58,7 +61,7 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 	void liberar_frames(segment* a_segment) {
 		void iterar_paginas(pageFrame* a_page) {
 			if(a_page->presenceBit) {
-				FREE_MEMORY_FRAME_BITMAP()(a_page->frame_number);
+				FREE_MEMORY_FRAME_BITMAP(a_page->frame_number);
 			} else if (a_segment->isHeap) {
 				FREE_SWAP_FRAME_BITMAP(a_page->frame_number);
 			} else {
@@ -71,7 +74,7 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 					munmap(mapped_file->pointer, mapped_file->length);
 					//Borrar entrada de la lista mapped_files
 					int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
-					list_remove_and_destroy_element(mapped_files, DESTROY_MAPPED_FILE);
+					list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
 				}
 			}
 		}
@@ -106,7 +109,8 @@ void FREE_SWAP_FRAME_BITMAP(int frame_number) {
 void SWAP_INIT() {
 	int fd_swap = open("SWAP_FILE", O_RDWR | O_CREAT, S_IRUSR | S_IRGRP | S_IROTH); //https://stackoverflow.com/questions/2395465/create-a-file-in-linux-using-c
 	swap_file = (char*) malloc(swap_size);
-	swap_file = mmap(NULL, swap_size, PROT_READ, PROT_WRITE, MAP_SHARED, fd_swap, 0);
+	//swap_file = mmap(NULL, swap_size, PROT_READ, PROT_WRITE, MAP_SHARED, fd_swap, 0); "too many arguments"
+	swap_file = mmap(NULL, swap_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_swap, 0);
 }
 
 int GET_FREE_SWAP_FRAME() {
@@ -217,7 +221,7 @@ int CLOCK() {
 	int swap_position = GET_FREE_SWAP_FRAME();
 	//Juega a algo el bit de modificado a la hora de escribir?
 	for(int i = 0; i < page_size; i++) { //Escribo en swap, byte a byte
-		swap_file[swap_position + i] = *(frame_pointer + i);
+		swap_file[swap_position + i] = (frame_pointer + i);
 	}
 	//Seteo el page frame con presence=0 y la direccion de swap donde esta la info
 	page_to_replace->presenceBit=0;
@@ -352,7 +356,7 @@ void* GET_LAST_METADATA(segment* a_segment) {
 	return NULL; //No deberia caer nunca aca, pero lo pongo asi Eclipse no jode
 }
 
-bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace an_address_space, uint32_t intended_size) {
+bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace* an_address_space, uint32_t intended_size) {
 	uint32_t real_size_needed;
 	t_list* segment_table = an_address_space->segment_table;
 	void* last_metadata = GET_LAST_METADATA(a_segment);
@@ -717,7 +721,7 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 
 
 void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
-	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(address, address_space);
+	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(address, address_space);
 	if(a_segment != NULL && a_segment->isHeap){
 		int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
 		if(frame != NULL){
@@ -736,7 +740,7 @@ void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 //TODO: La parte del swap
 
 char* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
-	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(src, address_space);
+	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(src, address_space);
 	t_list* page_frame_table = a_segment->pageFrameTable;
 	int page_move_counter = 0;
 	int page_number = GET_PAGE_NUMBER_FROM_ADDRESS(src, a_segment);
@@ -785,7 +789,7 @@ char* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 
 // no estoy seguro de como me llega la data por parametro lo dejo como void* data
 void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar, void* data){
-	segment* a_segment = GET_SEGMENT_WITH_ADDRESS(dst, address_space);
+	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(dst, address_space);
 	t_list* page_frame_table = a_segment->pageFrameTable;
 	int page_move_counter = 0;
 	int page_number = GET_PAGE_NUMBER_FROM_ADDRESS(dst, a_segment);

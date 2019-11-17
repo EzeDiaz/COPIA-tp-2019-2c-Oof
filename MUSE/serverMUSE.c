@@ -10,6 +10,7 @@
 #include <libMUSE.h>
 #include "globales.h"
 #include "estructuras_MUSE.h"
+#include "serverMUSE.h"
 
 //Commons
 #include <commons/string.h>
@@ -32,7 +33,30 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <pthread.h>
 
+void atenderCliente(int cliente){
+
+	void* buffer;
+	int alocador;
+
+	sem_wait(&semaforoLogger);
+	log_info(logger, "Recibimos conexion \n");
+	sem_post(&semaforoLogger);
+
+	buffer=recibirBuffer(&alocador,cliente);
+
+	while(0<alocador){
+		realizarRequest(buffer, cliente);
+		free(buffer);
+		buffer=recibirBuffer(&alocador,cliente);
+	}
+
+	sem_wait(&semaforoLogger);
+	log_info(logger, "Se desconecto el cliente\n");
+	sem_post(&semaforoLogger);
+	close(cliente);
+}
 
 void iniciarServidor(){
 
@@ -82,29 +106,6 @@ void iniciarServidor(){
 	}
 }
 
-void atenderCliente(int cliente){
-
-	void* buffer;
-	int alocador;
-
-	sem_wait(&semaforoLogger);
-	log_info(logger, "Recibimos conexion \n");
-	sem_post(&semaforoLogger);
-
-	buffer=recibirBuffer(&alocador,cliente);
-
-	while(0<alocador){
-		realizarRequest(buffer, cliente);
-		free(buffer);
-		buffer=recibirBuffer(&alocador,cliente);
-	}
-
-	sem_wait(&semaforoLogger);
-	log_info(logger, "Se desconecto el cliente\n");
-	sem_post(&semaforoLogger);
-	close(cliente);
-}
-
 void* recibirBuffer(int* alocador, int cliente){
 
 	void* buffer;
@@ -128,15 +129,23 @@ void* recibirBuffer(int* alocador, int cliente){
 
 void realizarRequest(void *buffer, int cliente){
 
+	bool falseStatus = 0;
+	bool trueStatus = 1;
+
 	int cod_op;
 	memcpy(&cod_op, buffer, sizeof(int));
 
 	switch(cod_op){
 
+	//Variables que uso en todos los cases
+	int offset= sizeof(int);
+	int longitudDelSiguiente=0;
+	void* buffer;
+	size_t n;
+
 	//init
 	case 100:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		char* IP_ID;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
@@ -149,7 +158,6 @@ void realizarRequest(void *buffer, int cliente){
 
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
 
-		void* buffer;
 		buffer=(void*)malloc(sizeof(int));
 		memcpy(buffer,&resultado,sizeof(int));
 
@@ -166,8 +174,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//alloc
 	case 102:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		uint32_t bytes_a_reservar;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
@@ -196,11 +203,11 @@ void realizarRequest(void *buffer, int cliente){
 							memcpy(&bytes_que_habia, pointer - 5, sizeof(uint32_t));
 							//Sobreescribo la metadata
 							memcpy(pointer - 5, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(pointer - 1, &false, sizeof(bool));
+							memcpy(pointer - 1, &falseStatus, sizeof(bool));
 							//Escribo la nueva metadata
 							bytes_sobrantes = bytes_que_habia - bytes_a_reservar - 5;
 							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
-							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &true, sizeof(uint32_t));
+							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &trueStatus, sizeof(bool));
 							sem_post(&mp_semaphore);
 							se_pudo_reservar_flag = 1;
 							segment_base = un_segmento->base;
@@ -230,14 +237,14 @@ void realizarRequest(void *buffer, int cliente){
 							memcpy(&bytes_que_habia, last_metadata, sizeof(uint32_t));
 							//Sobreescribo la metadata
 							memcpy(last_metadata, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(last_metadata + sizeof(uint32_t), &false, sizeof(bool));
+							memcpy(last_metadata + sizeof(uint32_t), &falseStatus, sizeof(bool));
 
 							bytes_que_quedan = bytes_a_reservar - internal_fragmentation;
 
 							pageFrame* last_page;
 
 							for(int i=0; i < frames_to_require; i++) {
-								int frame_number = ASSIGN_FIRST_FREE_FRAME();
+								int frame_number = CLOCK();
 								pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 								new_page->modifiedBit = 1; //Not sure
 								new_page->presenceBit = 1;
@@ -251,7 +258,7 @@ void realizarRequest(void *buffer, int cliente){
 							bytes_sobrantes = page_size - bytes_que_quedan - 5;
 							void* pointer = GET_FRAME_POINTER(last_page->frame_number);
 							memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-							memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &true, sizeof(uint32_t));
+							memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
 							sem_post(&mp_semaphore);
 
 							se_pudo_reservar_flag = 1;
@@ -292,12 +299,12 @@ void realizarRequest(void *buffer, int cliente){
 					uint32_t bytes_sobrantes = 0;
 
 					for(int i=0; i < frames_to_require; i++) {
-						int frame_number = ASSIGN_FIRST_FREE_FRAME();
+						int frame_number = CLOCK();
 						if(i == 0) {
 							//Escribo la primer metadata
 							pointer = GET_FRAME_POINTER(frame_number);
 							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(pointer + sizeof(uint32_t), &false, sizeof(bool));
+							memcpy(pointer + sizeof(uint32_t), &falseStatus, sizeof(bool));
 							pointer = pointer + 5;
 						}
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
@@ -313,7 +320,7 @@ void realizarRequest(void *buffer, int cliente){
 					bytes_sobrantes = page_size - bytes_que_quedan - 5;
 					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
 					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &true, sizeof(uint32_t));
+					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
 					sem_post(&mp_semaphore);
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
@@ -340,12 +347,12 @@ void realizarRequest(void *buffer, int cliente){
 					uint32_t bytes_sobrantes = 0;
 
 					for(int i=0; i < frames_to_require; i++) {
-						int frame_number = ASSIGN_FIRST_FREE_FRAME();
+						int frame_number = CLOCK();
 						if(i == 0) {
 							//Escribo la primer metadata
 							void* pointer = GET_FRAME_POINTER(frame_number);
 							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(pointer + sizeof(uint32_t), &false, sizeof(bool));
+							memcpy(pointer + sizeof(uint32_t), &falseStatus, sizeof(bool));
 							pointer = pointer + 5;
 						}
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
@@ -361,7 +368,7 @@ void realizarRequest(void *buffer, int cliente){
 					bytes_sobrantes = page_size - bytes_que_quedan - 5;
 					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
 					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &true, sizeof(uint32_t));
+					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
 					sem_post(&mp_semaphore);
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
@@ -390,7 +397,6 @@ void realizarRequest(void *buffer, int cliente){
 		}
 		virtual_direction = a_segment->base + displacement_until_page + page_offset;
 
-		void* buffer;
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &virtual_direction, sizeof(uint32_t));
 
@@ -401,8 +407,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//free
 	case 103:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		uint32_t dir;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
@@ -431,11 +436,9 @@ void realizarRequest(void *buffer, int cliente){
 
 		//get
 	case 104:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		void* dst;
 		uint32_t src;
-		size_t n;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
 		offset= offset+sizeof(int);
@@ -477,11 +480,9 @@ void realizarRequest(void *buffer, int cliente){
 
 		//cpy
 	case 105:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		uint32_t dest;
 		void* source;
-		size_t n;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
 		offset= offset+sizeof(int);
@@ -519,8 +520,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//map
 	case 106:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		char* path;
 		size_t length;
 		int flag;
@@ -559,9 +559,9 @@ void realizarRequest(void *buffer, int cliente){
 			new_map->references = 1;
 
 			//Mapeo posta posta el archivo. Deberia chequear si existe?
-			int file_desc = open(path, O_RDWR, S_IRWXU, S_IWOTH, S_IROTH); //Los ultimos dos flags son para 'others'
+			int file_desc = open(path, O_RDWR, S_IRWXU | S_IWOTH | S_IROTH); //Los ultimos dos flags son para 'others'
 			new_map->file_desc = file_desc;
-			mapped_file = mmap(NULL, length, PROT_READ, PROT_WRITE, flag, file_desc, 0);
+			mapped_file = mmap(NULL, length, PROT_READ | PROT_WRITE, flag, file_desc, 0);
 			new_map->pointer = mapped_file;
 
 			list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
@@ -596,7 +596,6 @@ void realizarRequest(void *buffer, int cliente){
 		new_segment->base = FIRST_FIT(cli_address_space->segment_table, 0, new_segment->size);
 		list_add(client_address_space->segment_table, new_segment);
 
-		void* buffer;
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &new_segment->base, sizeof(uint32_t));
 
@@ -607,8 +606,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//sync
 	case 107:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		uint32_t addr;
 		size_t len;
 
@@ -624,7 +622,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 		addressSpace* address_space_client = GET_ADDRESS_SPACE(cliente);
-		segment* segment_requested = GET_SEGMENT_WITH_ADDRESS(addr, address_space_client);
+		segment* segment_requested = GET_SEGMENT_FROM_ADDRESS(addr, address_space_client);
 		int writen_pages = 0;
 
 		if(segment_requested != NULL) {
@@ -680,37 +678,35 @@ void realizarRequest(void *buffer, int cliente){
 
 		//unmap
 	case 108:
-		int offset= sizeof(int);
-		int longitudDelSiguiente=0;
+		;
 		uint32_t direc;
 
 		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		memcpy(&direc, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
-		int resultado;
+		int res;
 
 		//MUSE YO TE INVOCO
 		addressSpace* addr_space = GET_ADDRESS_SPACE(cliente);
-		segment* a_segment = GET_SEGMENT_FROM_BASE(direc,addr_space);
+		segment* a_segm = GET_SEGMENT_FROM_BASE(direc,addr_space);
 		//Controlar que la direccion que me pasan este OK
-		mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+		mappedFile* mapped_file = GET_MAPPED_FILE(a_segm->path);
 		mapped_file->references--;
 		if(!mapped_file->references) {
 			close(mapped_file->file_desc);
 			munmap(mapped_file->pointer, mapped_file->length);
 			//Borrar entrada de la lista mapped_files
 			int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
-			list_remove_and_destroy_element(mapped_files, DESTROY_MAPPED_FILE);
+			list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
 		}
 
 		//Borro el segmento
-		int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segment->base);
-		list_remove_and_destroy_element(addr_space->segment_table, DESTROY_SEGMENT);
+		int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segm->base);
+		list_remove_and_destroy_element(addr_space->segment_table, index, DESTROY_SEGMENT);
 
-		void* buffer;
 		buffer=(void*)malloc(sizeof(uint32_t));
-		memcpy(buffer, &resultado, sizeof(uint32_t));
+		memcpy(buffer, &res, sizeof(uint32_t));
 
 		send(cliente, buffer, sizeof(buffer),0);
 

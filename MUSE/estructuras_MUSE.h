@@ -53,6 +53,7 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
+void DESTROY_SEGMENT(segment* a_segment);
 void DESTROY_ADDRESS_SPACE(addressSpace* an_address_space);
 void DESTROY_PAGE(pageFrame* a_page);
 void CLIENT_LEFT_THE_SYSTEM(int client);
@@ -71,7 +72,7 @@ segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space);
 int GET_OFFSET_FROM_POINTER(void* pointer);
 int GET_FRAME_NUMBER_FROM_POINTER(void* pointer);
 void* GET_LAST_METADATA(segment* a_segment);
-bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace an_address_space, uint32_t intended_size);
+bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace* an_address_space, uint32_t intended_size);
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_HEAP_SEGMENTS(addressSpace* address_space);
 bool THERE_ARE_EXISTING_HEAP_SEGMENTS(addressSpace* an_address_space);
@@ -92,7 +93,7 @@ void CHECK_MEMORY();
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status);
 heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer);
 void SUBSTRACT_MEMORY_LEFT(int size);
-segment* GET_SEGMENT_WITH_ADDRESS(uint32_t address, addressSpace* address_space);
+segment* GET_SEGMENT__ADDRESS(uint32_t, addressSpace*);
 int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment);
 void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment);
 void FREE_USED_FRAME(uint32_t address, addressSpace* address_space);

@@ -3,7 +3,7 @@
 
 void iniciarServidor();
 void atenderCliente(int cliente);
-void* recibirBuffer(int* alocador, int cliente);
+void* recibirBuffer(int*, int);
 void realizarRequest(void *buffer,int cliente);
 
 #endif /* SERVERMUSE_H_ */

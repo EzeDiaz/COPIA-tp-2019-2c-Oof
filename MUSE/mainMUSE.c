@@ -1,6 +1,6 @@
 //Bibliotecas propias
 #include <libMUSE.h>
-#include <serverMUSE.h>
+#include "serverMUSE.h"
 #include "globales.h"
 #include "estructuras_MUSE.h"
 
@@ -23,6 +23,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <pthread.h>
 
 int main(){
 	remove("MUSE_logger.log");
@@ -69,7 +70,7 @@ int main(){
 		free(mp_pointer);
 	 */
 
-	iniciar_servidor();
+	//iniciar_servidor();
 
 	DESTROY_SEMAPHORES();
 	return 0;

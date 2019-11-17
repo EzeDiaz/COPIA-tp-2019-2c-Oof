@@ -9,6 +9,7 @@
 #define GLOBALES_H_
 
 #include <commons/bitarray.h>
+#include "estructuras_MUSE.h"
 
 void* mp_pointer;	//puntero a la memoria principal
 t_log* logger;
