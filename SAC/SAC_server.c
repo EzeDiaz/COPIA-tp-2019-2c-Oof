@@ -4,6 +4,9 @@
  *  Created on: 6 oct. 2019
  *      Author: utnso
  */
+
+#include <fcntl.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -18,6 +21,8 @@
 #include <dirent.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
+#include <commons/bitarray.h>
 
 void atender_cliente(int);
 void* recibir_buffer(int* , int);
@@ -102,9 +107,34 @@ void start_up(){
 	system(strcat("./sac-dump ",NOMBRE_DEL_DISCO));
 
 
-
 }
 
+void crear_bitmap(t_config* config){
+
+
+
+	//Tengo que traer a memoria el bitarray que ya hay en el FS
+	char* ruta= string_new();
+	string_append(&ruta,PUNTO_DE_MONTAJE);
+	string_append(&ruta,"/Bitmap.bin");
+	int cantidad_bloques=CANT_MAX_BLOQUES;
+	if((cantidad_bloques % 8) == 0) {
+		cantidad_bloques = cantidad_bloques / 8;
+	} else {
+		cantidad_bloques = (cantidad_bloques / 8) + 1;
+	}
+
+	int file_Desc_Bitarray = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
+
+	char* array_de_bits = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED, file_Desc_Bitarray, 0);
+
+	bitarray = bitarray_create_with_mode(array_de_bits,cantidad_bloques,LSB_FIRST);
+	bitarray_set_bit(bitarray,0);
+
+	free(ruta);
+
+
+}
 void eliminar_semaforos(){ //TODO
 	NULL;
 }
@@ -187,6 +217,8 @@ void obtener_datos_del_config(){
 	NOMBRE_DEL_DISCO= malloc(10);
 	NOMBRE_DEL_DISCO= config_get_string_value(config, "NOMBRE_DEL_DISCO");
 	mkdir(PUNTO_DE_MONTAJE,S_IRWXU);
+
+	crear_bitmap(config);
 
 }
 

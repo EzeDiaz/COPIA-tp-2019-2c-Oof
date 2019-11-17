@@ -12,17 +12,19 @@
 #include <commons/log.h>
 #include <semaphore.h>
 #include <stdint.h>
+#include <commons/bitarray.h>
 
 
 
 //TADS
 typedef struct{
-	void* bloque;
+	int nuemero_bloque;
 
 }Bloque_datos;
 
 typedef struct{
 	Bloque_datos bloques[1024];
+	int numero_de_bloque;
 
 }ptrGBloque;
 
@@ -84,7 +86,7 @@ nodo_t* tabla_de_nodos[1024];
 int BLOCK_SIZE;
 int CANT_MAX_BLOQUES;
 char* NOMBRE_DEL_DISCO;
-
+t_bitarray* bitarray;
 
 
 #endif /* GLOBALES_H_ */
