@@ -142,6 +142,7 @@ void realizarRequest(void *buffer, int cliente){
 	int longitudDelSiguiente=0;
 	void* buffer;
 	size_t n;
+	client* client = FIND_CLIENT_BY_SOCKET(cliente);
 
 	//init
 	case 100:
@@ -169,6 +170,7 @@ void realizarRequest(void *buffer, int cliente){
 		//close
 	case 101:
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		// Agrego al struct _client_ 2 int que sirven para las metricas
 
 		break;
 
@@ -402,6 +404,8 @@ void realizarRequest(void *buffer, int cliente){
 
 		send(cliente, buffer, sizeof(buffer),0);
 
+		client->total_memory_requested += bytes_a_reservar;
+
 		free(buffer);
 		break;
 
@@ -415,7 +419,8 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
 
 		addressSpace* address_space = GET_ADDRESS_SPACE(cliente);
-		FREE_USED_FRAME(dir , address_space);
+		int bytes_freed = FREE_USED_FRAME(dir , address_space);
+		client->total_memory_freed += bytes_freed;
 
 		//MUSE YO TE INVOCO
 
@@ -548,12 +553,12 @@ void realizarRequest(void *buffer, int cliente){
 			mapped_file->references++;
 		} else {
 			mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
-			client* current_client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
+			client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
 			char* mapped_file = malloc(length); //Lo que tendra el return de mmap
 			new_map->path=(char*)malloc(sizeof(path));
 			memcpy(new_map->path, path, sizeof(path));
-			new_map->owner=(char*)malloc(sizeof(current_client->clientProcessId));
-			memcpy(new_map->owner, current_client->clientProcessId, sizeof(current_client->clientProcessId));
+			new_map->owner=(char*)malloc(sizeof(client->clientProcessId));
+			memcpy(new_map->owner, client->clientProcessId, sizeof(client->clientProcessId));
 			new_map->flag=flag;
 			new_map->length=length;
 			new_map->references = 1;

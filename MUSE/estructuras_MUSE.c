@@ -720,20 +720,20 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 
 
 
-void FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
+int FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(address, address_space);
 	if(a_segment != NULL && a_segment->isHeap){
 		int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
 		if(frame != NULL){
 			void* ptr_to_frame = GET_FRAME_POINTER(frame);
 			void* ptr_to_metadata = ptr_to_frame + address;
-			heapMetadata* frame_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata);
+			heapMetadata* frame_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata); //donde hago el free
 			WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_metadata, frame_metadata->size, 1);
 			MERGE_CONSECUTIVES_FREE_BLOCKS(a_segment);
-
+			return frame_metadata->size; // Asi puedo saber cuanto libera y registrarlo en las metricas
 		} else log_error(logger,"La pagina no se encuentra en memoria"); // generar page fault y swappear
 	} else log_error(logger,"El segmento no se encuentra en memoria");
-	//free(frame_metadata); De donde viene este frame_metadata?
+	return NULL;
 }
 
 
@@ -879,9 +879,29 @@ heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_t
 	return READ_HEAPMETADATA_IN_MEMORY(ptr_to_LA_metadata);
 }
 
+void LOG_SOCKET_METRICS(int socket){
 
+}
 
+void LOG_PROGRAM_METRICS(int a_client_socket){
+	client* client = FIND_CLIENT_BY_SOCKET(a_client_socket);
 
+	log_info(logger,"Memoria total pedida por cliente %s: %d bytes", client->clientProcessId, client->total_memory_requested);
+	log_info(logger,"Memoria total liberada por cliente %s: %d bytes", client->clientProcessId, client->total_memory_freed);
+	// falta lo de memory leaks
+
+}
+
+void LOG_SYSTEM_METRICS(){
+	log_info(logger,"Memoria disponible: %d bytes", memory_size);
+}
+
+void LOG_METRICS(int socket){
+
+	LOG_SOCKET_METRICS(socket);
+	LOG_PROGRAM_METRICS(socket);
+	LOG_SYSTEM_METRICS();
+}
 
 
 

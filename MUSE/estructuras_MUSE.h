@@ -41,6 +41,8 @@ typedef struct{
 typedef struct{
 	char* clientProcessId;
 	int clientSocket;
+	int total_memory_requested;
+	int total_memory_freed;
 } client;
 
 typedef struct{
