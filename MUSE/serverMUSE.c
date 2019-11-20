@@ -638,6 +638,7 @@ void realizarRequest(void *buffer, int cliente){
 					//Quiere escribir mas bytes del tamanio del archivo/segmento
 					//escribo tutti lo que puedo y luego rompo? No escribo nada y rompo?
 					//escribo lo que pueda y no chillo?
+					//En caso de romper, seguramente tire SEG FAULT (porque me zarpe del limite)
 				} else {
 					//Do your job buddy...
 					int pages_to_write;
@@ -650,14 +651,19 @@ void realizarRequest(void *buffer, int cliente){
 					//A las que copio al archivo, les pongo el bit de modificado en 0
 					//Bit de uso en 1?
 					mappedFile* mapped_file = GET_MAPPED_FILE(segment_requested->path);
-					int offset = addr - segment_requested->base;
+					int bytes_traveled = addr - segment_requested->base;
+					if(bytes_traveled % page_size > 0) //Si arranco corrido en la pagina
+						pages_to_write++;
+					int offset = bytes_traveled;
 					while(writen_pages < pages_to_write) {
-						int bytes_traveled = offset;
-						int current_frame = GET_FRAME_FROM_ADDRESS(addr, segment_requested);
+						int current_frame = GET_FRAME_FROM_ADDRESS(bytes_traveled, segment_requested);
 						void* pointer = GET_FRAME_POINTER(current_frame);
-						while(1) {
-							//Nos agarro una embooolia (Issue #31)
+						for(int i = (offset % page_size); i < page_size ; i++) {
+							mapped_file->pointer[bytes_traveled] = (char*)(pointer + i);
+							//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
+							bytes_traveled++;
 						}
+						offset = 0;
 						writen_pages++;
 					}
 				}
@@ -665,18 +671,11 @@ void realizarRequest(void *buffer, int cliente){
 		} else {
 			//seg_fault porque la direccion pedida no es valida
 		}
+		resultado = 0;//(en los casos feos lo pongo en -1... y el seg fault no entonces?)
+		buffer=(void*)malloc(sizeof(uint32_t));
+		memcpy(buffer, &resultado, sizeof(uint32_t));
 
-		/* Armamos el paquetito de respuesta
-		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
 		break;
