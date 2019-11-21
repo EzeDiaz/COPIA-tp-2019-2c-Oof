@@ -27,6 +27,8 @@ void liberar_eliminar_archivo(char*);
 bool verificar_path_este_permitido(char*);
 void crear_vector_de_punteros(ptrGBloque[],int);
 void* encontrar_posicion_en_disco(int);
-
+void escribir_en_disco(void* );
+void* leer_en_disco(void*, int );
+void* abrir_en_disco(int );
 
 #endif /* FUNCIONES_AUX_H_ */

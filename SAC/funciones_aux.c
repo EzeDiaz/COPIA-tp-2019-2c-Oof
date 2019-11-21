@@ -153,7 +153,27 @@ nodo_t* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
 	return el_nodo_a_retornar;
 }
 
+void escribir_en_disco(void* lo_que_quiero_escribir){
 
+	int un_nodo = buscar_nodo_libre();
+	void* posicion = encontrar_posicion_en_disco(un_nodo);
+
+	memcpy(posicion,lo_que_quiero_escribir,sizeof(*lo_que_quiero_escribir));
+
+}
+
+void* leer_en_disco(void* desde_donde_leo, int cant_de_bytes_a_leer){
+
+	void* retorno = malloc(cant_de_bytes_a_leer);
+
+	memcpy(retorno,desde_donde_leo,cant_de_bytes_a_leer);
+
+	return retorno;
+}
+
+void* abrir_en_disco(int numero_de_bloque){
+	return encontrar_posicion_en_disco(numero_de_bloque);
+}
 
 void liberar_bloque(char* path){
 
