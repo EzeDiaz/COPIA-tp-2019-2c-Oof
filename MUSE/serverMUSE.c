@@ -170,6 +170,7 @@ void realizarRequest(void *buffer, int cliente){
 		//close
 	case 101:
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		LOG_METRICS(cliente);
 		// Agrego al struct _client_ 2 int que sirven para las metricas
 
 		break;
@@ -405,6 +406,8 @@ void realizarRequest(void *buffer, int cliente){
 		send(cliente, buffer, sizeof(buffer),0);
 
 		client->total_memory_requested += bytes_a_reservar;
+
+		LOG_METRICS(cliente);
 
 		free(buffer);
 		break;

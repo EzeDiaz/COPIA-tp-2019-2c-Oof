@@ -879,6 +879,16 @@ heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_t
 	return READ_HEAPMETADATA_IN_MEMORY(ptr_to_LA_metadata);
 }
 
+float PORCENTAJE_ASIGNACION_MEM(int socket){
+	float porcentaje;
+	addressSpace* client_address_space = GET_ADDRESS_SPACE(socket);
+	int segments = list_size(client_address_space->segment_table); //segmentos asignados
+
+
+
+	return porcentaje;
+}
+
 void LOG_SOCKET_METRICS(int socket){
 
 }
