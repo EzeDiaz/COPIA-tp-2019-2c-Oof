@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <commons/bitarray.h>
+#include <sys/mman.h>
 
 void atender_cliente(int);
 void* recibir_buffer(int* , int);
@@ -105,6 +106,14 @@ void start_up(){
 	}
 	system(strcat("./sac-format",NOMBRE_DEL_DISCO));
 	system(strcat("./sac-dump ",NOMBRE_DEL_DISCO));
+	char* ruta = string_new();
+	string_append(&ruta,PUNTO_DE_MONTAJE);
+	string_append(&ruta,"/");
+	string_append(&ruta,NOMBRE_DEL_DISCO);
+	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
+	int cantidad_bloques= BLOCK_SIZE*CANT_MAX_BLOQUES;
+	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
+
 
 
 }

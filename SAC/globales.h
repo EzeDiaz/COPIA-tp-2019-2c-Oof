@@ -18,7 +18,8 @@
 
 //TADS
 typedef struct{
-	int nuemero_bloque;
+	int numero_bloque;
+	void* bloque;
 
 }Bloque_datos;
 
@@ -30,7 +31,7 @@ typedef struct{
 
 
 typedef struct{
-	char* identificador;
+	char identificador[3];
 	int version;
 	ptrGBloque* bloque_inicio_bitmap;
 	int bloques_que_ocupa;
@@ -87,6 +88,10 @@ int BLOCK_SIZE;
 int CANT_MAX_BLOQUES;
 char* NOMBRE_DEL_DISCO;
 t_bitarray* bitarray;
+void* primer_bloque;//[TODO];
+
+
+
 
 
 #endif /* GLOBALES_H_ */
