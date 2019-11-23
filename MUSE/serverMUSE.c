@@ -466,21 +466,12 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
-		char* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
+		void* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
 
-		//TODO: Armar paquete
+		buffer=(void*)malloc(n);
+		memcpy(buffer, data, n);
 
-		/* Armamos el paquetito de respuesta
-		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
 		free(dst);
