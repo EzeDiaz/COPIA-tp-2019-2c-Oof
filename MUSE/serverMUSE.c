@@ -8,6 +8,7 @@
 
 //Bibliotecas propias
 #include <libMUSE.h>
+#include <get_local_IP.h>
 #include "globales.h"
 #include "estructuras_MUSE.h"
 #include "serverMUSE.h"
@@ -64,7 +65,7 @@ void iniciarServidor(){
 
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
-	direccionServidor.sin_addr.s_addr= inet_addr(config_get_string_value(config,"IP")); //INADDR_ANY;
+	direccionServidor.sin_addr.s_addr= inet_addr(get_local_IP()); //INADDR_ANY;
 	direccionServidor.sin_port=htons(config_get_int_value(config,"PUERTO"));
 
 

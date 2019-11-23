@@ -70,7 +70,7 @@ int main(){
 		free(mp_pointer);
 	 */
 
-	//iniciar_servidor();
+	iniciarServidor();
 
 	DESTROY_SEMAPHORES();
 	return 0;
