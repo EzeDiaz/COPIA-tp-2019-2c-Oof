@@ -879,18 +879,75 @@ heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_t
 	return READ_HEAPMETADATA_IN_MEMORY(ptr_to_LA_metadata);
 }
 
-float PORCENTAJE_ASIGNACION_MEM(int socket){
-	float porcentaje;
+int PORCENTAJE_ASIGNACION_MEM(int socket){
+	int percentage;
 	addressSpace* client_address_space = GET_ADDRESS_SPACE(socket);
-	int segments = list_size(client_address_space->segment_table); //segmentos asignados
+	int my_segments = list_size(client_address_space->segment_table); //segmentos asignados
+	int total_segments = GET_TOTAL_SEGMENT(); // segmentos totales de mi sist
 
+	percentage = (my_segments / total_segments) * 100;
 
+	return percentage;
+}
 
-	return porcentaje;
+int FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(int a_client_socket){
+	client* client = FIND_CLIENT_BY_SOCKET(a_client_socket);
+	addressSpace* client_address_space = GET_ADDRESS_SPACE(a_client_socket);
+	segment* a_segment = GET_SEGMENT_FROM_BASE(client->last_requested_segment_base, client_address_space);
+	t_list* page_frame_table = a_segment->pageFrameTable;
+	int free_bytes_in_segment = 0;
+	int page_number = 0;
+	int page_move_counter = 0;
+	int new_page_move_counter = 0;
+	heapMetadata* current_metadata;
+	pageFrame* first_page = list_get(page_frame_table, page_number);
+	int current_frame = first_page->frame_number;
+	void* ptr_to_current_frame = GET_FRAME_POINTER(current_frame);
+	void* ptr_to_current_metadata = ptr_to_current_frame;
+
+	while(page_frame_table->elements_count > page_number){
+
+			current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata);
+
+			if(current_metadata->isFree){ // si estoy libre
+				page_move_counter = page_move_counter + current_metadata->size + 5; // el +5 es para avanzar los 5b de la primera metadata
+				free_bytes_in_segment += current_metadata->size;
+
+				if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
+					ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
+				}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
+					new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
+					page_number++;
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+				}
+			}
+	}
+
+	return free_bytes_in_segment;
+}
+
+int GET_TOTAL_SEGMENT(){
+	int i;
+	int total_segments = 0;
+	int limit = list_size(all_address_spaces);
+
+	for(i = 0; i < limit; i++){
+		addressSpace* client_address_space = list_get(all_address_spaces, i);
+		total_segments += list_size(client_address_space->segment_table);
+	}
+
+	return total_segments;
 }
 
 void LOG_SOCKET_METRICS(int socket){
+	int percentage = PORCENTAJE_ASIGNACION_MEM(socket);
+	int free_bytes_last_segment = FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(socket);
 
+	log_info(logger,"Porcentaje de asignacion de memoria [socket %d]: %d", socket, percentage);
+	log_info(logger,"Memoria disponible en ultimo segmento asignado [socket %d]: %d", socket, free_bytes_last_segment);
 }
 
 void LOG_PROGRAM_METRICS(int a_client_socket){
