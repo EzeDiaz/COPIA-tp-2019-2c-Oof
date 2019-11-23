@@ -123,8 +123,10 @@ void* recibirBuffer(int* alocador, int cliente){
 
 	//Si da menor a 0 es porque el cliente se desconecto mal (seg_fault o algo asi).
 	//Entonces, lo saco de prepo del sistema. Deberia chequear si, en una de esas, no salio antes?
-	if(recv_result < 0)
+	if(recv_result < 0) {
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		LOG_METRICS(cliente);
+	}
 }
 
 void realizarRequest(void *buffer, int cliente){
