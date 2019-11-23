@@ -116,7 +116,7 @@ void* recibirBuffer(int* alocador, int cliente){
 		buffer = malloc(*alocador);
 		recv(cliente, buffer,*alocador, MSG_WAITALL);
 		return buffer;
-	} else {
+	} else if(recv_result == 0){
 		*alocador=0;
 		return buffer;
 	}
@@ -126,6 +126,7 @@ void* recibirBuffer(int* alocador, int cliente){
 	if(recv_result < 0) {
 		CLIENT_LEFT_THE_SYSTEM(cliente);
 		LOG_METRICS(cliente);
+		return buffer; //Creo que tambien hay que retornarlo aca
 	}
 }
 
