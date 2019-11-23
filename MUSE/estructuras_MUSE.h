@@ -55,6 +55,13 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
+void LOG_METRICS(int socket);
+void LOG_SYSTEM_METRICS();
+void LOG_PROGRAM_METRICS(int a_client_socket);
+void LOG_SOCKET_METRICS(int socket);
+float PORCENTAJE_ASIGNACION_MEM(int socket);
+void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar, void* data);
+void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar);
 void DESTROY_SEGMENT(segment* a_segment);
 void DESTROY_ADDRESS_SPACE(addressSpace* an_address_space);
 void DESTROY_PAGE(pageFrame* a_page);
