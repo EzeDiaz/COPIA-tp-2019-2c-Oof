@@ -125,7 +125,6 @@ void crear_bitmap(t_config* config){
 	//Tengo que traer a memoria el bitarray que ya hay en el FS
 	char* ruta= string_new();
 	string_append(&ruta,PUNTO_DE_MONTAJE);
-	string_append(&ruta,"/Bitmap.bin");
 	int cantidad_bloques=CANT_MAX_BLOQUES;
 	if((cantidad_bloques % 8) == 0) {
 		cantidad_bloques = cantidad_bloques / 8;

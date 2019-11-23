@@ -23,7 +23,6 @@
 //Funcionalidades con archivos
 bool crear_archivo(char* path,mode_t mode){
 	bool flag = false;
-	creat(path,mode);
 	flag=agregar_metadata_de_archivo();
 	return flag;
 }
@@ -46,8 +45,11 @@ t_list* leer_archivo(){
 bool borrar_archivo(char* path){
 	bool flag = false;
 	if(verificar_path_este_permitido(path)){
-		remove(path);
-		//falta meterlo en el bitmap y todas esas cosas TODO
+		char fname[71];
+		obtener_nombre_de_archivo(fname,path);
+		GFile* nodo_a_borrar=encontrar_en_tabla_de_nodos(fname);
+		nodo_a_borrar->state=BORRADO;
+		borrar_del_bitmap(nodo_a_borrar->blk_indirect);
 		flag=true;
 	}
 	free(path);
@@ -58,16 +60,17 @@ bool agregar_metadata_de_archivo(char* path){
 	bool flag= false;
 
 
-	nodo_t* nodo_libre=buscar_nodo_libre();
+	GFile* nodo_libre=buscar_nodo_libre();
 	if(nodo_libre!=NULL){
-		nodo_libre->estado=OCUPADO;
-		nodo_libre->fecha_de_creacion= (long int) time(NULL) ;
-		nodo_libre->fecha_de_modificacion=nodo_libre->fecha_de_creacion;
-		nodo_libre->nombre_de_archivo=obtener_nombre_de_archivo(path);
-		nodo_libre->tamanio_del_archivo=0;
-		crear_vector_de_punteros(nodo_libre->punteros_indirectos_simples,1000);
-		nodo_libre->puntero_padre=obtener_puntero_padre(path);
+		nodo_libre->state=OCUPADO;
+		nodo_libre->c_date= (long int) time(NULL) ;
+		nodo_libre->m_date=nodo_libre->c_date;
+		obtener_nombre_de_archivo(nodo_libre->fname,path);
+		nodo_libre->file_size=0;
+		crear_vector_de_punteros(nodo_libre->blk_indirect,1000);
+		nodo_libre->parent_dir_block=obtener_puntero_padre(path);
 		flag=true;
+		escribir_en_disco(preparar_nodo_para_grabar(nodo_libre),buscar_bloque_libre(BUSQUEDA_NODO));
 	}
 
 	return flag;

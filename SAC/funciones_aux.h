@@ -16,18 +16,19 @@
 #include <dirent.h>
 
 
-nodo_t* encontrar_en_tabla_de_nodos(char* );
+GFile* encontrar_en_tabla_de_nodos(char* );
 void* paquetizar_metadata_de_directorio(t_list*);
-int buscar_nodo_libre();
+GFile* buscar_nodo_libre();
+int buscar_bloque_libre(int);
 ptrGBloque* obtener_puntero_padre(char*);
-char* obtener_nombre_de_archivo(char* );
+void obtener_nombre_de_archivo(char[],char* );
 void leer_cada_archivo_y_borrar(char*);
 void liberar_bloque(char*);
 void liberar_eliminar_archivo(char*);
 bool verificar_path_este_permitido(char*);
 void crear_vector_de_punteros(ptrGBloque[],int);
 void* encontrar_posicion_en_disco(int);
-void escribir_en_disco(void* );
+void escribir_en_disco(void*,int );
 void* leer_en_disco(void*, int );
 void* abrir_en_disco(int );
 

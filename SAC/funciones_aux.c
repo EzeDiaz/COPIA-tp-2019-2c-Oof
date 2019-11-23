@@ -22,32 +22,58 @@ bool verificar_path_este_permitido(char*path){
 }
 
 
-int buscar_nodo_libre(){
+int buscar_bloque_libre(int tipo_de_busqueda){
 
 	int nro_de_nodo=-1;
-	int cantidad_de_bloques=bitarray_get_max_bit(bitarray);
+	int cantidad_de_bloques;
 	int i=0;
-	while (i<cantidad_de_bloques || nro_de_nodo<0){
+	if(tipo_de_busqueda==BUSQUEDA_ARCHIVO){
+		cantidad_de_bloques=bitarray_get_max_bit(bitarray);
+		i=cantidad_de_bloques_reservados;
+	}else{
+		cantidad_de_bloques=cantidad_de_bloques_reservados;
+		i=1+(tamanio_disco/BLOCK_SIZE/8)/BLOCK_SIZE;
+
+	}
+	while ((i<cantidad_de_bloques && nro_de_nodo<0)){
 		if(! bitarray_test_bit(bitarray,i))
-		nro_de_nodo=i;
+			nro_de_nodo=i;
 
 		i++;
 
 
 	}
+
 	return nro_de_nodo;
 
+}
+
+GFile* buscar_nodo_libre(){
+
+	for(int i=0;i<1024;i++){
+		if(tabla_de_nodos[i]==NULL){
+
+			GFile* nodo_libre;
+			nodo_libre=(GFile*)malloc(sizeof(GFile));
+			tabla_de_nodos[i]=nodo_libre;
+			return nodo_libre;
+		}
+		if(tabla_de_nodos[i]->state==BORRADO){
+			return tabla_de_nodos[i];
+		}
+
+
+	}
+	return NULL;
 }
 
 void crear_vector_de_punteros(ptrGBloque array_de_bloques[], int n){
 
 	for(int i=0;i<n;i++){
-		for(int j=0; j<1024;j++){
-
-			array_de_bloques[i].bloques[j].bloque=NULL;
-		}
+		array_de_bloques[i]=0;
 	}
 }
+
 
 
 ptrGBloque* obtener_puntero_padre(char* path){
@@ -62,23 +88,23 @@ ptrGBloque* obtener_puntero_padre(char* path){
 
 	char* nombre_nodo_padre=vector[i-2];
 
-	nodo_t* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
-	return nodo_padre->punteros_indirectos_simples;
+	GFile* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
+	return nodo_padre->blk_indirect;
 
 
 }
 
 
-char* obtener_nombre_de_archivo(char* path){
+void obtener_nombre_de_archivo(char fname[],char* path){
 
 	char** vector= string_split(path, "/");
-
 	int i =0;
 	while(vector[i]!=NULL){
 		i++;
 	}
-
-	return vector[i-2];
+	for(int j=0;j<71;j++){
+		fname[j]=vector[i][j];
+	}
 
 
 }
@@ -113,19 +139,19 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 	memcpy(retorno+offset,&lista->elements_count,sizeof(int));
 	offset+=sizeof(int);
 
-	void paquetizar(nodo_t* un_nodo){
+	void paquetizar(GFile* un_nodo){
 
-		memcpy(retorno+offset ,&un_nodo->estado,1);//TODO esto puede romper
+		memcpy(retorno+offset ,&un_nodo->state,1);//TODO esto puede romper
 		offset+=1;
-		memcpy(retorno+offset,&un_nodo->fecha_de_creacion,sizeof(long int));
+		memcpy(retorno+offset,&un_nodo->c_date,sizeof(long int));
 		offset+=sizeof(long int);
-		memcpy(retorno+offset,&un_nodo->fecha_de_modificacion,sizeof(long int));
+		memcpy(retorno+offset,&un_nodo->m_date,sizeof(long int));
 		offset+=sizeof(long int);
-		memcpy(retorno+offset,&un_nodo->puntero_padre,sizeof(int));
+		memcpy(retorno+offset,&un_nodo->parent_dir_block,sizeof(int));
 		offset+=sizeof(int);
-		memcpy(retorno+offset,&un_nodo->tamanio_del_archivo,sizeof(int));
+		memcpy(retorno+offset,&un_nodo->file_size,sizeof(int));
 		offset+=sizeof(int);
-		memcpy(retorno+offset,un_nodo->nombre_de_archivo,72);
+		memcpy(retorno+offset,un_nodo->fname,72);
 		offset+=72;
 
 	}
@@ -134,13 +160,35 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 	return retorno;
 }
 
-nodo_t* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
 
-	nodo_t* buscar_nodo_por_nombre(char* nombre){
+void borrar_del_bitmap(uint32_t blk_indirect[]){
+
+	for(int i=0;i<1000;i++){
+		void* bloque_punt_indirecto=leer_en_disco(blk_indirect[i],1024*sizeof(uint32_t));
+		int offset=0;
+		for(int j=0;j<1024;j++){
+			uint32_t direccion_a_borrar;
+			memcpy(direccion_a_borrar,bloque_punt_indirecto+offset,sizeof(uint32_t));
+			offset+=sizeof(uint32_t);
+			if(direccion_a_borrar){
+				int numero_de_bloque=((int)primer_bloque - direccion_a_borrar)/BLOCK_SIZE;
+				bitarray_clean_bit(bitarray,numero_de_bloque);
+				//TODO ESTO PUEDE MALIR SAL
+			}
+		}
+		if(blk_indirect[i])
+			bitarray_clean_bit(bitarray,primer_bloque-blk_indirect[i]/BLOCK_SIZE);
+	}
+}
+
+
+GFile* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
+
+	GFile* buscar_nodo_por_nombre(char* nombre){
 
 		for(int i=0;i<1024;i++){
 
-			if(!strcmp(tabla_de_nodos[i]->nombre_de_archivo,nombre))
+			if(!strcmp(tabla_de_nodos[i]->fname,nombre))
 				return tabla_de_nodos[i];
 
 		}
@@ -148,17 +196,45 @@ nodo_t* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
 		return NULL;
 	}
 	sem_wait(mutex_tabla_de_nodos);
-	nodo_t* el_nodo_a_retornar = buscar_nodo_por_nombre(nombre_de_nodo);
+	GFile* el_nodo_a_retornar = buscar_nodo_por_nombre(nombre_de_nodo);
 	sem_post(mutex_tabla_de_nodos);
 	return el_nodo_a_retornar;
 }
 
-void escribir_en_disco(void* lo_que_quiero_escribir){
+void* preparar_nodo_para_grabar(GFile* nodo_libre){
 
-	int un_nodo = buscar_nodo_libre();
-	void* posicion = encontrar_posicion_en_disco(un_nodo);
+	void* paquete= malloc(sizeof(GFile));
+	int offset=0;
+	memcpy(paquete+offset,&nodo_libre->state,sizeof(nodo_libre->state));
+	offset+=sizeof(nodo_libre->state);
 
+	memcpy(paquete+offset,&nodo_libre->fname,strlen(nodo_libre->fname));
+	offset+=strlen(nodo_libre->fname);
+
+	memcpy(paquete+offset,&nodo_libre->c_date,sizeof(nodo_libre->c_date));
+	offset+=sizeof(nodo_libre->c_date);
+
+	memcpy(paquete+offset,&nodo_libre->m_date,sizeof(nodo_libre->m_date));
+	offset+=sizeof(nodo_libre->m_date);
+
+	memcpy(paquete+offset,&nodo_libre->file_size,sizeof(nodo_libre->file_size));
+	offset+=sizeof(nodo_libre->file_size);
+
+	memcpy(paquete+offset,&nodo_libre->parent_dir_block,sizeof(nodo_libre->parent_dir_block));
+	offset+=sizeof(nodo_libre->parent_dir_block);
+
+	memcpy(paquete+offset,&nodo_libre->blk_indirect,sizeof(nodo_libre->blk_indirect));
+	offset+=sizeof(nodo_libre->blk_indirect);//TODO REVISAR SI FUNCA SINO HAY QUE HACER UN FOR
+
+	return paquete;
+}
+
+void escribir_en_disco(void* lo_que_quiero_escribir,int un_bloque){
+
+
+	void* posicion = encontrar_posicion_en_disco(un_bloque);
 	memcpy(posicion,lo_que_quiero_escribir,sizeof(*lo_que_quiero_escribir));
+	free(lo_que_quiero_escribir);
 
 }
 
@@ -177,7 +253,7 @@ void* abrir_en_disco(int numero_de_bloque){
 
 void liberar_bloque(char* path){
 
-//TODO
+	//TODO
 
 
 }
