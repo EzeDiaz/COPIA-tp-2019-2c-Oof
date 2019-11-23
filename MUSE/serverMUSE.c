@@ -383,6 +383,7 @@ void realizarRequest(void *buffer, int cliente){
 					list_add(client_address_space->segment_table, new_segment);
 					segment_base = new_segment->base;
 				}
+				client->last_requested_segment_base = segment_base;
 			}
 		} else {
 			//No pude escribir porque no hay memoria

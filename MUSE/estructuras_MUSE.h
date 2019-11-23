@@ -43,6 +43,7 @@ typedef struct{
 	int clientSocket;
 	int total_memory_requested;
 	int total_memory_freed;
+	uint32_t last_requested_segment_base;
 } client;
 
 typedef struct{
