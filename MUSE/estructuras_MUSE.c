@@ -769,12 +769,20 @@ void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 				int swap_pos = swap_frame * page_size;
 				int free_frame = CLOCK();
 				void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
+				if(a_segment->isHeap){
+					for(int i = 0; i < page_size; i++){
+						memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+					}
+					FREE_SWAP_FRAME_BITMAP(swap_frame);
 
-				for(int i = 0; i < page_size; i++){
-					memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+				} else{
+					mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+
+					for(int i = 0; i < page_size; i++){
+						memcpy(ptr_to_free_frame + i, mapped_file->pointer[swap_pos + i], 1);
+					}
+					FREE_SWAP_FRAME_BITMAP(swap_frame);
 				}
-
-				FREE_SWAP_FRAME_BITMAP(swap_frame);
 
 				current_page->frame_number = free_frame;
 				current_page->presenceBit = 1;
@@ -834,12 +842,20 @@ void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_
 				int swap_pos = swap_frame * page_size;
 				int free_frame = CLOCK();
 				void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
+				if(a_segment->isHeap){
+					for(int i = 0; i < page_size; i++){
+						memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+					}
+					FREE_SWAP_FRAME_BITMAP(swap_frame);
 
-				for(int i = 0; i < page_size; i++){
-					memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+				} else{
+					mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+
+					for(int i = 0; i < page_size; i++){
+						memcpy(ptr_to_free_frame + i, mapped_file->pointer[swap_pos + i], 1);
+					}
+					FREE_SWAP_FRAME_BITMAP(swap_frame);
 				}
-
-				FREE_SWAP_FRAME_BITMAP(swap_frame);
 
 				current_page->frame_number = free_frame;
 				current_page->presenceBit = 1;
@@ -969,7 +985,8 @@ void REMOVE_FREE_PAGES_FROM_SEGMENT(segment* a_segment){
 		WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_last_metadata, new_free_size, 1);
 
 		while(page < a_segment->pageFrameTable->elements_count){
-			list_remove(a_segment->pageFrameTable, page+1);
+			pageFrame* page_to_be_destroyed = list_get(a_segment->pageFrameTable, page+1);
+			DESTROY_PAGE(page_to_be_destroyed);
 		}
 	}
 }
