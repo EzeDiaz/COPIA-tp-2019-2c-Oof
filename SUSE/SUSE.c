@@ -32,6 +32,7 @@ int main(){
 	iniciar_servidor();
 
 	//terminate_SUSE();
+	liberar_recursos();
 	return 0;
 }
 
@@ -103,6 +104,9 @@ void leer_config(){
 	SEM_IDS = config_get_array_value(un_config,"SEM_IDS");
 	SEM_INIT = config_get_array_value(un_config,"SEM_INIT");
 	SEM_MAX = config_get_array_value(un_config,"SEM_MAX");
+
+	free(nombre_del_config);
+	config_destroy(un_config);
 }
 /*int puesta_en_marcha_del_hilo(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*),void*  argumento){
 
@@ -118,7 +122,72 @@ void leer_config(){
 }*/
 
 
+void liberar_recursos(){
 
+	/*Mutex*/
+	sem_destroy(&semaforo_log_colas);
+	sem_destroy(&semaforo_diccionario_de_procesos);
+	sem_destroy(&semaforo_diccionario_procesos_x_queues);
+	sem_destroy(&semaforo_diccionario_procesos_x_semaforo);
+	sem_destroy(&semaforo_lista_procesos_finalizados);
+	sem_destroy(&mutex_log_servidor);
+	sem_destroy(&semaforo_estado_blocked);
+	sem_destroy(&semaforo_diccionario_por_semaforo);
+
+	/*Contador*/
+	sem_destroy(&grado_de_multiprogramacion_contador);
+	sem_destroy(&procesos_en_New);
+	sem_destroy(&semaforo_lista_procesos_finalizados);
+
+	/*DICCIONARIOS*/
+
+	void destructor_hilos(hilo_t* un_hilo){
+
+		free(un_hilo->metricas);
+		free(un_hilo->hilo_informacion);
+		free(un_hilo);
+	}
+
+	void destructor_de_procesos(char* PID, proceso_t* un_proceso){
+		free(PID);
+		sem_destroy(un_proceso->procesos_en_Ready);
+
+		list_destroy_and_destroy_elements(un_proceso->hilos_del_programa,destructor_hilos);
+	}
+
+	dictionary_destroy_and_destroy_elements(diccionario_de_procesos,destructor_de_procesos);
+
+
+	void destructor_de_queues(char* PID, t_queue* vector_queue[]){
+		free(PID);
+		queue_destroy_and_destroy_elements(vector_queue[COLA_EXEC],destructor_hilos);
+		queue_destroy_and_destroy_elements(vector_queue[COLA_READY],destructor_hilos);
+	}
+
+	dictionary_destroy_and_destroy_elements(diccionario_procesos_x_queues,destructor_de_queues);
+
+
+	void destructor_de_semaforos(char* PID, char* nombre_de_semaforo){
+		free(PID);
+		free(nombre_de_semaforo);
+	}
+
+	dictionary_destroy_and_destroy_elements(diccionario_de_procesos_x_semaforo,destructor_de_semaforos);
+
+
+	void destructor_de_lista_de_bloqueados(char* PID, t_list* lista_de_bloqueados){
+		free(PID);
+		list_destroy_and_destroy_elements(lista_de_bloqueados,destructor_hilos);
+	}
+
+	dictionary_destroy_and_destroy_elements(diccionario_bloqueados_por_semafaro,destructor_de_lista_de_bloqueados);
+
+	/*COLAS*/
+
+	queue_destroy_and_destroy_elements(cola_new,destructor_hilos);
+	queue_destroy_and_destroy_elements(cola_exit,destructor_hilos);
+
+}
 
 void terminate_SUSE(){
 

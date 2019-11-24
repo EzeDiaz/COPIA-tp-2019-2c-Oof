@@ -45,6 +45,7 @@ proceso_t* inicializar_proceso(int);
 void agregar_al_diccionario(int , sem_t*);
 void leer_config();
 void crear_hilo(hilo_t*, void*);
+void liberar_recursos();
 
 
 #endif /* SUSE_H_ */
