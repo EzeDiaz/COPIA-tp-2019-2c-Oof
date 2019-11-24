@@ -48,7 +48,7 @@ void mostrar_metricas(){
 void metricas_por_sistema(){//Son mas de 1 semaforo TODO
 
 	int grado_multiprogramacion;
-	sem_getvalue(grado_de_multiprogramacion_contador,&grado_multiprogramacion);
+	sem_getvalue(&grado_de_multiprogramacion_contador,&grado_multiprogramacion);
 	log_info(log_metricas_sistema,"grado de programacion actual: %d \n",grado_multiprogramacion);
 
 	void loguear_semaforo(char* nombre_del_semaforo, int valor){

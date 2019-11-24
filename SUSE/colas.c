@@ -28,7 +28,7 @@
 //NO SE SUPONE QUE VOY A TENER VARIOS DE ESTOS ESTADOS READY?
 void newToReady(){
 
-	sem_wait(grado_de_multiprogramacion_contador);
+	sem_wait(&grado_de_multiprogramacion_contador);
 	hilo_t*  hilo = queue_pop(cola_new);
 
 	t_queue*cola_ready = obtener_cola_ready_de(hilo->PID);
@@ -37,9 +37,9 @@ void newToReady(){
 
 	hilo->estado_del_hilo = READY;
 
-	sem_wait(semaforo_diccionario_de_procesos);
+	sem_wait(&semaforo_diccionario_de_procesos);
 	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,hilo->PID);
-	sem_post(semaforo_diccionario_de_procesos);
+	sem_post(&semaforo_diccionario_de_procesos);
 	sem_post(&un_proceso->procesos_en_Ready);
 
 	sem_wait(&semaforo_log_colas);
@@ -134,9 +134,9 @@ void * estadoReady(int PID)
 	{
 		if(!finDePlanificacion)
 		{
-			sem_wait(semaforo_diccionario_de_procesos);
+			sem_wait(&semaforo_diccionario_de_procesos);
 			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,PID);
-			sem_post(semaforo_diccionario_de_procesos);
+			sem_post(&semaforo_diccionario_de_procesos);
 
 			sem_wait(&un_proceso->procesos_en_Ready);
 
@@ -235,7 +235,7 @@ void exit_thread(hilo_t* hilo){
 
 	list_add(hilos_finalizados,hilo);
 	sem_post(&semaforo_lista_procesos_finalizados);
-	sem_post(grado_de_multiprogramacion_contador);
+	sem_post(&grado_de_multiprogramacion_contador);
 	mostrar_metricas();
 
 }

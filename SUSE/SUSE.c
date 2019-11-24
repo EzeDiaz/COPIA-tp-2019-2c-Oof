@@ -150,7 +150,7 @@ void liberar_recursos(){
 
 	void destructor_de_procesos(char* PID, proceso_t* un_proceso){
 		free(PID);
-		sem_destroy(un_proceso->procesos_en_Ready);
+		sem_destroy(&un_proceso->procesos_en_Ready);
 
 		list_destroy_and_destroy_elements(un_proceso->hilos_del_programa,destructor_hilos);
 	}
@@ -187,6 +187,8 @@ void liberar_recursos(){
 	queue_destroy_and_destroy_elements(cola_new,destructor_hilos);
 	queue_destroy_and_destroy_elements(cola_exit,destructor_hilos);
 
+	destruir_logs_sistema(); //TODO falta destruir un par mas de logs
+
 }
 
 void terminate_SUSE(){
@@ -205,13 +207,13 @@ void aceptar_proceso(int PID){
 	sem_t semaforo_exec;
 	sem_init(&semaforo_exec,0,1);
 	agregar_al_diccionario(PID,&semaforo_exec);
-	sem_post(procesos_en_New);
+	sem_post(&procesos_en_New);
 }
 
 void agregar_al_diccionario(int PID, sem_t* semaforo_exec){
-	sem_wait(semaforo_diccionario_procesos_x_semaforo);
+	sem_wait(&semaforo_diccionario_procesos_x_semaforo);
 	dictionary_put(diccionario_de_procesos_x_semaforo,string_itoa(PID),semaforo_exec);
-	sem_post(semaforo_diccionario_procesos_x_semaforo);
+	sem_post(&semaforo_diccionario_procesos_x_semaforo);
 }
 
 
