@@ -72,8 +72,8 @@ int CANT_MAX_BLOQUES;
 char* NOMBRE_DEL_DISCO;
 t_bitarray* bitarray;
 void* primer_bloque;
-int cantidad_de_bloques_reservados;
-long tamanio_disco;
+long long cantidad_de_bloques_reservados;
+long long tamanio_disco;
 t_config* config;
 t_log* logger_de_deserializacion;
 
