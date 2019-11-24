@@ -59,9 +59,10 @@ bool escribir_archivo(uint32_t direccion,const void *cosas_a_escribir, size_t ca
 	return flag;
 }
 
-t_list* leer_archivo(){
+void* leer_archivo(uint32_t direccion, void *cosas_a_leer, size_t count){
 	t_list* lista_de_retorno = list_create();
-	return lista_de_retorno;
+	cosas_a_leer=leer_en_disco((void*)direccion,count);
+	return cosas_a_leer;
 }
 
 bool borrar_archivo(char* path){
@@ -123,28 +124,7 @@ bool crear_directorio(char* path, mode_t mode){
 void* listar_directorio_y_archivos(char*path, char*string_de_archivos){
 
 	if(verificar_path_este_permitido(path)){
-		t_list* lista_de_retorno = list_create();
-		char* directorio = string_new();
-		string_append(&directorio, path);
-		struct dirent *dir;
 
-		//TODO
-
-		DIR* directorio_tabla= opendir(directorio);
-		if(directorio_tabla != NULL){
-
-			while ((dir = readdir(directorio_tabla)) != NULL){
-				if(!strcmp(dir->d_name,"..") || !strcmp(dir->d_name, ".")){
-
-				}else{
-					if(string_contains(string_de_archivos,dir->d_name))
-						list_add(lista_de_retorno,encontrar_en_tabla_de_nodos(dir->d_name));
-				}
-			}
-		}
-
-
-		return paquetizar_metadata_de_directorio(lista_de_retorno);
 	}
 	return NULL;
 }

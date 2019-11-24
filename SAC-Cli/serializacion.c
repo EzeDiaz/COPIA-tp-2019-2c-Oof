@@ -133,9 +133,9 @@ int serializar_fs_read(int fd, void *buf, size_t count){
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
 	int retorno;
-	memcpy(&retorno,resultado,sizeof(int));
+	memcpy(buf,resultado,count);
 	free(resultado);
-	return resultado;
+	return count;
 
 
 }
