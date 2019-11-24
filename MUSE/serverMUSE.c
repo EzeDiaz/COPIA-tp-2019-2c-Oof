@@ -41,9 +41,9 @@ void atenderCliente(int cliente){
 	void* buffer;
 	int alocador;
 
-	sem_wait(&semaforoLogger);
+	sem_wait(&logger_semaphore);
 	log_info(logger, "Recibimos conexion \n");
-	sem_post(&semaforoLogger);
+	sem_post(&logger_semaphore);
 
 	buffer=recibirBuffer(&alocador,cliente);
 
@@ -53,9 +53,9 @@ void atenderCliente(int cliente){
 		buffer=recibirBuffer(&alocador,cliente);
 	}
 
-	sem_wait(&semaforoLogger);
+	sem_wait(&logger_semaphore);
 	log_info(logger, "Se desconecto el cliente\n");
-	sem_post(&semaforoLogger);
+	sem_post(&logger_semaphore);
 	close(cliente);
 }
 
@@ -70,26 +70,26 @@ void iniciarServidor(){
 
 
 	int servidor = socket(AF_INET, SOCK_STREAM , 0);
-	sem_wait(&semaforoLogger);
+	sem_wait(&logger_semaphore);
 	log_info(logger, "Levantamos el servidor\n");
-	sem_post(&semaforoLogger);
+	sem_post(&logger_semaphore);
 
 	int activado = 1;
 	setsockopt(servidor, SOL_SOCKET, SO_REUSEADDR, &activado, sizeof(activado));
 
 	if(bind(servidor, (void*) &direccionServidor, sizeof(direccionServidor)) != 0){
-		sem_wait(&semaforoLogger);
+		sem_wait(&logger_semaphore);
 		log_info(logger, "Fallo el bind");
-		sem_post(&semaforoLogger);
+		sem_post(&logger_semaphore);
 		perror("Fallo el bind");
 		exit(1);
 	}
 
 	int cliente;
 
-	sem_wait(&semaforoLogger);
+	sem_wait(&logger_semaphore);
 	log_info(logger, "Servidor listo para recibir un cliente\n");
-	sem_post(&semaforoLogger);
+	sem_post(&logger_semaphore);
 
 	listen(servidor, 100);
 	pthread_t *hilo;
@@ -98,9 +98,9 @@ void iniciarServidor(){
 	cliente = accept(servidor, (void*) &direccionCliente, &tamanioDireccion);
 
 	while(1){
-		sem_wait(&semaforoLogger);
+		sem_wait(&logger_semaphore);
 		log_info(logger, "Recibimos un cliente\n");
-		sem_post(&semaforoLogger);
+		sem_post(&logger_semaphore);
 		pthread_create(&hilo, NULL,  (void*)atenderCliente, cliente);
 		pthread_detach(hilo);
 		cliente = accept(servidor, (void*) &direccionCliente, &tamanioDireccion);
@@ -720,8 +720,8 @@ void realizarRequest(void *buffer, int cliente){
 		break;
 	}
 
-	sem_wait(&semaforoLogger);
+	sem_wait(&logger_semaphore);
 	log_info(logger,"Terminamos el request\n");
-	sem_post(&semaforoLogger);
+	sem_post(&logger_semaphore);
 }
 
