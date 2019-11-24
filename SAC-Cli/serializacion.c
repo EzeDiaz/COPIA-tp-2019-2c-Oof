@@ -168,7 +168,7 @@ void* serializar_paquete_para_crear_archivo(const char *path, mode_t mode){
 	offset+=sizeof(int);
 	memcpy(paquete+offset,path,peso_path);
 	offset+=peso_path;
-	memcpy(paquete+offset,mode,sizeof(mode_t));
+	memcpy(paquete+offset,&mode,sizeof(mode_t));
 
 	return paquete;
 }

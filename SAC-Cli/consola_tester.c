@@ -28,6 +28,18 @@ int consola(){
 
 		if(!strncmp(linea, "create",5)){
 
+			char* path=(char*)malloc(71);
+			mode_t mode;
+			if(leer_parametros_mkdir(path,&mode, linea)){
+				if(serializar_fs_create(path,mode,NULL)){
+					printf("Creamos la tabla :D \n");
+				} else {
+					printf("La tabla ya existe \n");
+				}
+				free(path);
+			}else{
+				printf("No pudimos leer bien los paramatros => no creamos nada\n");
+			}
 		}
 
 		if(!strncmp(linea, "mkdir",5)){
@@ -54,24 +66,24 @@ int consola(){
 				struct fuse_file_info* fi;
 				off_t offset;
 				if(leer_parametros_readdir(path, buffer,puntero_a_funcion,&offset,fi, linea)){
-							if(serializar_fs_readdir(path, buffer,puntero_a_funcion,offset,fi)){
-								printf("preparate para el readdir \n");
-							} else {
-								printf("fallo el readdir \n");
-							}
-							free(path);
-							free(buffer);
-							free(fi);
-						}else{
-							printf("No pudimos leer bien los paramatros => no creamos nada\n");
-						}
-							}else{
-
-								printf("Comando invalido, volver a intentar :(\n");
-							}
-
-						}
+					if(serializar_fs_readdir(path, buffer,puntero_a_funcion,offset,fi)){
+						printf("preparate para el readdir \n");
+					} else {
+						printf("fallo el readdir \n");
 					}
+					free(path);
+					free(buffer);
+					free(fi);
+				}else{
+					printf("No pudimos leer bien los paramatros => no creamos nada\n");
+				}
+			}else{
+
+				printf("Comando invalido, volver a intentar :(\n");
+			}
+
+		}
+	}
 	free(linea);
 	printf("Se cerro la consola de testeo. GG WP!\n");
 	return 0;
@@ -97,7 +109,7 @@ int leer_parametros_readdir(char* path, void * buffer,fuse_fill_dir_t puntero_a_
 	char** parametros = string_split(linea, " ");
 	if(parametros[1]==NULL){//TODO
 
-		}else{
+	}else{
 
 	}
 	return 1;

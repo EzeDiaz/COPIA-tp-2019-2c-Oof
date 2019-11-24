@@ -34,3 +34,15 @@
 
 [INFO] 01:30:57:254 deserializacion/(17359:17447): Es el codigo de 'creacion de direcorio', comenzando la deserializacion de parametros
 
+[INFO] 01:52:08:454 deserializacion/(17692:18121): Estamos por deserializar el codigo de operacion
+
+[INFO] 01:52:08:454 deserializacion/(17692:18121): Obtuvimos el codigo de operacion 
+
+[INFO] 01:52:35:477 deserializacion/(17692:18121): Es el codigo de 'creacion de archivos', comenzando la deserializacion de parametros
+
+[INFO] 02:07:14:532 deserializacion/(18578:18693): Estamos por deserializar el codigo de operacion
+
+[INFO] 02:07:15:744 deserializacion/(18578:18693): Obtuvimos el codigo de operacion 
+
+[INFO] 02:07:18:262 deserializacion/(18578:18693): Es el codigo de 'creacion de archivos', comenzando la deserializacion de parametros
+

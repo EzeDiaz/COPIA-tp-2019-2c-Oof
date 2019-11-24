@@ -22,13 +22,15 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	int codigo_de_operacion=determinar_protocolo(buffer);
 	void* resultado;
 	void* paquete_decifrado;
+	creacion* creacion;
 
 	switch(codigo_de_operacion){
 
 	case CREAR_ARCHIVO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'creacion de archivos', comenzando la deserializacion de parametros\n");
-		paquete_decifrado=decifrar_archivo_a_crear(buffer);
-		resultado=crear_archivo(paquete_decifrado);
+		creacion=decifrar_directorio_a_crear(buffer);
+		int flag=crear_archivo(creacion->path,creacion->mode);
+		resultado= serializar_flag(flag);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -55,8 +57,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case CREAR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'creacion de direcorio', comenzando la deserializacion de parametros\n");
-		directorio_a_crear_t* directorio=decifrar_directorio_a_crear(buffer);
-		int flag_resultado=crear_directorio(directorio->path,directorio->mode);
+		creacion=decifrar_directorio_a_crear(buffer);
+		int flag_resultado=crear_directorio(creacion->path,creacion->mode);
 		resultado=serializar_flag(flag_resultado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
@@ -132,8 +134,8 @@ void* decifrar_archivo_a_borrar(void*buffer){
 
 	return NULL;//creo que el borrar directorio tambien borra Archivos TODO
 }
-directorio_a_crear_t* decifrar_directorio_a_crear(void*buffer){
-	directorio_a_crear_t* directorio = malloc(sizeof(directorio_a_crear_t));
+creacion* decifrar_directorio_a_crear(void*buffer){
+	creacion* directorio = malloc(sizeof(creacion));
 	int offset=0;
 	int peso;
 	memcpy(&peso, buffer+offset,sizeof(int));
