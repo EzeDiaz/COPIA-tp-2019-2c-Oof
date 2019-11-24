@@ -32,5 +32,8 @@ void* encontrar_posicion_en_disco(int);
 void escribir_en_disco(void*,int );
 void* leer_en_disco(void*, int );
 void* abrir_en_disco(int );
+bool esta_full_el_bloque_puntero(ptrGBloque);
+void* obtener_direccion_de_escritura(ptrGBloque );
+
 
 #endif /* FUNCIONES_AUX_H_ */

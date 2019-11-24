@@ -28,13 +28,50 @@ void agregar_datos_de_escritura_a_tabla_de_nodo(uint32_t direccion,t_list* bloqu
 		}
 		list_iterate(bloque_a_escribir,agregar_datos);
 	}
-
 	i++;
 	}
 }
 
-void agregar_bloque_dato_a_bloque_puntero(tabla_de_nodos[i]->blk_indirect,int bloque);
+void agregar_bloque_dato_a_bloque_puntero(ptrGBloque vector_de_direcciones[] ,int bloque){
 
+
+	for(int i=0;i<1000;i++){
+		if(!esta_full_el_bloque_puntero(vector_de_direcciones[i])){
+			void* direccion_escritura=obtener_direccion_de_escritura(vector_de_direcciones[i]);
+			void* direccion_bloque=encontrar_posicion_en_disco(bloque);
+			agregar_direccion_del_bloque_de_dato(direccion_escritura,direccion_bloque);
+		}
+	}
+}
+
+void agregar_direccion_del_bloque_de_dato(void* direccion_escritura,void *direccion_bloque){
+
+	memcpy(direccion_escritura,direccion_bloque,sizeof(ptrGBloque));
+}
+
+bool esta_full_el_bloque_puntero(ptrGBloque una_direccion){
+	int i=0;
+	void*direccion_dentro;
+	while(i<1024 && (int)direccion_dentro!=0){
+	memcpy(direccion_dentro,(void*)una_direccion+i*sizeof(una_direccion),sizeof(una_direccion));
+	}
+	if(direccion_dentro==0){
+
+		return false;
+	}
+	return true;
+}
+
+void* obtener_direccion_de_escritura(ptrGBloque direcciones){
+	void* direccion;
+	void* punto_de_lectura= direcciones;
+	int offset=0;
+	while(((int)direccion)!=0){
+	memcpy(direccion,punto_de_lectura+offset,sizeof(direcciones));
+	offset+=sizeof(direcciones);
+	}
+	return (direccion-sizeof(direcciones));
+}
 
 bool verificar_path_este_permitido(char*path){
 
