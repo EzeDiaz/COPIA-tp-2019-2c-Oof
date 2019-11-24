@@ -11,7 +11,7 @@ int socket_MUSE;
 t_log* logger;
 t_config* config;
 pthread_mutex_t mutexLog;
-pthread_mutex_t semaforoLogger;
+pthread_mutex_t logger_semaphore;
 
     #include <stdint.h>
     #include <stddef.h>
