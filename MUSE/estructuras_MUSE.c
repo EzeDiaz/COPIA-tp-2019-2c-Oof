@@ -746,7 +746,7 @@ int FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 }
 
 
-//TODO: La parte del swap
+
 //TODO: Si nos dicen que no nos importa que traiga la metadata siguiente queda asi, sino agregar "get_metadata_behind_address"
 void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
 	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(src, address_space);
@@ -917,14 +917,16 @@ heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_t
 				current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_next_metadata);
 			} else{ // cambio de pagina
 				page_number++;
-				new_page_move_counter = page_move_counter - page_size;
-				global_move_counter = global_move_counter + page_move_counter;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				ptr_to_LA_metadata = ptr_to_current_metadata;
-				free(current_metadata);
-				if(next_page != NULL){
-					void* ptr_to_new_frame = GET_FRAME_POINTER(next_page->frame_number);
-					ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+				if(page_number < page_frame_table->elements_count){
+					new_page_move_counter = page_move_counter - page_size;
+					global_move_counter = global_move_counter + page_move_counter;
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					ptr_to_LA_metadata = ptr_to_current_metadata;
+					free(current_metadata);
+					if(next_page != NULL){
+						void* ptr_to_new_frame = GET_FRAME_POINTER(next_page->frame_number);
+						ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+					}
 				}
 			}
 
@@ -962,10 +964,12 @@ int FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(int a_client_socket){
 			}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
 				new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
 				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+				if(page_number < page_frame_table->elements_count){
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+				}
 			}
 		}
 	}
@@ -1015,6 +1019,71 @@ int GET_TOTAL_SEGMENTS(){
 	return total_segments;
 }
 
+int TOTAL_MEMORY_LEAKS(int a_client_socket){
+	int leaked_bytes = 0;
+	int segment_counter = 0;
+	int page_number = 0;
+	int page_move_counter = 0;
+	int new_page_move_counter = 0;
+	heapMetadata* current_metadata;
+	addressSpace* client_address_space = GET_ADDRESS_SPACE(a_client_socket);
+	t_list* segment_table = client_address_space->segment_table;
+
+	while(segment_table->elements_count > segment_counter){
+		segment* a_segment = list_get(segment_table, segment_counter);
+		if(a_segment->isHeap){
+			t_list* page_frame_table = a_segment->pageFrameTable;
+			pageFrame* first_page = list_get(page_frame_table, page_number);
+			int current_frame = first_page->frame_number;
+			void* ptr_to_current_frame = GET_FRAME_POINTER(current_frame);
+			void* ptr_to_current_metadata = ptr_to_current_frame;
+
+			while(page_frame_table->elements_count > page_number){
+
+				current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata);
+
+				if(!current_metadata->isFree){ // si no estoy libre
+					page_move_counter = page_move_counter + current_metadata->size + 5; // el +5 es para avanzar los 5b de la primera metadata
+					leaked_bytes += current_metadata->size;
+
+					if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
+						ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
+					}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
+						new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
+						page_number++;
+						if(page_number < page_frame_table->elements_count){
+							pageFrame* next_page = list_get(page_frame_table, page_number);
+							current_frame = next_page->frame_number;
+							void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+							ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+						}
+					}
+				} else{ //si estoy libre anda al siguiente y pregunta again por un usado
+					page_move_counter = page_move_counter + current_metadata->size + 5;
+					if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
+						ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
+					}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
+						new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
+						page_number++;
+						if(page_number < page_frame_table->elements_count){
+							pageFrame* next_page = list_get(page_frame_table, page_number);
+							current_frame = next_page->frame_number;
+							void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+							ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+						}
+					}
+				}
+			}
+			segment_counter++;
+		} else{ // si no es de heap (es de map)
+			mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+			leaked_bytes += mapped_file->length;
+			segment_counter++;
+		}
+	}
+	return leaked_bytes;
+}
+
 void LOG_SOCKET_METRICS(int socket){
 	int percentage = PORCENTAJE_ASIGNACION_MEM(socket);
 	int free_bytes_last_segment = FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(socket);
@@ -1025,10 +1094,11 @@ void LOG_SOCKET_METRICS(int socket){
 
 void LOG_PROGRAM_METRICS(int a_client_socket){
 	client* client = FIND_CLIENT_BY_SOCKET(a_client_socket);
+	int bytes_leaked = TOTAL_MEMORY_LEAKS(a_client_socket);
 
 	log_info(logger,"Memoria total pedida por cliente %s: %d bytes", client->clientProcessId, client->total_memory_requested);
 	log_info(logger,"Memoria total liberada por cliente %s: %d bytes", client->clientProcessId, client->total_memory_freed);
-	// falta lo de memory leaks
+	log_info(logger,"Memory leaks del cliente %s: %d bytes", client->clientProcessId, bytes_leaked);
 
 }
 
