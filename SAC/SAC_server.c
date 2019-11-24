@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <commons/log.h>
@@ -105,14 +106,12 @@ void start_up(){
 	char* comando = string_new();
 	string_append(&comando,"dd if=/dev/zero iflag=fullblock of=");
 	string_append(&comando,PUNTO_DE_MONTAJE);
-	string_append(&comando,"/");
 	string_append(&comando,NOMBRE_DEL_DISCO);
 	string_append(&comando," bs=");
 	string_append(&comando,string_itoa(BLOCK_SIZE));
 	string_append(&comando," count=");
 	string_append(&comando,string_itoa(CANT_MAX_BLOQUES));
 	int retorno = system(comando);
-	//FILE* fd = popen(comando,"w");
 	free(comando);
 	if(retorno<0){
 		printf("No podemos levantar el FileSystem\n");
@@ -132,10 +131,11 @@ void start_up(){
 	free(comando);
 	char* ruta = string_new();
 	string_append(&ruta,PUNTO_DE_MONTAJE);
-	string_append(&ruta,"/");
 	string_append(&ruta,NOMBRE_DEL_DISCO);
 	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
-	int cantidad_bloques= BLOCK_SIZE*CANT_MAX_BLOQUES;
+	char* error=strerror(errno);
+	printf(error);
+	int cantidad_bloques= CANT_MAX_BLOQUES;
 	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
 
 	crear_bitmap(config);
@@ -183,9 +183,9 @@ void crear_bitmap(t_config* config){
 
 	int file_Desc_Bitarray = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
 
-	char* array_de_bits = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED, file_Desc_Bitarray, 0);
-
-	bitarray = bitarray_create_with_mode(array_de_bits,cantidad_bloques,LSB_FIRST);
+	//char* array_de_bits = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED, file_Desc_Bitarray, 0);
+	char* direccion_bitmap=(char*)(primer_bloque+BLOCK_SIZE);
+	bitarray = bitarray_create_with_mode(direccion_bitmap,cantidad_bloques,LSB_FIRST);
 
 	free(ruta);
 
