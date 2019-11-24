@@ -16,7 +16,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	log_info(logger_de_deserializacion, "Estamos por deserializar el codigo de operacion\n");
 	int codigo_de_operacion=determinar_protocolo(buffer);
 	void* resultado;
-	void* paquete_descifrado;
+
 	int TID;
 
 
@@ -72,22 +72,22 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		log_info(logger_de_deserializacion, "Nos llego un codigo invalido\n");
 	}
 	free(resultado);
-	free(paquete_descifrado);
+
 }
 
 void enviar_resultado(void* param1,int param2){
 
 
 }
-
+/*
 void* serializar_bool(bool dato){
 
 	int peso_dato=sizeof(bool)+sizeof(int);
 	void* paquete= malloc(peso_dato +sizeof(int));
 	memcpy(paquete,&peso_dato ,sizeof(int));
-	memcpy(paquete, &dato, sizeof(int)); //NO SE SI VA EL & TODO, SI ROMPE MIREN ESTO
+	memcpy(paquete, &dato, sizeof(int));//NO SE SI VA EL & TODO, SI ROMPE MIREN ESTO
 	return paquete;
-}
+}*/
 
 int descifrar_suse_create(void*param){
 	int offset=(int)sizeof(int);

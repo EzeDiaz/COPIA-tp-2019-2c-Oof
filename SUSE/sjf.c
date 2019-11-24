@@ -2,7 +2,7 @@
 
 
 // SJF 1
-
+/*
 int sjf_tincho(int n, char **args) {
 	printf("SJF: SHORTEST JOB FIRST");
 	// cada proceso contiene dos elementos:
@@ -103,4 +103,4 @@ void completionTime(int num, int mat[][6])
             swap(mat[val][k], mat[i][k]);
         }
     }
-}
+}*/
