@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <commons/bitarray.h>
 #include "sac.h"
+#include <commons/config.h>
 
 
 
@@ -73,7 +74,7 @@ t_bitarray* bitarray;
 void* primer_bloque;
 int cantidad_de_bloques_reservados;
 long tamanio_disco;
-
+t_config* config;
 
 
 #endif /* GLOBALES_H_ */

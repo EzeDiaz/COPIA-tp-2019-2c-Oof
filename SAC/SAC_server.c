@@ -104,8 +104,18 @@ void start_up(){
 		printf("No podemos levantar el FileSystem\n");
 		exit(1);
 	}
-	system(strcat("./sac-format",NOMBRE_DEL_DISCO));
-	system(strcat("./sac-dump ",NOMBRE_DEL_DISCO));
+	comando=string_new();
+	string_append(&comando,"./sac-format ");
+	string_append(&comando,NOMBRE_DEL_DISCO);
+	system(comando);
+	free(comando);
+
+	comando=string_new();
+	string_append(&comando,"./sac-dump ");
+	string_append(&comando,NOMBRE_DEL_DISCO);
+	system(comando);
+
+	free(comando);
 	char* ruta = string_new();
 	string_append(&ruta,PUNTO_DE_MONTAJE);
 	string_append(&ruta,"/");
@@ -113,6 +123,8 @@ void start_up(){
 	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
 	int cantidad_bloques= BLOCK_SIZE*CANT_MAX_BLOQUES;
 	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
+
+	crear_bitmap(config);
 
 
 
@@ -137,7 +149,6 @@ void crear_bitmap(t_config* config){
 	char* array_de_bits = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED, file_Desc_Bitarray, 0);
 
 	bitarray = bitarray_create_with_mode(array_de_bits,cantidad_bloques,LSB_FIRST);
-	bitarray_set_bit(bitarray,0);
 
 	free(ruta);
 
@@ -198,7 +209,7 @@ void* recibir_buffer(int* alocador, int cliente_socket){
 
 void obtener_datos_del_config(){
 	char* nombre_config;
-	t_config* config;
+
 
 	//IP = string_new();
 
@@ -226,7 +237,6 @@ void obtener_datos_del_config(){
 	NOMBRE_DEL_DISCO= config_get_string_value(config, "NOMBRE_DEL_DISCO");
 	mkdir(PUNTO_DE_MONTAJE,S_IRWXU);
 
-	crear_bitmap(config);
 
 }
 

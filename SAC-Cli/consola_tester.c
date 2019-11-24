@@ -26,6 +26,10 @@ int consola(){
 		printf("Ingrese un comando...\n");
 		linea = readline(">");
 
+		if(!strncmp(linea, "create",5)){
+
+		}
+
 		if(!strncmp(linea, "mkdir",5)){
 			char* path=(char*)malloc(71);
 			mode_t mode;
