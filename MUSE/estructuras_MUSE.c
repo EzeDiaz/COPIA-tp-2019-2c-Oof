@@ -985,8 +985,7 @@ void REMOVE_FREE_PAGES_FROM_SEGMENT(segment* a_segment){
 		WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_last_metadata, new_free_size, 1);
 
 		while(page < a_segment->pageFrameTable->elements_count){
-			pageFrame* page_to_be_destroyed = list_get(a_segment->pageFrameTable, page+1);
-			DESTROY_PAGE(page_to_be_destroyed);
+			list_remove_and_destroy_element(a_segment->pageFrameTable, page+1, DESTROY_PAGE);
 		}
 	}
 }
