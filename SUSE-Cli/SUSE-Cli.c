@@ -72,7 +72,7 @@ void start_up(){
 
 	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
 	config = config_create(nombre_de_config);
-
+	free(nombre_de_config);
 
 }
 
