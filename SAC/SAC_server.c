@@ -58,7 +58,6 @@ int main(){
 	printf("Listos para escuchar\n");
 
 	log_info(log_servidor,"Servidor listo para recibir un cliente\n");
-	inicializar_semaforos();
 
 	while(1){
 		listen(servidor, 100);
@@ -86,15 +85,19 @@ int main(){
 void inicializar_semaforos(){
 
 	sem_init(&mutex_log_servidor, 0, 1);
+	sem_init(&mutex_tabla_de_nodos,0,1);
+	sem_init(&mutex_log_servidor,0,1);
 
 }
 
 
 void inicializar_globales(){
 
+	//LOGGERS
 	logger_de_deserializacion=log_create("log de deserializacion","deserializacion",0,LOG_LEVEL_INFO);
 
-
+	//SEMAFOROS
+	inicializar_semaforos();
 }
 
 
@@ -166,7 +169,9 @@ void crear_bitmap(t_config* config){
 
 }
 void eliminar_semaforos(){ //TODO
-	NULL;
+	sem_destroy(&mutex_log_servidor);
+	sem_destroy(&mutex_tabla_de_nodos);
+	sem_destroy(&mutex_log_servidor);
 }
 
 

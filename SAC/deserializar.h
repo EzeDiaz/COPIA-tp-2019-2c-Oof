@@ -57,7 +57,7 @@ void* decifrar_archivo_a_crear(void*);
 archivo_descifrado_escritura* decifrar_archivo_a_escribir(void*);
 void* decifrar_archivo_a_leer(void*);
 void* decifrar_archivo_a_borrar(void*);
-creacion* decifrar_directorio_a_crear(void*);
+creacion* decifrar_creacion(void*);
 directorio_a_listar_t* decifrar_directorio_a_listar(void*);
 char* decifrar_directorio_a_borrar(void*);
 

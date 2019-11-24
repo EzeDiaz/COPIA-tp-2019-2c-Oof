@@ -23,7 +23,7 @@
 //Funcionalidades con archivos
 bool crear_archivo(char* path,mode_t mode){
 	bool flag = false;
-	flag=agregar_metadata_de_archivo();
+	flag=agregar_metadata_de_archivo(path);
 	return flag;
 }
 

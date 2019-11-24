@@ -162,14 +162,13 @@ ptrGBloque* obtener_puntero_padre(char* path){
 
 void obtener_nombre_de_archivo(char fname[],char* path){
 
-	char** vector= string_split(path, "/");
+	char** vector= string_split(path, "\/");
 	int i =0;
 	while(vector[i]!=NULL){
 		i++;
 	}
-	for(int j=0;j<71;j++){
-		fname[j]=vector[i][j];
-	}
+		fname=vector[i-1];
+
 
 
 }
@@ -257,9 +256,9 @@ GFile* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
 
 		return NULL;
 	}
-	sem_wait(mutex_tabla_de_nodos);
+	sem_wait(&mutex_tabla_de_nodos);
 	GFile* el_nodo_a_retornar = buscar_nodo_por_nombre(nombre_de_nodo);
-	sem_post(mutex_tabla_de_nodos);
+	sem_post(&mutex_tabla_de_nodos);
 	return el_nodo_a_retornar;
 }
 
