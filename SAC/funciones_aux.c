@@ -15,6 +15,27 @@ void* encontrar_posicion_en_disco(int numero_de_bloque){
 
 }
 
+void agregar_datos_de_escritura_a_tabla_de_nodo(uint32_t direccion,t_list* bloque_a_escribir){
+
+	int i=0;
+
+
+	while(i<1024){
+	if(tabla_de_nodos[i]->blk_indirect==direccion){
+
+		void agregar_datos(int bloque){
+		agregar_bloque_dato_a_bloque_puntero(tabla_de_nodos[i]->blk_indirect,bloque);
+		}
+		list_iterate(bloque_a_escribir,agregar_datos);
+	}
+
+	i++;
+	}
+}
+
+void agregar_bloque_dato_a_bloque_puntero(tabla_de_nodos[i]->blk_indirect,int bloque);
+
+
 bool verificar_path_este_permitido(char*path){
 
 	//puede mejorar TODO
@@ -111,21 +132,18 @@ void obtener_nombre_de_archivo(char fname[],char* path){
 
 
 void leer_cada_archivo_y_borrar(char* path){
-
-
-	char* directorio = string_new();
-	struct dirent *dir;
-	DIR* directorio_tabla= opendir(directorio);
-	if(directorio_tabla != NULL){
-
-		while ((dir = readdir(directorio_tabla)) != NULL){
-			if(!strcmp(dir->d_name,"..") || !strcmp(dir->d_name, ".")){
-
-			}else{
-				borrar_archivo(strcat(path,dir->d_name));
-			}
+	char fname[71];
+	obtener_nombre_de_archivo(fname, path);
+	GFile* nodo_dir=encontrar_en_tabla_de_nodos(fname);
+	for(int i=0;i<1024;i++){
+		tabla_de_nodos[i];
+		if(tabla_de_nodos[i]->parent_dir_block==nodo_dir->blk_indirect){
+			borrar_del_bitmap(tabla_de_nodos[i]->blk_indirect);
+			tabla_de_nodos[i]->state=BORRADO;
 		}
 	}
+
+
 }
 
 void* paquetizar_metadata_de_directorio(t_list*lista){
@@ -164,11 +182,11 @@ void* paquetizar_metadata_de_directorio(t_list*lista){
 void borrar_del_bitmap(uint32_t blk_indirect[]){
 
 	for(int i=0;i<1000;i++){
-		void* bloque_punt_indirecto=leer_en_disco(blk_indirect[i],1024*sizeof(uint32_t));
+		void* bloque_punt_indirecto=leer_en_disco((void*)blk_indirect[i],1024*sizeof(uint32_t));
 		int offset=0;
 		for(int j=0;j<1024;j++){
 			uint32_t direccion_a_borrar;
-			memcpy(direccion_a_borrar,bloque_punt_indirecto+offset,sizeof(uint32_t));
+			memcpy(&direccion_a_borrar,bloque_punt_indirecto+offset,sizeof(uint32_t));
 			offset+=sizeof(uint32_t);
 			if(direccion_a_borrar){
 				int numero_de_bloque=((int)primer_bloque - direccion_a_borrar)/BLOCK_SIZE;

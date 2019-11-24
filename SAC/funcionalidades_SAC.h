@@ -18,7 +18,7 @@
 bool crear_archivo();
 bool escribir_archivo();
 t_list* leer_archivo();
-bool borrar_archivo();
+bool borrar_archivo(char*);
 bool agregar_metadata_de_archivo();
 
 

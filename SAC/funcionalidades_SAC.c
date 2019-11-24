@@ -32,8 +32,30 @@ t_list* listar_metadata(){
 	return lista_de_retorno;
 }
 
-bool escribir_archivo(){
+bool escribir_archivo(uint32_t direccion,const void *cosas_a_escribir, size_t cantidad_a_escribir){
 	bool flag = false;
+	t_list* bloques_a_escribir=list_create();
+	int bloque_a_escribir=0;
+
+	while(cantidad_a_escribir>BLOCK_SIZE*bloques_a_escribir->elements_count && bloques_a_escribir>0){
+		bloque_a_escribir=buscar_bloque_libre(BUSQUEDA_ARCHIVO);
+		if(bloque_a_escribir>0)
+			list_add(bloques_a_escribir,bloque_a_escribir);
+	}
+	if(bloques_a_escribir->elements_count>0){
+		agregar_datos_de_escritura_a_tabla_de_nodo(direccion,bloques_a_escribir);
+		int offset=0;
+		void escribir_cosas_en_disco(int bloque){
+
+			escribir_en_disco(cosas_a_escribir+offset,bloque_a_escribir);
+			offset+=BLOCK_SIZE;
+		}
+		list_iterate(bloques_a_escribir,escribir_cosas_en_disco);
+		flag=true;
+	}
+
+
+	list_destroy(bloques_a_escribir);
 	return flag;
 }
 
@@ -59,7 +81,6 @@ bool borrar_archivo(char* path){
 bool agregar_metadata_de_archivo(char* path){
 	bool flag= false;
 
-
 	GFile* nodo_libre=buscar_nodo_libre();
 	if(nodo_libre!=NULL){
 		nodo_libre->state=OCUPADO;
@@ -77,8 +98,13 @@ bool agregar_metadata_de_archivo(char* path){
 }
 
 int abrir_archivo(char* path, int flags, mode_t mode){
-	if(verificar_path_este_permitido(path))
-		return open(path, flags,mode);
+	if(verificar_path_este_permitido(path)){
+		char nombre_archivo[71];
+		obtener_nombre_de_archivo(nombre_archivo,path);
+		GFile* nodo=encontrar_en_tabla_de_nodos(nombre_archivo);
+		return nodo->blk_indirect;
+	}
+
 
 	return -1;
 }
@@ -87,10 +113,9 @@ int abrir_archivo(char* path, int flags, mode_t mode){
 bool crear_directorio(char* path, mode_t mode){
 	bool flag = false;
 	if(verificar_path_este_permitido(path)){
-		mkdir(path, mode);
-		flag=errno!=EEXIST;
+
+		flag=agregar_metadata_de_archivo(path);
 	}
-	//falta meterlo en el bitmap y todas esas cosas TODO
 
 	return flag;
 }
@@ -128,8 +153,8 @@ bool eliminar_directorio(char* path){
 	bool flag = false;
 	if(verificar_path_este_permitido(path)){
 		leer_cada_archivo_y_borrar(path);
-		liberar_bloque(path);
-		remove(path);
+		borrar_archivo(path);
+
 		//falta meterlo en el bitmap y todas esas cosas TODO
 		flag=true;
 	}

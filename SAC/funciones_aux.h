@@ -14,6 +14,7 @@
 #include <string.h>
 #include <errno.h>
 #include <dirent.h>
+#include <commons/string.h>
 
 
 GFile* encontrar_en_tabla_de_nodos(char* );
