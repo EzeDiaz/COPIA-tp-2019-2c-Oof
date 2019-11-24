@@ -8,6 +8,7 @@
 #ifndef DESERIALIZAR_H_
 #define DESERIALIZAR_H_
 #include <commons/log.h>
+#include "globales.h"
 
 //TADS
 typedef struct{
@@ -28,7 +29,7 @@ typedef struct{
 	char* string_nombre_de_archivos;
 }directorio_a_listar_t;
 
-t_log* logger_de_deserializacion;
+
 
 
 

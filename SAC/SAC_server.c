@@ -30,10 +30,12 @@ void* recibir_buffer(int* , int);
 t_log* log_servidor;
 
 int main(){
+
 	remove("log_servidor.log");
 	log_servidor = log_create("log_servidor.log","SAC_Servidor",0,LOG_LEVEL_DEBUG);
 	obtener_datos_del_config();
 	start_up();
+	inicializar_globales();
 	struct sockaddr_in direccion_servidor;
 	direccion_servidor.sin_family = AF_INET;
 	direccion_servidor.sin_addr.s_addr = inet_addr(IP);
@@ -86,6 +88,15 @@ void inicializar_semaforos(){
 	sem_init(&mutex_log_servidor, 0, 1);
 
 }
+
+
+void inicializar_globales(){
+
+	logger_de_deserializacion=log_create("log de deserializacion","deserializacion",0,LOG_LEVEL_INFO);
+
+
+}
+
 
 void start_up(){
 	char* comando = string_new();

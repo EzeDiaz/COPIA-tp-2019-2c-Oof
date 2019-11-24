@@ -56,7 +56,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case CREAR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'creacion de direcorio', comenzando la deserializacion de parametros\n");
 		directorio_a_crear_t* directorio=decifrar_directorio_a_crear(buffer);
-		resultado=crear_directorio(directorio->path,directorio->mode);
+		int flag_resultado=crear_directorio(directorio->path,directorio->mode);
+		resultado=serializar_flag(flag_resultado);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -86,7 +87,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		log_info(logger_de_deserializacion, "Nos llego un codigo invalido\n");
 	}
 	free(resultado);
-	free(paquete_decifrado);
+	//free(paquete_decifrado);
 }
 
 

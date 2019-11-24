@@ -75,6 +75,6 @@ void* primer_bloque;
 int cantidad_de_bloques_reservados;
 long tamanio_disco;
 t_config* config;
-
+t_log* logger_de_deserializacion;
 
 #endif /* GLOBALES_H_ */

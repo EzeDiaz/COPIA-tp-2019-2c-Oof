@@ -9,6 +9,13 @@
 
 #include "funciones_aux.h"
 
+void* serializar_flag(int flag_resultado){
+	void* paquete=malloc(sizeof(int));
+	memcpy(paquete,&flag_resultado,sizeof(int));
+	return paquete;
+
+}
+
 void* encontrar_posicion_en_disco(int numero_de_bloque){
 
 	return (primer_bloque+ numero_de_bloque* BLOCK_SIZE);

@@ -1,2 +1,16 @@
-[INFO] 23:06:39:725 SAC_Servidor/(14160:14160): Leimos el config: config.config
+[INFO] 01:27:51:571 SAC_Servidor/(17359:17359): Leimos el config: config.config
+
+[INFO] 01:28:57:187 SAC_Servidor/(17359:17359): Levantamos el servidor
+
+[INFO] 01:29:00:70 SAC_Servidor/(17359:17359): Servidor listo para recibir un cliente
+
+[INFO] 01:30:09:978 SAC_Servidor/(17359:17359): Recibimos un cliente
+
+[INFO] 01:30:11:754 SAC_Servidor/(17359:17447): Recibimos una conexion
+
+[INFO] 01:30:11:754 SAC_Servidor/(17359:17447): Terminamos el request
+
+[INFO] 01:30:38:949 SAC_Servidor/(17359:17447): Terminamos el request
+
+[INFO] 01:30:57:254 SAC_Servidor/(17359:17447): Terminamos el request
 
