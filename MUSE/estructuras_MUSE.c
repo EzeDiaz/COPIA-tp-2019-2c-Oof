@@ -646,7 +646,8 @@ int GET_PAGE_NUMBER_FROM_ADDRESS(uint32_t address, segment* a_segment){
 }
 //TODO: Hacer frees de current metadata y next metadata
 
-// Cada vez que hago un Free() invoco esta funcion que recorre toda la TDP mergeando las metadatas libres
+// Cada vez que hago un Free() invoco esta funcion que recorre toda la TDP mergeando las metadatas libres y borra las paginas que estan
+// todas free
 
 void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 	int page_move_counter = 0;
@@ -681,21 +682,24 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 			} else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
 				new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
 				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
-				next_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_first_metadata_new_frame);
+				if(page_number < page_frame_table->elements_count){
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
+					next_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_first_metadata_new_frame);
 
-				if(next_metadata->isFree){ // si la proxima metadata que esta en otro frame esta libre
-					uint32_t total_size = current_metadata->size + next_metadata->size + 5;
-					page_move_counter = page_move_counter - current_metadata->size - 5;
-					WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata, total_size, 1);
-					page_number--;
-				} else{ // si no esta libre
-					ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
-					page_move_counter = new_page_move_counter;
 
+					if(next_metadata->isFree){ // si la proxima metadata que esta en otro frame esta libre
+						uint32_t total_size = current_metadata->size + next_metadata->size + 5;
+						page_move_counter = page_move_counter - current_metadata->size - 5;
+						WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata, total_size, 1);
+						page_number--;
+					} else{ // si no esta libre
+						ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
+						page_move_counter = new_page_move_counter;
+
+					}
 				}
 			}
 		} else{ // si no esta free... me paro en el proximo y se vuelve mi actual
@@ -707,34 +711,16 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 			} else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
 				new_page_move_counter = page_move_counter - page_size;
 				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
-				ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
-				page_move_counter = new_page_move_counter;
+				if(page_number < page_frame_table->elements_count) {
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
+					ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
+					page_move_counter = new_page_move_counter;
+				}
 			}
 
-		}
-	}
-
-	while(page_frame_table->elements_count > page_number){
-
-		current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata);
-
-		if(current_metadata->isFree){ // si estoy libre
-			page_move_counter = page_move_counter + current_metadata->size + 5; // el +5 es para avanzar los 5b de la primera metadata
-
-			if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
-				ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
-			}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
-				new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
-				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
-			}
 		}
 	}
 
@@ -772,42 +758,61 @@ void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 	void* data = malloc(bytes_a_copiar);
 
 	if(a_segment != NULL){
-		if(a_segment->isHeap){
-			pageFrame* current_page = list_get(page_frame_table, page_number);
+		src = TRANSLATE_DL_TO_DF(src);
+		pageFrame* current_page = list_get(page_frame_table, page_number);
+		void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
+		void* ptr_to_data = ptr_to_frame + src; // va a donde empieza la data a leer
+
+		while(page_frame_table->elements_count > page_number && bytes > 0){
+			if(!current_page->presenceBit){
+				//swap
+				int swap_frame =  current_page->frame_number;
+				int swap_pos = swap_frame * page_size;
+				int free_frame = CLOCK();
+				void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
+
+				for(int i = 0; i < page_size; i++){
+					memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+				}
+
+				FREE_SWAP_FRAME_BITMAP(swap_frame);
+
+				current_page->frame_number = free_frame;
+				current_page->presenceBit = 1;
+			}
+
 			void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
-			void* ptr_to_data = ptr_to_frame + src; // va a donde empieza la data a leer (se saltea la metadata)
+			void* ptr_to_data = ptr_to_frame + src; // va a donde empieza la data a leer
+			page_move_counter = ptr_to_data + bytes_a_copiar;
 
-			while(page_frame_table->elements_count > page_number && bytes > 0){
-				while(current_page->presenceBit && bytes > 0){
-					page_move_counter = ptr_to_data + bytes_a_copiar;
-					if(page_move_counter < page_size){ // si al sumar esos bytes sigo en mi pagina
-						memcpy(data+offset, ptr_to_data, bytes_a_copiar);
-						bytes = bytes - bytes_a_copiar;
-						current_page->useBit = 1;
+			if(page_move_counter < page_size){ // si al sumar esos bytes sigo en mi pagina
+				memcpy(data+offset, ptr_to_data, bytes_a_copiar);
+				bytes = bytes - bytes_a_copiar;
+				current_page->useBit = 1;
 
-					} else{ // si al sumar esos bytes me pase... voy a la pagina siguiente y leo lo que me queda
-						int bytes_restantes_en_frame_siguiente = page_move_counter - page_size;
-						int bytes_en_frame_anterior = bytes_a_copiar - bytes_restantes_en_frame_siguiente;
-						memcpy(data, ptr_to_data, bytes_en_frame_anterior);
-						page_number++;
-						current_page->useBit = 1;
-						current_page = list_get(page_frame_table, page_number);
-						void* ptr_to_new_frame = GET_FRAME_POINTER(current_page->frame_number);
-						bytes_a_copiar = bytes_restantes_en_frame_siguiente;
-						ptr_to_data = ptr_to_new_frame;
-						offset = offset + bytes_en_frame_anterior;
-					}
-
-				} // salgo de ese while porque el frame no esta en memoria y lo voy a buscar a swap
-
-
-
-
-			} if(bytes > 0) {}//seg fault (me quede sin paginas y me quedaron bytes por copiar)
-		} // seg fault (segmento no es heap)
-	} // seg fault (segmento no existe)
-
+			} else{ // si al sumar esos bytes me pase... voy a la pagina siguiente y leo lo que me queda
+				int bytes_restantes_en_frame_siguiente = page_move_counter - page_size;
+				int bytes_en_frame_anterior = bytes_a_copiar - bytes_restantes_en_frame_siguiente;
+				memcpy(data, ptr_to_data, bytes_en_frame_anterior);
+				bytes = bytes - bytes_en_frame_anterior;
+				page_number++;
+				if(page_number < page_frame_table->elements_count){
+					current_page->useBit = 1;
+					current_page = list_get(page_frame_table, page_number);
+					bytes_a_copiar = bytes_restantes_en_frame_siguiente;
+					offset = offset + bytes_en_frame_anterior;
+				}
+			}
+		}
+	}
 	return data;
+}
+
+int TRANSLATE_DL_TO_DF(uint32_t dl){
+	int r = dl / page_size;
+	int df = dl - (page_size * r);
+
+	return df;
 }
 
 // no estoy seguro de como me llega la data por parametro lo dejo como void* data
@@ -820,44 +825,55 @@ void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_
 	int bytes = bytes_a_copiar;
 
 	if(a_segment != NULL){
-		if(a_segment->isHeap){
-			heapMetadata* metadata = GET_METADATA_BEHIND_ADDRESS(dst, page_frame_table);
-			if(metadata->size > bytes_a_copiar + dst){
-				pageFrame* current_page = list_get(page_frame_table, page_number);
-				void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
-				void* ptr_to_data = ptr_to_frame + dst; // va a donde empieza la data a copiar (se saltea la metadata)
+		dst = TRANSLATE_DL_TO_DF(dst);
+		pageFrame* current_page = list_get(page_frame_table, page_number);
 
-				while(page_frame_table->elements_count > page_number && bytes > 0){
-					while(current_page->presenceBit && bytes > 0){
-						page_move_counter = ptr_to_data + bytes_a_copiar;
-						if(page_move_counter < page_size){ // si al sumar esos bytes sigo en mi pagina
-							memcpy(ptr_to_data, data+offset, bytes_a_copiar);
-							bytes = bytes - bytes_a_copiar;
-							current_page->useBit = 1;
+		while(page_frame_table->elements_count > page_number && bytes > 0){
+			if(!current_page->presenceBit){
+				//swap
+				int swap_frame =  current_page->frame_number;
+				int swap_pos = swap_frame * page_size;
+				int free_frame = CLOCK();
+				void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
 
-						} else{ // si al sumar esos bytes me pase... voy a la pagina siguiente y copio lo que me queda
-							int bytes_restantes_en_frame_siguiente = page_move_counter - page_size;
-							int bytes_en_frame_anterior = bytes_a_copiar - bytes_restantes_en_frame_siguiente;
-							memcpy(ptr_to_data, data+offset, bytes_en_frame_anterior);
-							page_number++;
-							current_page->useBit = 1;
-							current_page = list_get(page_frame_table, page_number);
-							void* ptr_to_new_frame = GET_FRAME_POINTER(current_page->frame_number);
-							bytes_a_copiar = bytes_restantes_en_frame_siguiente;
-							ptr_to_data = ptr_to_new_frame;
-							offset = offset + bytes_en_frame_anterior;
-						}
+				for(int i = 0; i < page_size; i++){
+					memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+				}
 
-					} // salgo de ese while porque el frame no esta en memoria y lo voy a buscar a swap
+				FREE_SWAP_FRAME_BITMAP(swap_frame);
 
-
-
-
-				} if(bytes > 0) {}//seg fault (me quede sin paginas y me quedaron bytes por copiar)
+				current_page->frame_number = free_frame;
+				current_page->presenceBit = 1;
 			}
-		} // seg fault (segmento no es heap)
-	} // seg fault (segmento no existe)
 
+			heapMetadata* metadata = GET_METADATA_BEHIND_ADDRESS(dst, page_frame_table);
+			if(metadata->size > bytes_a_copiar + dst){ //Si tengo espacio suficiente para copiar, copio
+				void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
+				void* ptr_to_data = ptr_to_frame + dst; // va a donde empieza la data a escribir
+
+				page_move_counter = ptr_to_data + bytes_a_copiar;
+
+				if(page_move_counter < page_size){ // si al sumar esos bytes sigo en mi pagina
+					memcpy(ptr_to_data, data+offset, bytes_a_copiar);
+					bytes = bytes - bytes_a_copiar;
+					current_page->useBit = 1;
+
+				} else{ // si al sumar esos bytes me pase... voy a la pagina siguiente y copio lo que me queda
+					int bytes_restantes_en_frame_siguiente = page_move_counter - page_size;
+					int bytes_en_frame_anterior = bytes_a_copiar - bytes_restantes_en_frame_siguiente;
+					memcpy(ptr_to_data, data+offset, bytes_en_frame_anterior);
+					bytes = bytes - bytes_en_frame_anterior;
+					page_number++;
+					if(page_number < page_frame_table->elements_count){
+						current_page->useBit = 1;
+						current_page = list_get(page_frame_table, page_number);
+						bytes_a_copiar = bytes_restantes_en_frame_siguiente;
+						offset = offset + bytes_en_frame_anterior;
+					} //ultima pagina, no se puede seguir
+				}
+			} // else no tengo espacio suficiente
+		}
+	}
 }
 
 heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_table){
