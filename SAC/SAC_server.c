@@ -139,9 +139,32 @@ void start_up(){
 	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
 
 	crear_bitmap(config);
+	setear_fs();
 
 
 
+}
+
+
+void setear_fs(){
+
+	tamanio_disco=4294967296;
+	int n_bloques=(tamanio_disco/BLOCK_SIZE/8)/BLOCK_SIZE;
+	cantidad_de_bloques_reservados= 1025 +n_bloques;
+
+
+	GFile* primer_nodo=buscar_nodo_libre();
+	primer_nodo->parent_dir_block=NULL;
+	primer_nodo->state=DIRECTORIO;
+	primer_nodo->c_date=(long)time (NULL);
+	primer_nodo->m_date=primer_nodo->c_date;
+	primer_nodo->file_size=0;
+	crear_vector_de_punteros(primer_nodo->blk_indirect,1000);
+
+	for(int i=0; i<71;i++){
+	primer_nodo->fname[i]=PUNTO_DE_MONTAJE[i];
+	}
+	escribir_en_disco(preparar_nodo_para_grabar(primer_nodo),buscar_bloque_libre(BUSQUEDA_NODO));
 }
 
 void crear_bitmap(t_config* config){
