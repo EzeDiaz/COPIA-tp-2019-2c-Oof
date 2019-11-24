@@ -8,6 +8,7 @@
 
 //Bibliotecas propias
 #include <libMUSE.h>
+#include <get_local_IP.h>
 #include "globales.h"
 #include "estructuras_MUSE.h"
 #include "serverMUSE.h"
@@ -64,7 +65,7 @@ void iniciarServidor(){
 
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
-	direccionServidor.sin_addr.s_addr= inet_addr(config_get_string_value(config,"IP")); //INADDR_ANY;
+	direccionServidor.sin_addr.s_addr= inet_addr(get_local_IP()); //INADDR_ANY;
 	direccionServidor.sin_port=htons(config_get_int_value(config,"PUERTO"));
 
 
@@ -116,15 +117,18 @@ void* recibirBuffer(int* alocador, int cliente){
 		buffer = malloc(*alocador);
 		recv(cliente, buffer,*alocador, MSG_WAITALL);
 		return buffer;
-	} else {
+	} else if(recv_result == 0){
 		*alocador=0;
 		return buffer;
 	}
 
 	//Si da menor a 0 es porque el cliente se desconecto mal (seg_fault o algo asi).
 	//Entonces, lo saco de prepo del sistema. Deberia chequear si, en una de esas, no salio antes?
-	if(recv_result < 0)
+	if(recv_result < 0) {
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		LOG_METRICS(cliente);
+		return buffer; //Creo que tambien hay que retornarlo aca
+	}
 }
 
 void realizarRequest(void *buffer, int cliente){
@@ -467,21 +471,12 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
-		char* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
+		void* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
 
-		//TODO: Armar paquete
+		buffer=(void*)malloc(n);
+		memcpy(buffer, data, n);
 
-		/* Armamos el paquetito de respuesta
-		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
 		free(dst);
