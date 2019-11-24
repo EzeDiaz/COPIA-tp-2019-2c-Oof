@@ -66,7 +66,7 @@ void iniciarServidor(){
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
 	direccionServidor.sin_addr.s_addr= inet_addr(get_local_IP()); //INADDR_ANY;
-	direccionServidor.sin_port=htons(config_get_int_value(config,"PUERTO"));
+	direccionServidor.sin_port=htons(config_get_int_value(config,"LISTEN_PORT"));
 
 
 	int servidor = socket(AF_INET, SOCK_STREAM , 0);
