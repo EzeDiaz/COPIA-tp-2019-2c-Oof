@@ -680,21 +680,24 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 			} else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
 				new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
 				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
-				next_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_first_metadata_new_frame);
+				if(page_number < page_frame_table->elements_count){
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
+					next_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_first_metadata_new_frame);
 
-				if(next_metadata->isFree){ // si la proxima metadata que esta en otro frame esta libre
-					uint32_t total_size = current_metadata->size + next_metadata->size + 5;
-					page_move_counter = page_move_counter - current_metadata->size - 5;
-					WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata, total_size, 1);
-					page_number--;
-				} else{ // si no esta libre
-					ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
-					page_move_counter = new_page_move_counter;
 
+					if(next_metadata->isFree){ // si la proxima metadata que esta en otro frame esta libre
+						uint32_t total_size = current_metadata->size + next_metadata->size + 5;
+						page_move_counter = page_move_counter - current_metadata->size - 5;
+						WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata, total_size, 1);
+						page_number--;
+					} else{ // si no esta libre
+						ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
+						page_move_counter = new_page_move_counter;
+
+					}
 				}
 			}
 		} else{ // si no esta free... me paro en el proximo y se vuelve mi actual
@@ -706,34 +709,16 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 			} else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
 				new_page_move_counter = page_move_counter - page_size;
 				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
-				ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
-				page_move_counter = new_page_move_counter;
+				if(page_number < page_frame_table->elements_count) {
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
+					ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
+					page_move_counter = new_page_move_counter;
+				}
 			}
 
-		}
-	}
-
-	while(page_frame_table->elements_count > page_number){
-
-		current_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_current_metadata);
-
-		if(current_metadata->isFree){ // si estoy libre
-			page_move_counter = page_move_counter + current_metadata->size + 5; // el +5 es para avanzar los 5b de la primera metadata
-
-			if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
-				ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
-			}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
-				new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
-				page_number++;
-				pageFrame* next_page = list_get(page_frame_table, page_number);
-				current_frame = next_page->frame_number;
-				void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
-				ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
-			}
 		}
 	}
 
