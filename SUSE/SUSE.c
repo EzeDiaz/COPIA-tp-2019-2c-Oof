@@ -29,6 +29,7 @@ int main(){
 	suse_init();
 
 	/*DESARROLLO*/
+	iniciar_servidor();
 
 	//terminate_SUSE();
 	return 0;
@@ -39,42 +40,11 @@ void suse_init(){
 
 	/*INICIALIZO HILOS*/
 
-	hilo_t* hilo_new_to_ready;
-	pthread_create(hilo_new_to_ready,NULL,estadoNew(),NULL);
+	hilo_t *hilo_new_to_ready;
+	pthread_create(&hilo_new_to_ready,NULL,estadoNew,NULL);
 	pthread_detach(hilo_new_to_ready);
 
 	/*INICIALIZO VARIABLES GLOBALES*/
-
-	//Mutex
-	sem_t* semaforo_log_colas;
-	sem_t* semaforo_diccionario_de_procesos;
-	sem_t* semaforo_diccionario_procesos_x_queues;
-	sem_t* semaforo_diccionario_procesos_x_semaforo;
-	sem_t* mutex_log_servidor;
-	sem_t* semaforo_lista_procesos_finalizados;
-	sem_t* semaforo_estado_blocked;
-	sem_t* semaforo_diccionario_por_semaforo;
-
-	//Contador
-	sem_t* grado_de_multiprogramacion_contador;
-	sem_t* procesos_en_New;
-
-	//LOGS
-	t_log* log_colas;
-	t_log* logger;
-	t_log* log_metricas_sistema;
-	t_log* log_metricas_programa;
-	t_log* log_metricas_hilo;
-
-	//DICCIONARIOS
-	t_dictionary* diccionario_de_procesos;
-	t_dictionary* diccionario_procesos_x_queues; // Va a ser una tupla de (PID;VectorDeColas)
-	t_dictionary* diccionario_de_procesos_x_semaforo;
-	t_dictionary* diccionario_bloqueados_por_semafaro;
-
-	//COLAS
-	t_queue* cola_new;
-	t_queue* cola_exit;
 
 
 	/*INICIALIZO RECURSOS*/
@@ -104,19 +74,19 @@ void suse_init(){
 	/*INICIALIZO SEMAFOROS*/
 
 	/*Mutex*/
-	sem_init(semaforo_log_colas,0,1);
-	sem_init(semaforo_diccionario_de_procesos,0,1);
-	sem_init(semaforo_diccionario_procesos_x_queues,0,1);
-	sem_init(semaforo_diccionario_procesos_x_semaforo,0,1);
-	sem_init(semaforo_lista_procesos_finalizados,0,1);
-	sem_init(mutex_log_servidor,0,1);
-	sem_init(semaforo_estado_blocked,0,1);
-	sem_init(semaforo_diccionario_por_semaforo,0,1);
+	sem_init(&semaforo_log_colas,0,1);
+	sem_init(&semaforo_diccionario_de_procesos,0,1);
+	sem_init(&semaforo_diccionario_procesos_x_queues,0,1);
+	sem_init(&semaforo_diccionario_procesos_x_semaforo,0,1);
+	sem_init(&semaforo_lista_procesos_finalizados,0,1);
+	sem_init(&mutex_log_servidor,0,1);
+	sem_init(&semaforo_estado_blocked,0,1);
+	sem_init(&semaforo_diccionario_por_semaforo,0,1);
 
 	/*Contador*/
-	sem_init(grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
-	sem_init(procesos_en_New,0,0);
-	sem_init(semaforo_lista_procesos_finalizados,0,0);
+	sem_init(&grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
+	sem_init(&procesos_en_New,0,0);
+	sem_init(&semaforo_lista_procesos_finalizados,0,0);
 
 }
 
@@ -226,7 +196,6 @@ bool suse_wait(char* semaforo, int PID){
 
 
 void* suse_signal(char* semaforo, int PID){
-	//TODO
 	//Genero una operacion signal sobre el semaforo dado
 	signal(semaforo,PID);
 	//no sabemos que retorna, revisar issue #22

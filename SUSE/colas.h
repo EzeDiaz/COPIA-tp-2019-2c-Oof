@@ -16,6 +16,7 @@
 
 //Prototipos
 void newToReady();
+void * estadoNew();
 void exit_thread(hilo_t*);
 bool esta_vacia(t_queue* );
 void encolar_en_new(hilo_t*);
