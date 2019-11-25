@@ -22,6 +22,13 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	switch(codigo_de_operacion){
 
+	case HILOLAY_INIT:
+			log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
+			resultado=armar_paquete(_hilolay_init(cliente_socket),INT);
+			enviar_resultado(resultado,cliente_socket);
+			break;
+
+
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
 		int tid=descifrar_suse_create(buffer);

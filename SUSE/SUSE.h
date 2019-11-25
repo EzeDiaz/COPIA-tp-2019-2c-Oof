@@ -46,6 +46,7 @@ void agregar_al_diccionario(int , sem_t*);
 void leer_config();
 void crear_hilo(hilo_t*, void*);
 void liberar_recursos();
+int _hilolay_init(int);
 
 
 #endif /* SUSE_H_ */

@@ -284,10 +284,22 @@ void* suse_close(int TID){
 
 
 
-void hilolay_init(){
+int _hilolay_init(int PID){
+			proceso_t* un_proceso;
+			un_proceso =malloc(sizeof(proceso_t));
+			un_proceso->hilos_del_programa=list_create();
 
-	suse_init();
+			dictionary_put(diccionario_de_procesos, PID ,un_proceso);
+			t_queue* vector_queues[2];
+			vector_queues[COLA_READY]=queue_create();
+			vector_queues[COLA_EXEC]=queue_create();
+			dictionary_put(diccionario_procesos_x_queues,PID, vector_queues);
 
+			hilo_t* un_hilo;
+			pthread_create(un_hilo, NULL, estadoReady(PID), NULL);
+			pthread_detach(un_hilo);
+
+			return PID;
 
 }
 
@@ -304,24 +316,12 @@ int suse_create(int tid, int socket){
 
 	if(dictionary_has_key(diccionario_de_procesos, socket)){
 
-		un_proceso = dictionary_get(diccionario_de_procesos, socket);
+	un_proceso = dictionary_get(diccionario_de_procesos, socket);
 
 
 	}else{
 
-		proceso_t* un_proceso;
-		un_proceso =malloc(sizeof(proceso_t));
-		un_proceso->hilos_del_programa=list_create();
-
-		dictionary_put(diccionario_de_procesos, socket,un_proceso);
-		t_queue* vector_queues[2];
-		vector_queues[COLA_READY]=queue_create();
-		vector_queues[COLA_EXEC]=queue_create();
-		dictionary_put(diccionario_procesos_x_queues,socket, vector_queues);
-
-		hilo_t* un_hilo;
-		pthread_create(un_hilo, NULL, estadoReady(socket), NULL);
-		pthread_detach(un_hilo);
+		return -1;
 
 	}
 
