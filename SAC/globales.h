@@ -7,7 +7,7 @@
 
 #ifndef GLOBALES_H_
 #define GLOBALES_H_
-#define _FILE_OFFSET_BITS  64
+
 
 #include <commons/collections/list.h>
 #include <commons/log.h>

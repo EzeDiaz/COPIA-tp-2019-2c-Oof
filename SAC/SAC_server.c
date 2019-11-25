@@ -4,7 +4,7 @@
  *  Created on: 6 oct. 2019
  *      Author: utnso
  */
-
+#define _FILE_OFFSET_BITS  64
 #include <fcntl.h>
 #include <sys/types.h>
 #include <stdio.h>
@@ -119,12 +119,14 @@ void start_up(){
 	}
 	comando=string_new();
 	string_append(&comando,"./sac-format ");
+	string_append(&comando,PUNTO_DE_MONTAJE);
 	string_append(&comando,NOMBRE_DEL_DISCO);
 	system(comando);
 	free(comando);
 
 	comando=string_new();
 	string_append(&comando,"./sac-dump ");
+	string_append(&comando,PUNTO_DE_MONTAJE);
 	string_append(&comando,NOMBRE_DEL_DISCO);
 	system(comando);
 
@@ -133,8 +135,7 @@ void start_up(){
 	string_append(&ruta,PUNTO_DE_MONTAJE);
 	string_append(&ruta,NOMBRE_DEL_DISCO);
 	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
-	char* error=strerror(errno);
-	printf(error);
+
 	int cantidad_bloques= CANT_MAX_BLOQUES;
 	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
 
@@ -181,9 +182,6 @@ void crear_bitmap(t_config* config){
 		cantidad_bloques = (cantidad_bloques / 8) + 1;
 	}
 
-	int file_Desc_Bitarray = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
-
-	//char* array_de_bits = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED, file_Desc_Bitarray, 0);
 	char* direccion_bitmap=(char*)(primer_bloque+BLOCK_SIZE);
 	bitarray = bitarray_create_with_mode(direccion_bitmap,cantidad_bloques,LSB_FIRST);
 
