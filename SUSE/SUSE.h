@@ -37,7 +37,7 @@ void suse_init();
 void* suse_close(int);
 void* suse_join(int);
 void* suse_signal(char* semaforo, int PID);
-hilo_t* suse_scheduler_next(int);
+hilo_t* suse_schedule_next(int);
 bool suse_wait(char*, int );
 int suse_create(int, int);
 proceso_t* obtener_proceso(int);

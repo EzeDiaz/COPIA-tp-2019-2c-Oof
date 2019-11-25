@@ -217,7 +217,7 @@ void agregar_al_diccionario(int PID, sem_t* semaforo_exec){
 }
 
 
-hilo_t* suse_scheduler_next(int PID){
+hilo_t* suse_schedule_next(int PID){
 
 	t_queue* cola_Ready = obtener_cola_ready_de(PID);
 

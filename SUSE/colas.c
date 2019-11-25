@@ -92,7 +92,7 @@ void readyToExec(int PID)
 			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
 			int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
 
-			hilo_t* hilo=suse_scheduler_next(PID);
+			hilo_t* hilo=suse_schedule_next(PID);
 
 			sem_wait(&semaforo_diccionario_procesos_x_semaforo);
 			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));

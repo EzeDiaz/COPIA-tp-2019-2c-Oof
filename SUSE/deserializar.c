@@ -31,7 +31,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
-		hilo_t* hilo_siguiente=suse_scheduler_next(cliente_socket);
+		hilo_t* hilo_siguiente=suse_schedule_next(cliente_socket);
 		resultado= armar_paquete(hilo_siguiente->hilo_informacion->tid,INT);
 		enviar_resultado(resultado,cliente_socket);
 		break;

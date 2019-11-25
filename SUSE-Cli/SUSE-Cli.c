@@ -53,7 +53,7 @@ void suse_signal(char* semaforo){
 	void* paquete = serializar_suse_signal(semaforo);
 	enviar_paquete(paquete);
 }
-void suse_scheduler_next(){
+void suse_schedule_next(){
 	void* paquete = serializar_suse_scheduler_next();
 	enviar_paquete(paquete);
 }
