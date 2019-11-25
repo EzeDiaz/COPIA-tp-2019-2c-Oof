@@ -7,6 +7,19 @@
 
 #include "serializar.h"
 
+void* serializar_hilolay_init(){
+	int peso_total_paquete = sizeof(int)*2;
+		int codigo_de_operacion = HILOLAY_INIT;
+		int offset = 0;
+		void* paquete = malloc(peso_total_paquete);
+
+		memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
+		offset += sizeof(int);
+		memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
+		offset += sizeof(int);
+		return paquete;
+
+}
 
 void* serializar_suse_close(int tid){
 

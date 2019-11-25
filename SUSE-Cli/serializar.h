@@ -39,6 +39,7 @@ void* serializar_suse_signal(char*);
 void* serializar_suse_scheduler_next();
 void* serializar_suse_wait(char*);
 void* serializar_suse_create(int);
+void* serializar_hilolay_init();
 
 
 
