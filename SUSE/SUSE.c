@@ -98,7 +98,8 @@ void leer_config(){
 
 	ALPHA_SJF = config_get_int_value(un_config,"ALPHA_SJF")/100;
 	PUERTO_ESCUCHA = config_get_int_value(un_config,"LISTEN_PORT");
-	IP = config_get_string_value(un_config, "IP");
+	IP=(char*)malloc(50);
+	strncpy(IP ,config_get_string_value(un_config, "IP"),strlen(config_get_string_value(un_config, "IP")));
 	METRICS_TIMER = config_get_int_value(un_config,"METRICS_TIMER");
 	MAX_MULTIPROG = config_get_int_value(un_config,"MAX_MULTIPROG");
 	SEM_IDS = config_get_array_value(un_config,"SEM_IDS");
@@ -221,6 +222,7 @@ hilo_t* suse_schedule_next(int PID){
 
 	t_queue* cola_Ready = obtener_cola_ready_de(PID);
 
+	// TODO REVISAR ESTE SJF
 	void sjf(hilo_t* un_hilo){
 		un_hilo->prioridad = calcular_sjf(un_hilo);
 	}

@@ -6,15 +6,12 @@
  */
 
 #include "SUSE-Cli.h"
+#include <errno.h>
 
 
 void* enviar_paquete(void*);
 void* recibir_resultado(int* );
 
-int main(int argc, char *argv[]){
-	start_up();
-	conectar_con_servidor(argc,argv);
-}
 
 void* enviar_paquete(void*paquete){
 
@@ -76,12 +73,12 @@ void start_up(){
 
 	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
 	config = config_create(nombre_de_config);
-	free(nombre_de_config);
+	//free(nombre_de_config);
 
 }
 
 
-void conectar_con_servidor(int argc, char *argv[]) {
+void conectar_con_servidor(int argc, char **argv) {
 
 		char* server_name=config_get_string_value(config,"IP");
 	    int server_port, socket_fd;
@@ -112,6 +109,8 @@ void conectar_con_servidor(int argc, char *argv[]) {
 	        perror("Error en la creacion del socket");
 	        exit(1);
 	    }
+	    printf(strerror(errno));
+
 
 
 	    /* Connect to socket with server address. */

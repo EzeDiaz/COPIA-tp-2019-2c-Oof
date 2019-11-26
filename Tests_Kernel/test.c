@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <hilolay/hilolay.h>
-#include </home/utnso/tp-2019-2c-Oof/SUSE-Cli/SUSE-Cli.h>
+#include <SUSE/SUSE-Cli.h>
 
 
 void recursiva(int cant) {
@@ -48,7 +48,8 @@ void *test2(void *arg) {
 
 
 /* Main program */
-int main() {
+int main(int argc, char *argv[]) {
+	conectar_con_servidor( argc, argv);
     int i;
 
     //hilolay_init();
