@@ -1,16 +1,8 @@
-[INFO] 23:40:03:361 Servidor/(8850:8850): Levantamos el servidor
+[INFO] 13:31:17:33 Servidor/(6563:6563): Levantamos el servidor
 
-[INFO] 23:40:03:361 Servidor/(8850:8850): Servidor listo para recibir un cliente
+[INFO] 13:31:17:34 Servidor/(6563:6563): Servidor listo para recibir un cliente
 
-[INFO] 23:44:54:898 Servidor/(8850:8850): Recibimos un cliente
+[INFO] 13:31:46:301 Servidor/(6563:6563): Recibimos un cliente
 
-[INFO] 23:44:54:900 Servidor/(8850:9001): Recibimos conexion 
-
-[INFO] 23:44:55:171 Servidor/(8850:9001): Se desconecto el cliente
-
-[INFO] 23:49:21:108 Servidor/(8850:8850): Recibimos un cliente
-
-[INFO] 23:49:21:110 Servidor/(8850:9139): Recibimos conexion 
-
-[INFO] 23:49:21:380 Servidor/(8850:9139): Se desconecto el cliente
+[INFO] 13:31:46:309 Servidor/(6563:6622): Recibimos conexion 
 

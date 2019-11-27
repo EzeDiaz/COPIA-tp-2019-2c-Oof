@@ -39,6 +39,8 @@ void* serializar_bool(bool);
 void* armar_paquete(void* , int );
 void* descifrar_hilolay_init(void*);
 //void* hilolay_init(void*);
+int determinar_protocolo(void* );
+void identificar_paquete_y_ejecutar_comando(int, void*);
 
 int descifrar_suse_create(void*);
 //void* suse_create(hilolay_t*, hilolay_attr_t*, (void*), void* );

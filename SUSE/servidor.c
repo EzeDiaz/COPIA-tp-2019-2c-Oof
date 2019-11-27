@@ -9,7 +9,7 @@
 #include <netdb.h>
 #include <sys/types.h>
 #include <netinet/in.h>
-
+#include "deserializar.h"
 #include "globales.h"
 
 void atender_cliente(int );
@@ -129,6 +129,8 @@ void* recibir_buffer(int* alocador, int cliente){
 }
 
 void realizar_request(void *buffer,int cliente){
+
+	identificar_paquete_y_ejecutar_comando(cliente, buffer);
 
 
 }

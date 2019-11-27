@@ -8,9 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <hilolay/hilolay.h>
-#include <readline/readline.h>
-#include <SUSE/SUSE-Cli.h>
+#include "example_alumnos.c"
+
 
 
 void recursiva(int cant) {
@@ -53,11 +52,18 @@ void *test2(void *arg) {
 int main(int argc, char *argv[]) {
 
 	int i;
-	hilolay_init();
+
+	//hilolay_init();
 
 	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
 	config = config_create(nombre_de_config);
+
 	conectar_con_servidor(argc, argv[1]);
+
+
+	_hilolay_init();
+	init_internal(&hiloops);
+
 
     struct hilolay_t th1;
     struct hilolay_t th2;
@@ -67,5 +73,5 @@ int main(int argc, char *argv[]) {
 
 	hilolay_join(&th2);
 	hilolay_join(&th1);
-    return hilolay_return(0);
+    return 0;
 }

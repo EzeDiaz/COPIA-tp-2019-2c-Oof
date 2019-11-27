@@ -60,6 +60,15 @@ t_queue* obtener_cola_de(int PID, int cola){
 
 void incializar_logs_sistema(){
 
+
+	remove("log_metricas.log");//no va a pasar como el tp anterior que tenias un log de 15 MB
+	remove("log_colas.log");
+	remove("log_deserializacion.log");
+	remove("log_metricas_programa.log");
+	remove("log_metricas_hilo.log");
+	remove("logger.log");
+
+	logger_de_deserializacion= log_create("log_deserializacion.log","Deserializacion",0,LOG_LEVEL_INFO);
 	log_metricas_programa = log_create("log_metricas_programa.log","log_metricas_programa",0,LOG_LEVEL_INFO);
 	log_metricas_hilo = log_create("log_metricas_hilo.log","log_metricas_hilo",0,LOG_LEVEL_INFO);
 	log_metricas_sistema = log_create("log_metricas.log","log_metricas",0,LOG_LEVEL_INFO);
@@ -69,12 +78,14 @@ void incializar_logs_sistema(){
 }
 
 void destruir_logs_sistema(){
-
+	log_destroy(logger_de_deserializacion);
+	log_destroy(log_metricas_programa);
+	log_destroy(log_metricas_hilo);
 	log_destroy(log_metricas_sistema);//destruyo el log y borro el archivo
 	log_destroy(log_colas);
+	log_destroy(logger);
 
-	remove("log_metricas.log");//no va a pasar como el tp anterior que tenias un log de 15 MB
-	remove("log_colas.log");
+
 
 }
 
