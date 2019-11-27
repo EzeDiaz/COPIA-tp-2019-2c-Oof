@@ -41,6 +41,7 @@ t_log* logger;
 t_log* log_metricas_sistema;
 t_log* log_metricas_programa;
 t_log* log_metricas_hilo;
+t_log* logger_de_deserializacion;
 
 //DICCIONARIOS
 t_dictionary* diccionario_de_procesos;

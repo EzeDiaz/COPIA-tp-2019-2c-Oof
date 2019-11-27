@@ -1,8 +1,8 @@
-[INFO] 13:31:17:33 Servidor/(6563:6563): Levantamos el servidor
+[INFO] 14:30:08:486 Servidor/(8858:8858): Levantamos el servidor
 
-[INFO] 13:31:17:34 Servidor/(6563:6563): Servidor listo para recibir un cliente
+[INFO] 14:30:08:486 Servidor/(8858:8858): Servidor listo para recibir un cliente
 
-[INFO] 13:31:46:301 Servidor/(6563:6563): Recibimos un cliente
+[INFO] 14:30:44:142 Servidor/(8858:8858): Recibimos un cliente
 
-[INFO] 13:31:46:309 Servidor/(6563:6622): Recibimos conexion 
+[INFO] 14:30:44:146 Servidor/(8858:8934): Recibimos conexion 
 

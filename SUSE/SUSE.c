@@ -46,11 +46,6 @@ int main(){
 
 void suse_init(){
 
-	/*INICIALIZO HILOS*/
-
-	hilo_t *hilo_new_to_ready;
-	pthread_create(&hilo_new_to_ready,NULL,estadoNew,NULL);
-	pthread_detach(hilo_new_to_ready);
 
 	/*INICIALIZO VARIABLES GLOBALES*/
 
@@ -95,6 +90,12 @@ void suse_init(){
 	sem_init(&grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
 	sem_init(&procesos_en_New,0,0);
 	sem_init(&semaforo_lista_procesos_finalizados,0,0);
+	/*INICIALIZO HILOS*/
+
+	hilo_t *hilo_new_to_ready;
+	pthread_create(&hilo_new_to_ready,NULL,estadoNew,NULL);
+	pthread_detach(hilo_new_to_ready);
+
 
 }
 
@@ -142,18 +143,6 @@ void leer_config2(){
 	//free(montaje);
 	config_destroy(configuracion);
 }
-/*int puesta_en_marcha_del_hilo(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*),void*  argumento){
-
-	const struct hilolay_attr_t* atributo_auxiliar = (struct hilolay_attr_t*) atributos_del_hilo;
-	struct hilolay_attr_t atributos_default;
-	bool esta_libre_cpu = false;
-	bool c11 = (atributos_del_hilo == ATTR_C11_THREAD);
-	if(atributo_auxiliar == NULL || c11){
-		lll_lock
-	}
-
-
-}*/
 
 
 void liberar_recursos(){
@@ -221,8 +210,7 @@ void liberar_recursos(){
 	queue_destroy_and_destroy_elements(cola_new,destructor_hilos);
 	queue_destroy_and_destroy_elements(cola_exit,destructor_hilos);
 
-	destruir_logs_sistema(); //TODO falta destruir un par mas de logs
-
+	destruir_logs_sistema();
 }
 
 void terminate_SUSE(){
@@ -320,15 +308,17 @@ void* suse_close(int TID){
 
 
 int _hilolay_init(int PID){
+	//char* pid=(char*)malloc(6);
+	char*pid=string_itoa(PID);
 	proceso_t* un_proceso;
 	un_proceso =malloc(sizeof(proceso_t));
 	un_proceso->hilos_del_programa=list_create();
 
-	dictionary_put(diccionario_de_procesos, PID ,un_proceso);
+	dictionary_put(diccionario_de_procesos, pid ,un_proceso);
 	t_queue* vector_queues[2];
 	vector_queues[COLA_READY]=queue_create();
 	vector_queues[COLA_EXEC]=queue_create();
-	dictionary_put(diccionario_procesos_x_queues,PID, vector_queues);
+	dictionary_put(diccionario_procesos_x_queues,pid, vector_queues);
 
 	hilo_t* un_hilo;
 	pthread_create(un_hilo, NULL, estadoReady(PID), NULL);

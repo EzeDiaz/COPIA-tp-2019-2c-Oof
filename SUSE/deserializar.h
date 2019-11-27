@@ -14,7 +14,8 @@
 #include "colas.h"
 #include <sys/socket.h>
 #include <sys/types.h>
-t_log* logger_de_deserializacion;
+#include "globales.h"
+
 
 enum {
 	HILOLAY_INIT = 0,

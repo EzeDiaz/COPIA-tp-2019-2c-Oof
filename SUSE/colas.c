@@ -25,7 +25,7 @@
 /// ******************************************************************************************************** ///
 
 
-//NO SE SUPONE QUE VOY A TENER VARIOS DE ESTOS ESTADOS READY?
+
 void newToReady(){
 
 	sem_wait(&grado_de_multiprogramacion_contador);
