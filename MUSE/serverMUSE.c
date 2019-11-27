@@ -479,8 +479,10 @@ void realizarRequest(void *buffer, int cliente){
 		//MUSE YO TE INVOCO
 		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
 		sem_wait(&mp_semaphore);
+		sem_wait(&mapped_files_semaphore); //Siempre agarrar los semaforos asi para evitar potenciales deadlocks. Si llega a haber, revisar aca
 		void* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
 		sem_post(&mp_semaphore);
+		sem_post(&mapped_files_semaphore);
 		buffer=(void*)malloc(n);
 		memcpy(buffer, data, n);
 
@@ -555,6 +557,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 		addressSpace* cli_address_space = GET_ADDRESS_SPACE(cliente);
+		sem_wait(&mapped_files_semaphore);
 		if(FILE_ALREADY_MAPPED(path)) {
 			mappedFile* mapped_file = GET_MAPPED_FILE(path);
 			mapped_file->references++;
@@ -578,6 +581,7 @@ void realizarRequest(void *buffer, int cliente){
 
 			list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
 		}
+		sem_post(&mapped_files_semaphore);
 
 		//Siguientes pasos:
 		//1. Rellenar el espacio que sobre del archivo con \0 (Esto no lo hace de por si mmap?) --> "https://stackoverflow.com/questions/47604431/why-we-can-mmap-to-a-file-but-exceed-the-file-size"
@@ -640,6 +644,7 @@ void realizarRequest(void *buffer, int cliente){
 		int writen_pages = 0;
 
 		sem_wait(&mp_semaphore);
+		sem_wait(&mapped_files_semaphore);
 		if(segment_requested != NULL) {
 			if(segment_requested->isHeap) {
 				//ERROR: no es un segmento de map
@@ -682,6 +687,7 @@ void realizarRequest(void *buffer, int cliente){
 			//seg_fault porque la direccion pedida no es valida
 		}
 		sem_post(&mp_semaphore);
+		sem_post(&mapped_files_semaphore);
 		resultado = 0;//(en los casos feos lo pongo en -1... y el seg fault no entonces?)
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &resultado, sizeof(uint32_t));
@@ -706,6 +712,7 @@ void realizarRequest(void *buffer, int cliente){
 		addressSpace* addr_space = GET_ADDRESS_SPACE(cliente);
 		segment* a_segm = GET_SEGMENT_FROM_BASE(direc,addr_space);
 		//Controlar que la direccion que me pasan este OK
+		sem_wait(&mapped_files_semaphore);
 		mappedFile* mapped_file = GET_MAPPED_FILE(a_segm->path);
 		mapped_file->references--;
 		if(!mapped_file->references) {
@@ -715,10 +722,11 @@ void realizarRequest(void *buffer, int cliente){
 			int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
 			list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
 		}
+		sem_post(&mapped_files_semaphore);
 
 		sem_wait(&mp_semaphore);
 		//Libero los frames que tenga tomados en memoria
-		//...
+		//TODO - ver CLIENT_LEFT_THE_SYSTEM
 		sem_post(&mp_semaphore);
 
 		//Borro el segmento

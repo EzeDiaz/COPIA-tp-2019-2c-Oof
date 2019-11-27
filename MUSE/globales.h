@@ -26,6 +26,7 @@ t_bitarray* bitmap_swap; //Estructura de control para el area de swap
 
 pthread_mutex_t mp_semaphore;
 pthread_mutex_t logger_semaphore;
+pthread_mutex_t mapped_files_semaphore;
 pthread_mutex_t segmentation_table_semaphore;
 pthread_mutex_t memory_controller_semaphore;
 

@@ -67,6 +67,7 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 			} else {
 				//(COPIADO DEL UNMAP)
 				//Controlar que la direccion que me pasan este OK
+				sem_wait(&mapped_files_semaphore);
 				mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
 				mapped_file->references--;
 				if(!mapped_file->references) {
@@ -76,6 +77,7 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 					int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
 					list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
 				}
+				sem_post(&mapped_files_semaphore);
 			}
 		}
 		list_iterate(a_segment->pageFrameTable, iterar_paginas);
@@ -553,6 +555,7 @@ void INITIALIZE_SEMAPHORES(){
 	sem_init(&logger_semaphore,0,1);
 	sem_init(&segmentation_table_semaphore,0,1);
 	sem_init(&memory_controller_semaphore,0,1);
+	sem_init(&mapped_files_semaphore,0,1);
 	//TODO: Inicializar diccionario pid - semaforo
 }
 
@@ -561,6 +564,7 @@ void DESTROY_SEMAPHORES(){
 	sem_destroy(&logger_semaphore);
 	sem_destroy(&segmentation_table_semaphore);
 	sem_destroy(&memory_controller_semaphore);
+	sem_destroy(&mapped_files_semaphore);
 }
 
 void CHECK_MEMORY(){
