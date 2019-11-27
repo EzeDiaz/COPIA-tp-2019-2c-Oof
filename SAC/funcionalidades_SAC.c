@@ -83,7 +83,7 @@ bool agregar_metadata_de_archivo(char* path){
 	bool flag= false;
 
 	GFile* nodo_libre=buscar_nodo_libre();
-	if(nodo_libre!=NULL){
+	if(nodo_libre!=NULL && obtener_puntero_padre(path)!=-1){
 		nodo_libre->state=OCUPADO;
 		nodo_libre->c_date= (long int) time(NULL) ;
 		nodo_libre->m_date=nodo_libre->c_date;

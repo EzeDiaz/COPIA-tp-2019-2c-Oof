@@ -1,6 +1,10 @@
-[INFO] 11:16:17:210 SAC_Servidor/(4336:4336): Leimos el config: config.config
+[INFO] 15:24:08:613 SAC_Servidor/(7867:7867): Leimos el config: config.config
 
-[INFO] 11:18:06:523 SAC_Servidor/(4336:4336): Levantamos el servidor
+[INFO] 15:24:08:674 SAC_Servidor/(7867:7867): Levantamos el servidor
 
-[INFO] 11:18:06:671 SAC_Servidor/(4336:4336): Servidor listo para recibir un cliente
+[INFO] 15:24:08:674 SAC_Servidor/(7867:7867): Servidor listo para recibir un cliente
+
+[INFO] 15:24:51:695 SAC_Servidor/(7867:7867): Recibimos un cliente
+
+[INFO] 15:24:51:698 SAC_Servidor/(7867:7917): Recibimos una conexion
 

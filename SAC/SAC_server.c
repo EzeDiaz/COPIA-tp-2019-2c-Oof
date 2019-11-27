@@ -105,7 +105,6 @@ void inicializar_globales(){
 void start_up(){
 	char* comando = string_new();
 	string_append(&comando,"dd if=/dev/zero iflag=fullblock of=");
-	string_append(&comando,PUNTO_DE_MONTAJE);
 	string_append(&comando,NOMBRE_DEL_DISCO);
 	string_append(&comando," bs=");
 	string_append(&comando,string_itoa(BLOCK_SIZE));
@@ -117,22 +116,7 @@ void start_up(){
 		printf("No podemos levantar el FileSystem\n");
 		exit(1);
 	}
-	comando=string_new();
-	string_append(&comando,"./sac-format ");
-	string_append(&comando,PUNTO_DE_MONTAJE);
-	string_append(&comando,NOMBRE_DEL_DISCO);
-	system(comando);
-	free(comando);
-
-	comando=string_new();
-	string_append(&comando,"./sac-dump ");
-	string_append(&comando,PUNTO_DE_MONTAJE);
-	string_append(&comando,NOMBRE_DEL_DISCO);
-	system(comando);
-
-	free(comando);
 	char* ruta = string_new();
-	string_append(&ruta,PUNTO_DE_MONTAJE);
 	string_append(&ruta,NOMBRE_DEL_DISCO);
 	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
 
@@ -141,6 +125,18 @@ void start_up(){
 
 	crear_bitmap(config);
 	setear_fs();
+	comando=string_new();
+	string_append(&comando,"./sac-format disco.bin");
+
+	system(comando);
+	free(comando);
+
+	comando=string_new();
+	string_append(&comando,"./sac-dump disco.bin");
+	system(comando);
+
+	free(comando);
+
 
 
 
@@ -149,7 +145,7 @@ void start_up(){
 
 void setear_fs(){
 
-	tamanio_disco=4294967296;
+	tamanio_disco=BLOCK_SIZE*CANT_MAX_BLOQUES;
 	int n_bloques=(tamanio_disco/BLOCK_SIZE/8)/BLOCK_SIZE;
 	cantidad_de_bloques_reservados= 1025 +n_bloques;
 
@@ -163,7 +159,7 @@ void setear_fs(){
 	crear_vector_de_punteros(primer_nodo->blk_indirect,1000);
 
 	for(int i=0; i<71;i++){
-	primer_nodo->fname[i]=PUNTO_DE_MONTAJE[i];
+		primer_nodo->fname[i]=PUNTO_DE_MONTAJE[i];
 	}
 	escribir_en_disco(preparar_nodo_para_grabar(primer_nodo),buscar_bloque_libre(BUSQUEDA_NODO));
 }
@@ -173,8 +169,7 @@ void crear_bitmap(t_config* config){
 
 
 	//Tengo que traer a memoria el bitarray que ya hay en el FS
-	char* ruta= string_new();
-	string_append(&ruta,PUNTO_DE_MONTAJE);
+
 	int cantidad_bloques=CANT_MAX_BLOQUES;
 	if((cantidad_bloques % 8) == 0) {
 		cantidad_bloques = cantidad_bloques / 8;
@@ -184,8 +179,6 @@ void crear_bitmap(t_config* config){
 
 	char* direccion_bitmap=(char*)(primer_bloque+BLOCK_SIZE);
 	bitarray = bitarray_create_with_mode(direccion_bitmap,cantidad_bloques,LSB_FIRST);
-
-	free(ruta);
 
 
 }

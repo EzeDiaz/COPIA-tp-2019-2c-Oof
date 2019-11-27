@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
 
 t_config* leer_config(){
 
-	char* nombre_config= readline("ingresar nombre de config: \n>");
+	char* nombre_config= readline("Ingresar nombre de config: \n>");
 	return config_create(nombre_config);
 
 }

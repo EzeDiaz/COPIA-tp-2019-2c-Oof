@@ -152,9 +152,13 @@ ptrGBloque* obtener_puntero_padre(char* path){
 	}
 
 	char* nombre_nodo_padre=vector[i-2];
+	if(nombre_nodo_padre != NULL){
+		GFile* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
+		return nodo_padre->blk_indirect;
+	}else{
+		return -1;
+	}
 
-	GFile* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
-	return nodo_padre->blk_indirect;
 
 
 }
