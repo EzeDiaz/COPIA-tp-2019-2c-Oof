@@ -48,5 +48,19 @@ void crear_hilo(hilo_t*, void*);
 void liberar_recursos();
 int _hilolay_init(int);
 
+typedef struct {
+	char* IP;
+	char * LISTEN_PORT;
+	int METRICS_TIMER;
+	int MAX_MULTIPROG;
+	char** SEM_IDS;
+	char** SEM_INIT;
+	char** SEM_MAX;
+	float ALPHA_SJF;
+
+}structConfig;
+
+void leer_config2();
+
 
 #endif /* SUSE_H_ */

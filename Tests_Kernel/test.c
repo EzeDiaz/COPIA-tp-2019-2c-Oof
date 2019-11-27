@@ -6,8 +6,10 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <hilolay/hilolay.h>
+#include <readline/readline.h>
 #include <SUSE/SUSE-Cli.h>
 
 
@@ -49,10 +51,14 @@ void *test2(void *arg) {
 
 /* Main program */
 int main(int argc, char *argv[]) {
-	conectar_con_servidor( argc, argv);
-    int i;
 
-    //hilolay_init();
+	int i;
+	hilolay_init();
+
+	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
+	config = config_create(nombre_de_config);
+	conectar_con_servidor(argc, argv[1]);
+
     struct hilolay_t th1;
     struct hilolay_t th2;
 

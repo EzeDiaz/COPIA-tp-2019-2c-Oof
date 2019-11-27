@@ -22,12 +22,19 @@
 #include <commons/string.h>
 #include <readline/readline.h>
 
+#include <hilolay/alumnos.h>
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
+
+
 
 int main(){
 
 	suse_init();
-
+	leer_config();
 	/*DESARROLLO*/
 	iniciar_servidor();
 
@@ -58,7 +65,7 @@ void suse_init(){
 
 	/*SETEAR CONFIG*/
 
-	leer_config();
+	//leer_config2(argv[1]);
 
 	/*INICIALIZO DICCIONARIOS*/
 
@@ -96,18 +103,44 @@ void leer_config(){
 	char* nombre_del_config = readline("Ingresar ruta del config:");
 	t_config* un_config = config_create(nombre_del_config);
 
-	ALPHA_SJF = config_get_int_value(un_config,"ALPHA_SJF")/100;
-	PUERTO_ESCUCHA = config_get_int_value(un_config,"LISTEN_PORT");
 	IP=(char*)malloc(50);
 	strncpy(IP ,config_get_string_value(un_config, "IP"),strlen(config_get_string_value(un_config, "IP")));
+	PUERTO_ESCUCHA = config_get_int_value(un_config,"LISTEN_PORT");
 	METRICS_TIMER = config_get_int_value(un_config,"METRICS_TIMER");
 	MAX_MULTIPROG = config_get_int_value(un_config,"MAX_MULTIPROG");
 	SEM_IDS = config_get_array_value(un_config,"SEM_IDS");
 	SEM_INIT = config_get_array_value(un_config,"SEM_INIT");
 	SEM_MAX = config_get_array_value(un_config,"SEM_MAX");
+	ALPHA_SJF = config_get_int_value(un_config,"ALPHA_SJF")/100;
 
 	free(nombre_del_config);
 	config_destroy(un_config);
+}
+
+void leer_config2(){
+
+	structConfig * config;
+	//char * montaje = strdup("");
+	char* nombre_del_config = readline("Ingresar ruta del config:");
+	t_config * configuracion = config_create(nombre_del_config);
+
+	//config->IP = strdup(config_get_string_value(configuracion, "IP"));
+	//string_append(&montaje, config_get_string_value(configuracion, "PUNTO_MONTAJE")); //IP
+	string_append(&config->IP, config_get_string_value(configuracion, "IP"));
+	string_append(&config->LISTEN_PORT, config_get_string_value(configuracion, "LISTEN_PORT"));
+	config->METRICS_TIMER = config_get_int_value(configuracion, "METRICS_TIMER");
+	config->MAX_MULTIPROG = config_get_int_value(configuracion, "MAX_MULTIPROG");
+	config->SEM_IDS = config_get_array_value(configuracion, "SEM_IDS");
+	config->SEM_INIT = config_get_array_value(configuracion, "SEM_INIT");
+	config->SEM_MAX = config_get_array_value(configuracion, "SEM_MAX");
+	config->ALPHA_SJF =  config_get_int_value(configuracion, "ALPHA_SJF");
+
+	//log_info(alog, "Lee el archivo de configuracion");
+
+	//config->montaje = obtenerMontaje(montaje);
+
+	//free(montaje);
+	config_destroy(configuracion);
 }
 /*int puesta_en_marcha_del_hilo(hilolay_t* hilo, hilolay_attr_t* atributos_del_hilo, void*(*funcion_main)(void*),void*  argumento){
 
@@ -287,21 +320,21 @@ void* suse_close(int TID){
 
 
 int _hilolay_init(int PID){
-			proceso_t* un_proceso;
-			un_proceso =malloc(sizeof(proceso_t));
-			un_proceso->hilos_del_programa=list_create();
+	proceso_t* un_proceso;
+	un_proceso =malloc(sizeof(proceso_t));
+	un_proceso->hilos_del_programa=list_create();
 
-			dictionary_put(diccionario_de_procesos, PID ,un_proceso);
-			t_queue* vector_queues[2];
-			vector_queues[COLA_READY]=queue_create();
-			vector_queues[COLA_EXEC]=queue_create();
-			dictionary_put(diccionario_procesos_x_queues,PID, vector_queues);
+	dictionary_put(diccionario_de_procesos, PID ,un_proceso);
+	t_queue* vector_queues[2];
+	vector_queues[COLA_READY]=queue_create();
+	vector_queues[COLA_EXEC]=queue_create();
+	dictionary_put(diccionario_procesos_x_queues,PID, vector_queues);
 
-			hilo_t* un_hilo;
-			pthread_create(un_hilo, NULL, estadoReady(PID), NULL);
-			pthread_detach(un_hilo);
+	hilo_t* un_hilo;
+	pthread_create(un_hilo, NULL, estadoReady(PID), NULL);
+	pthread_detach(un_hilo);
 
-			return PID;
+	return PID;
 
 }
 
@@ -318,7 +351,7 @@ int suse_create(int tid, int socket){
 
 	if(dictionary_has_key(diccionario_de_procesos, socket)){
 
-	un_proceso = dictionary_get(diccionario_de_procesos, socket);
+		un_proceso = dictionary_get(diccionario_de_procesos, socket);
 
 
 	}else{
