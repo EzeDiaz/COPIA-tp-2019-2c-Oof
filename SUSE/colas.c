@@ -129,13 +129,13 @@ void * estadoReady(int PID)
 {
 	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
 	// y se frenara la planificacion
-
+	char*pid=string_itoa(PID);
 	while(!finDePlanificacion)
 	{
 		if(!finDePlanificacion)
 		{
 			sem_wait(&semaforo_diccionario_de_procesos);
-			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,PID);
+			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
 			sem_post(&semaforo_diccionario_de_procesos);
 
 			sem_wait(&un_proceso->procesos_en_Ready);

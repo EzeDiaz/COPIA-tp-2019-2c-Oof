@@ -50,8 +50,9 @@ t_queue* obtener_cola_exec_de(int PID){
 }
 
 t_queue* obtener_cola_de(int PID, int cola){
+	char*pid=string_itoa(PID);
 	sem_wait(&semaforo_diccionario_procesos_x_queues);
-	t_queue** vector_cola = dictionary_get(diccionario_procesos_x_queues,PID);
+	t_queue** vector_cola = dictionary_get(diccionario_procesos_x_queues,pid);
 
 	sem_post(&semaforo_diccionario_procesos_x_queues);
 	return vector_cola[cola];

@@ -62,12 +62,6 @@ void suse_init(){
 
 	//leer_config2(argv[1]);
 
-	/*INICIALIZO DICCIONARIOS*/
-
-	diccionario_de_procesos = dictionary_create();
-	diccionario_procesos_x_queues = dictionary_create();
-	diccionario_de_procesos_x_semaforo = dictionary_create();
-	diccionario_bloqueados_por_semafaro = dictionary_create();
 
 	/*INICIALIZO COLAS*/
 
@@ -91,6 +85,13 @@ void suse_init(){
 	sem_init(&procesos_en_New,0,0);
 	sem_init(&semaforo_lista_procesos_finalizados,0,0);
 	/*INICIALIZO HILOS*/
+
+	/*INICIALIZO DICCIONARIOS*/
+
+	diccionario_de_procesos = dictionary_create();
+	diccionario_procesos_x_queues = dictionary_create();
+	diccionario_de_procesos_x_semaforo = dictionary_create();
+	diccionario_bloqueados_por_semafaro = dictionary_create();
 
 	hilo_t *hilo_new_to_ready;
 	pthread_create(&hilo_new_to_ready,NULL,estadoNew,NULL);
