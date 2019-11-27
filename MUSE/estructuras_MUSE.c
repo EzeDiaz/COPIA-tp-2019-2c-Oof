@@ -102,12 +102,14 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 }
 
 void FREE_SWAP_FRAME_BITMAP(int frame_number) {
+	sem_wait(&bitmap_swap_semaphore);
 	int limit = bitarray_get_max_bit(bitmap_swap);
 	if(frame_number < limit) { //Menor estricto o amplio?
 		bitarray_clean_bit(bitmap_swap, frame_number);
 	} else {
 		//Estas queriendo liberar un numero de frame que no existe
 	}
+	sem_post(&bitmap_swap_semaphore);
 }
 
 void SWAP_INIT() {
@@ -118,13 +120,16 @@ void SWAP_INIT() {
 }
 
 int GET_FREE_SWAP_FRAME() {
+	sem_wait(&bitmap_swap_semaphore);
 	int counter = bitarray_get_max_bit(bitmap_swap);
 	for(int i=0;i<counter;i++){
 		if(!bitarray_test_bit(bitmap_swap, i)){
 			bitarray_set_bit(bitmap_swap,i);
+			sem_post(&bitmap_swap_semaphore);
 			return i;
 		}
 	}
+	sem_post(&bitmap_swap_semaphore);
 	return -1; //Si no hay mas lugar en swap muere un gatito
 }
 
@@ -146,14 +151,17 @@ void SET_BITMAP_SWAP(){
 }
 
 int CLOCK() {
+	sem_wait(&bitmap_memory_semaphore);
 	int counter = bitarray_get_max_bit(bitmap_memory);
 	for(int i=0;i<counter;i++){
 		if(!bitarray_test_bit(bitmap_memory, i)){
 			bitarray_set_bit(bitmap_memory,i);
 			SUBSTRACT_MEMORY_LEFT(page_size);
+			sem_post(&bitmap_memory_semaphore);
 			return i;
 		}
 	}
+	sem_post(&bitmap_memory_semaphore);
 	//No consegui frames libres, tengo que ejecutar el algoritmo
 	int initial_position = clock_pointer;
 	int frame_found=-1;
@@ -447,12 +455,14 @@ addressSpace* GET_ADDRESS_SPACE(int client_socket) {
 }
 
 void FREE_MEMORY_FRAME_BITMAP(int frame_number) {
+	sem_wait(&bitmap_memory_semaphore);
 	int limit = bitarray_get_max_bit(bitmap_memory);
 	if(frame_number < limit) { //Menor estricto o amplio?
 		bitarray_clean_bit(bitmap_memory, frame_number);
 	} else {
 		//Estas queriendo liberar un numero de frame que no existe
 	}
+	sem_post(&bitmap_memory_semaphore);
 }
 
 void* GET_FRAME_POINTER(int frame_number) {
@@ -556,6 +566,8 @@ void INITIALIZE_SEMAPHORES(){
 	sem_init(&segmentation_table_semaphore,0,1);
 	sem_init(&memory_controller_semaphore,0,1);
 	sem_init(&mapped_files_semaphore,0,1);
+	sem_init(&bitmap_memory_semaphore,0,1);
+	sem_init(&bitmap_swap_semaphore, 0, 1);
 	//TODO: Inicializar diccionario pid - semaforo
 }
 
@@ -565,6 +577,8 @@ void DESTROY_SEMAPHORES(){
 	sem_destroy(&segmentation_table_semaphore);
 	sem_destroy(&memory_controller_semaphore);
 	sem_destroy(&mapped_files_semaphore);
+	sem_destroy(&bitmap_memory_semaphore);
+	sem_destroy(&bitmap_swap_semaphore);
 }
 
 void CHECK_MEMORY(){
