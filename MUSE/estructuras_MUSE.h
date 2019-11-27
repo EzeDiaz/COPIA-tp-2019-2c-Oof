@@ -56,6 +56,7 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
+int TRANSLATE_DL_TO_DF(uint32_t dl);
 void LOG_METRICS(int socket);
 void LOG_SYSTEM_METRICS();
 void LOG_PROGRAM_METRICS(int a_client_socket);

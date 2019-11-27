@@ -95,6 +95,8 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 	list_iterate(client_ad_sp->segment_table, liberar_frames);
 	list_remove_and_destroy_by_condition(all_address_spaces, el_address_spaces_es_del_cliente, DESTROY_ADDRESS_SPACE);
 	list_remove_and_destroy_by_condition(client_list, es_el_cliente, DESTROY_CLIENT);
+
+	//TODO: destruir tambien los semaforos particulares del proceso
 }
 
 void FREE_SWAP_FRAME_BITMAP(int frame_number) {
@@ -551,6 +553,7 @@ void INITIALIZE_SEMAPHORES(){
 	sem_init(&logger_semaphore,0,1);
 	sem_init(&segmentation_table_semaphore,0,1);
 	sem_init(&memory_controller_semaphore,0,1);
+	//TODO: Inicializar diccionario pid - semaforo
 }
 
 void DESTROY_SEMAPHORES(){

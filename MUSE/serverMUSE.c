@@ -42,7 +42,7 @@ void atenderCliente(int cliente){
 	int alocador;
 
 	sem_wait(&logger_semaphore);
-	log_info(logger, "Recibimos conexion \n");
+	log_info(logger, "Recibimos conexion");
 	sem_post(&logger_semaphore);
 
 	buffer=recibirBuffer(&alocador,cliente);
@@ -54,7 +54,7 @@ void atenderCliente(int cliente){
 	}
 
 	sem_wait(&logger_semaphore);
-	log_info(logger, "Se desconecto el cliente\n");
+	log_info(logger, "Se desconecto el cliente");
 	sem_post(&logger_semaphore);
 	close(cliente);
 }
@@ -71,7 +71,7 @@ void iniciarServidor(){
 
 	int servidor = socket(AF_INET, SOCK_STREAM , 0);
 	sem_wait(&logger_semaphore);
-	log_info(logger, "Levantamos el servidor\n");
+	log_info(logger, "Levantamos el servidor");
 	sem_post(&logger_semaphore);
 
 	int activado = 1;
@@ -88,7 +88,7 @@ void iniciarServidor(){
 	int cliente;
 
 	sem_wait(&logger_semaphore);
-	log_info(logger, "Servidor listo para recibir un cliente\n");
+	log_info(logger, "Servidor listo para recibir un cliente");
 	sem_post(&logger_semaphore);
 
 	listen(servidor, 100);
@@ -99,7 +99,7 @@ void iniciarServidor(){
 
 	while(1){
 		sem_wait(&logger_semaphore);
-		log_info(logger, "Recibimos un cliente\n");
+		log_info(logger, "Recibimos un cliente");
 		sem_post(&logger_semaphore);
 		pthread_create(&hilo, NULL,  (void*)atenderCliente, cliente);
 		pthread_detach(hilo);
@@ -163,6 +163,8 @@ void realizarRequest(void *buffer, int cliente){
 
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
 
+		//TODO: crearle los semaforos particulares de este proceso
+
 		buffer=(void*)malloc(sizeof(int));
 		memcpy(buffer,&resultado,sizeof(int));
 
@@ -201,10 +203,10 @@ void realizarRequest(void *buffer, int cliente){
 				//El proceso que pide ya tiene segmentos de heap
 				void usar_segmento_si_tiene_espacio(segment* un_segmento) {
 					if(!se_pudo_reservar_flag) {
+						sem_wait(&mp_semaphore);
 						pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata
 						if(pointer != NULL) {
 							//El segmento tiene lugar
-							sem_wait(&mp_semaphore);
 							uint32_t bytes_que_habia;
 							uint32_t bytes_sobrantes;
 							memcpy(&bytes_que_habia, pointer - 5, sizeof(uint32_t));
@@ -215,15 +217,16 @@ void realizarRequest(void *buffer, int cliente){
 							bytes_sobrantes = bytes_que_habia - bytes_a_reservar - 5;
 							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
 							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &trueStatus, sizeof(bool));
-							sem_post(&mp_semaphore);
 							se_pudo_reservar_flag = 1;
 							segment_base = un_segmento->base;
 						}
+						sem_post(&mp_semaphore);
 					}
 				}
 
 				void usar_segmento_si_se_puede_agrandar(segment* un_segmento) {
 					if(!se_pudo_reservar_flag) {
+						sem_wait(&mp_semaphore);
 						if(SEGMENT_CAN_BE_EXTENDED(un_segmento, client_address_space, bytes_a_reservar + 5)) {
 							//Puedo agrandar el segmento
 							void* last_metadata = GET_LAST_METADATA(un_segmento);
@@ -237,7 +240,6 @@ void realizarRequest(void *buffer, int cliente){
 								frames_to_require = (bytes_a_reservar + 5 - internal_fragmentation) / page_size;
 							}
 
-							sem_wait(&mp_semaphore);
 							uint32_t bytes_que_habia = 0;
 							uint32_t bytes_sobrantes = 0;
 							uint32_t bytes_que_quedan = 0;
@@ -266,11 +268,11 @@ void realizarRequest(void *buffer, int cliente){
 							void* pointer = GET_FRAME_POINTER(last_page->frame_number);
 							memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
 							memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
-							sem_post(&mp_semaphore);
 
 							se_pudo_reservar_flag = 1;
 							segment_base = un_segmento->base;
 						}
+						sem_post(&mp_semaphore);
 					}
 				}
 
@@ -287,6 +289,7 @@ void realizarRequest(void *buffer, int cliente){
 				debe_crearse_segmento_flag = 1;
 			}
 			if(debe_crearse_segmento_flag) {
+				sem_wait(&mp_semaphore);
 				//Crear nuevo segmento
 				if(client_address_space->segment_table->elements_count) {
 					//Ya hay segmentos
@@ -300,7 +303,6 @@ void realizarRequest(void *buffer, int cliente){
 						frames_to_require = (bytes_a_reservar + 10) / page_size;
 					}
 
-					sem_wait(&mp_semaphore);
 					pageFrame* last_page;
 					uint32_t bytes_que_quedan = bytes_a_reservar;
 					uint32_t bytes_sobrantes = 0;
@@ -328,7 +330,6 @@ void realizarRequest(void *buffer, int cliente){
 					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
 					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
 					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
-					sem_post(&mp_semaphore);
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 					new_segment->base = FIRST_FIT(client_address_space->segment_table, 0, new_segment->size);
@@ -348,7 +349,6 @@ void realizarRequest(void *buffer, int cliente){
 						frames_to_require = (bytes_a_reservar + 10) / page_size;
 					}
 
-					sem_wait(&mp_semaphore);
 					pageFrame* last_page;
 					uint32_t bytes_que_quedan = bytes_a_reservar;
 					uint32_t bytes_sobrantes = 0;
@@ -376,13 +376,13 @@ void realizarRequest(void *buffer, int cliente){
 					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
 					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
 					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
-					sem_post(&mp_semaphore);
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 
 					list_add(client_address_space->segment_table, new_segment);
 					segment_base = new_segment->base;
 				}
+				sem_post(&mp_semaphore);
 				client->last_requested_segment_base = segment_base;
 			}
 		} else {
@@ -390,8 +390,10 @@ void realizarRequest(void *buffer, int cliente){
 			//Existe esta condicion? O agarro y mando un frame a swap y chau?
 		}
 		uint32_t displacement_until_page = 0;
+		sem_wait(&mp_semaphore);
 		uint32_t page_offset = GET_OFFSET_FROM_POINTER(pointer);
 		int frame_number = GET_FRAME_NUMBER_FROM_POINTER(pointer);
+		sem_post(&mp_semaphore);
 		int iterator = 0;
 		uint32_t virtual_direction;
 
@@ -404,6 +406,9 @@ void realizarRequest(void *buffer, int cliente){
 			displacement_until_page = displacement_until_page + page_size;
 		}
 		virtual_direction = a_segment->base + displacement_until_page + page_offset;
+
+
+		//////////// END MUSE
 
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &virtual_direction, sizeof(uint32_t));
@@ -427,7 +432,9 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
 
 		addressSpace* address_space = GET_ADDRESS_SPACE(cliente);
+		sem_wait(&mp_semaphore);
 		int bytes_freed = FREE_USED_FRAME(dir , address_space);
+		sem_post(&mp_semaphore);
 		client->total_memory_freed += bytes_freed;
 
 		//MUSE YO TE INVOCO
@@ -471,8 +478,9 @@ void realizarRequest(void *buffer, int cliente){
 
 		//MUSE YO TE INVOCO
 		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
+		sem_wait(&mp_semaphore);
 		void* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
-
+		sem_post(&mp_semaphore);
 		buffer=(void*)malloc(n);
 		memcpy(buffer, data, n);
 
@@ -586,7 +594,9 @@ void realizarRequest(void *buffer, int cliente){
 		}
 
 		for(int i=0; i < frames_to_require; i++) {
+			sem_wait(&mp_semaphore);
 			int frame_number = CLOCK(); //Ver issue #28
+			sem_post(&mp_semaphore);
 			pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 			new_page->modifiedBit = 0; //Casi seguro que es 0
 			new_page->useBit = 0;
@@ -629,6 +639,7 @@ void realizarRequest(void *buffer, int cliente){
 		segment* segment_requested = GET_SEGMENT_FROM_ADDRESS(addr, address_space_client);
 		int writen_pages = 0;
 
+		sem_wait(&mp_semaphore);
 		if(segment_requested != NULL) {
 			if(segment_requested->isHeap) {
 				//ERROR: no es un segmento de map
@@ -670,6 +681,7 @@ void realizarRequest(void *buffer, int cliente){
 		} else {
 			//seg_fault porque la direccion pedida no es valida
 		}
+		sem_post(&mp_semaphore);
 		resultado = 0;//(en los casos feos lo pongo en -1... y el seg fault no entonces?)
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &resultado, sizeof(uint32_t));
@@ -703,6 +715,11 @@ void realizarRequest(void *buffer, int cliente){
 			int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
 			list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
 		}
+
+		sem_wait(&mp_semaphore);
+		//Libero los frames que tenga tomados en memoria
+		//...
+		sem_post(&mp_semaphore);
 
 		//Borro el segmento
 		int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segm->base);
