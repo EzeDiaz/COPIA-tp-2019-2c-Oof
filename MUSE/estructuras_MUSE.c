@@ -167,6 +167,7 @@ int CLOCK() {
 	int iterations=0;
 	pageFrame* page_to_replace;
 	//Busco uso=0, modificado=0
+	sem_wait(&clock_semaphore);
 	while(frame_found < 0 && iterations < counter) {
 		pageFrame* page_frame = clock_table[initial_position];
 		if(page_frame->useBit == 0 && page_frame->modifiedBit == 0) {
@@ -226,6 +227,7 @@ int CLOCK() {
 		if(initial_position > counter)
 			initial_position = 0;
 	}
+	sem_post(&clock_semaphore);
 
 	//Escribo en swap las cosas del frame que estoy entregando
 	void* frame_pointer = GET_FRAME_POINTER(page_to_replace->frame_number);
@@ -576,6 +578,7 @@ void INITIALIZE_SEMAPHORES(){
 	sem_init(&bitmap_swap_semaphore, 0, 1);
 	sem_init(&client_table_semaphore,0,1);
 	sem_init(&addresses_space_semaphore,0,1);
+	sem_init(&clock_semaphore,0,1);
 }
 
 void DESTROY_SEMAPHORES(){
@@ -588,6 +591,7 @@ void DESTROY_SEMAPHORES(){
 	sem_destroy(&bitmap_swap_semaphore);
 	sem_destroy(&client_table_semaphore);
 	sem_destroy(&addresses_space_semaphore);
+	sem_destroy(&clock_semaphore);
 }
 
 void CHECK_MEMORY(){
@@ -775,9 +779,6 @@ int FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 	return NULL;
 }
 
-
-
-//TODO: Si nos dicen que no nos importa que traiga la metadata siguiente queda asi, sino agregar "get_metadata_behind_address"
 void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
 	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(src, address_space);
 	t_list* page_frame_table = a_segment->pageFrameTable;
