@@ -158,9 +158,9 @@ void* armar_paquete(void* dato, int tipo_de_dato){
 		break;
 	case INT:
 		size=(sizeof(int));
-		paquete=malloc(sizeof(int)+sizeof(int));
+		paquete=(void*)malloc(sizeof(*dato)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(int),dato,sizeof(int));
+		memcpy(paquete+ sizeof(int),&dato,sizeof(int));
 		break;
 	case CHAR:
 		size=(sizeof(char));

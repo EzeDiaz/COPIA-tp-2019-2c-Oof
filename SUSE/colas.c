@@ -56,9 +56,9 @@ void * estadoNew()
 
 	while(!finDePlanificacion)
 	{
-		if(!finDePlanificacion)
+		if(!finDePlanificacion&& suse_esta_atendiendo && (cola_new->elements->elements_count>0))
 		{
-			sem_wait(&procesos_en_New);
+			sem_wait(&procesos_en_new);
 
 			newToReady();
 			//Tiene que chequear el grado de multiprogramacion y si hay lugar lo pasa a Ready
@@ -90,10 +90,13 @@ void readyToExec(int PID)
 		if(esta_vacia(cola_Exec)){
 			char* tiempo_inicio= temporal_get_string_time();
 			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-			int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
+			long milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
 
 			hilo_t* hilo=suse_schedule_next(PID);
 
+			if(hilo == NULL){
+
+			}else{
 			sem_wait(&semaforo_diccionario_procesos_x_semaforo);
 			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
 			sem_post(&semaforo_diccionario_procesos_x_semaforo);
@@ -114,6 +117,7 @@ void readyToExec(int PID)
 			sem_wait(&semaforo_log_colas);
 			log_info(log_colas,"Se paso el proceso a Exec \n");
 			sem_post(&semaforo_log_colas);
+			}
 		}
 	}
 
@@ -237,6 +241,7 @@ void exit_thread(hilo_t* hilo){
 	sem_post(&semaforo_lista_procesos_finalizados);
 	sem_post(&grado_de_multiprogramacion_contador);
 	mostrar_metricas();
+	sem_post(&procesos_en_new);
 
 }
 

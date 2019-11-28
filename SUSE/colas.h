@@ -15,6 +15,7 @@
 
 
 //Prototipos
+void * estadoReady(int );
 void newToReady();
 void * estadoNew();
 void exit_thread(hilo_t*);

@@ -25,7 +25,7 @@ int iniciar_servidor(){
 
 	//leer_config_y_setear();
 
-	bool suse_esta_atendiendo = true;
+	suse_esta_atendiendo = true;
 
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
@@ -56,6 +56,7 @@ int iniciar_servidor(){
 	log_info(logger, "Servidor listo para recibir un cliente\n");
 	sem_post(&mutex_log_servidor);
 
+
 	while(suse_esta_atendiendo){
 
 		listen(servidor, 100);
@@ -69,6 +70,7 @@ int iniciar_servidor(){
 		sem_post(&mutex_log_servidor);
 		pthread_create(&hilo, NULL,  (void*)atender_cliente, cliente);
 		pthread_detach(hilo);
+		//cliente = accept(servidor, (void*) &direccionCliente, &tamanioDireccion);
 
 	}
 
@@ -91,26 +93,26 @@ int iniciar_servidor(){
 
 void atender_cliente(int cliente){
 
-		void* buffer;
-		int alocador;
+	void* buffer;
+	int alocador;
 
-		sem_wait(&mutex_log_servidor);
-		log_info(logger, "Recibimos conexion \n");
-		sem_post(&mutex_log_servidor);
+	sem_wait(&mutex_log_servidor);
+	log_info(logger, "Recibimos conexion \n");
+	sem_post(&mutex_log_servidor);
 
+	buffer=recibir_buffer(&alocador,cliente);
+
+	while(0<alocador){
+		realizar_request(buffer, cliente);
+		free(buffer);
 		buffer=recibir_buffer(&alocador,cliente);
+	}
 
-		while(0<alocador){
-			realizar_request(buffer, cliente);
-			free(buffer);
-			buffer=recibir_buffer(&alocador,cliente);
-		}
+	sem_wait(&mutex_log_servidor);
+	log_info(logger, "Se desconecto el cliente\n");
+	sem_post(&mutex_log_servidor);
 
-		sem_wait(&mutex_log_servidor);
-		log_info(logger, "Se desconecto el cliente\n");
-		sem_post(&mutex_log_servidor);
-
-		close(cliente);
+	close(cliente);
 }
 
 

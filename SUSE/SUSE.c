@@ -33,8 +33,11 @@
 
 int main(){
 
-	suse_init();
+	/*SETEAR CONFIG -192.168.0.17*/
 	leer_config();
+
+	suse_init();
+
 	/*DESARROLLO*/
 	iniciar_servidor();
 
@@ -46,10 +49,6 @@ int main(){
 
 void suse_init(){
 
-
-	/*INICIALIZO VARIABLES GLOBALES*/
-
-
 	/*INICIALIZO RECURSOS*/
 
 	hilos_finalizados = list_create();
@@ -57,10 +56,6 @@ void suse_init(){
 	/*INICIALIZO LOG*/
 
 	incializar_logs_sistema();
-
-	/*SETEAR CONFIG*/
-
-	//leer_config2(argv[1]);
 
 
 	/*INICIALIZO COLAS*/
@@ -75,16 +70,17 @@ void suse_init(){
 	sem_init(&semaforo_diccionario_de_procesos,0,1);
 	sem_init(&semaforo_diccionario_procesos_x_queues,0,1);
 	sem_init(&semaforo_diccionario_procesos_x_semaforo,0,1);
-	sem_init(&semaforo_lista_procesos_finalizados,0,1);
+	//sem_init(&semaforo_lista_procesos_finalizados,0,1); ESTOY PROBANDO ALGO
 	sem_init(&mutex_log_servidor,0,1);
 	sem_init(&semaforo_estado_blocked,0,1);
 	sem_init(&semaforo_diccionario_por_semaforo,0,1);
 
 	/*Contador*/
+	sem_init(&procesos_en_new,0,MAX_MULTIPROG);
 	sem_init(&grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
-	sem_init(&procesos_en_New,0,0);
-	sem_init(&semaforo_lista_procesos_finalizados,0,0);
-	/*INICIALIZO HILOS*/
+
+
+	//sem_init(&semaforo_lista_procesos_finalizados,0,0);
 
 	/*INICIALIZO DICCIONARIOS*/
 
@@ -92,6 +88,9 @@ void suse_init(){
 	diccionario_procesos_x_queues = dictionary_create();
 	diccionario_de_procesos_x_semaforo = dictionary_create();
 	diccionario_bloqueados_por_semafaro = dictionary_create();
+
+
+	/*INICIALIZO HILOS*/
 
 	hilo_t *hilo_new_to_ready;
 	pthread_create(&hilo_new_to_ready,NULL,estadoNew,NULL);
@@ -160,8 +159,7 @@ void liberar_recursos(){
 
 	/*Contador*/
 	sem_destroy(&grado_de_multiprogramacion_contador);
-	sem_destroy(&procesos_en_New);
-	sem_destroy(&semaforo_lista_procesos_finalizados);
+	sem_destroy(&procesos_en_new);
 
 	/*DICCIONARIOS*/
 
@@ -230,7 +228,7 @@ void aceptar_proceso(int PID){
 	sem_t semaforo_exec;
 	sem_init(&semaforo_exec,0,1);
 	agregar_al_diccionario(PID,&semaforo_exec);
-	sem_post(&procesos_en_New);
+	sem_post(&procesos_en_new);
 }
 
 void agregar_al_diccionario(int PID, sem_t* semaforo_exec){
@@ -310,7 +308,7 @@ void* suse_close(int TID){
 
 int _hilolay_init(int PID){
 	//char* pid=(char*)malloc(6);
-	char*pid=string_itoa(PID);
+	char* pid=string_itoa(PID);
 	proceso_t* un_proceso;
 	un_proceso =malloc(sizeof(proceso_t));
 	un_proceso->hilos_del_programa=list_create();
@@ -320,9 +318,12 @@ int _hilolay_init(int PID){
 	vector_queues[COLA_READY]=queue_create();
 	vector_queues[COLA_EXEC]=queue_create();
 	dictionary_put(diccionario_procesos_x_queues,pid, vector_queues);
+	pthread_mutex_t* semaforo_exec_x_proceso;
 
-	hilo_t* un_hilo;
-	pthread_create(un_hilo, NULL, estadoReady(PID), NULL);
+	sem_init(&semaforo_exec_x_proceso,0,1);
+	dictionary_put(diccionario_de_procesos_x_semaforo,pid,semaforo_exec_x_proceso);
+	pthread_t* un_hilo;
+	pthread_create(&un_hilo, NULL, estadoReady, PID);
 	pthread_detach(un_hilo);
 
 	return PID;
