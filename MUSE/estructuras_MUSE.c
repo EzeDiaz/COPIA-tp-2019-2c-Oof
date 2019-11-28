@@ -499,11 +499,14 @@ void SET_BITMAP_MEMORY(){
 }
 
 client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
+	sem_wait(&client_table_semaphore);
 	bool es_el_cli_de_ese_socket(void *a_client) {
 		return ((client*)a_client)->clientSocket == a_client_socket;
 	}
+	client* cli = list_find(client_list, es_el_cli_de_ese_socket); //Consigo el id segun el socket
+	sem_post(&client_table_semaphore);
 
-	return list_find(client_list, es_el_cli_de_ese_socket); //Consigo el id segun el socket
+	return cli;
 }
 
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
@@ -513,7 +516,9 @@ int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
 	memcpy(new_client->clientProcessId, client_ID, sizeof(client_ID));
 	memcpy(&new_client->clientSocket, &client_socket, sizeof(int));
 
+	sem_wait(&client_table_semaphore);
 	list_add(client_list, new_client);
+	sem_post(&client_table_semaphore);
 
 	return 0; //"Si no lo pude inicializar retorna -1. Podria pasar o es solo del lado del cliente?
 }
@@ -568,7 +573,8 @@ void INITIALIZE_SEMAPHORES(){
 	sem_init(&mapped_files_semaphore,0,1);
 	sem_init(&bitmap_memory_semaphore,0,1);
 	sem_init(&bitmap_swap_semaphore, 0, 1);
-	//TODO: Inicializar diccionario pid - semaforo
+	sem_init(&client_table_semaphore,0,1);
+	sem_init(&addresses_space_semaphore,0,1);
 }
 
 void DESTROY_SEMAPHORES(){
@@ -579,6 +585,8 @@ void DESTROY_SEMAPHORES(){
 	sem_destroy(&mapped_files_semaphore);
 	sem_destroy(&bitmap_memory_semaphore);
 	sem_destroy(&bitmap_swap_semaphore);
+	sem_destroy(&client_table_semaphore);
+	sem_destroy(&addresses_space_semaphore);
 }
 
 void CHECK_MEMORY(){

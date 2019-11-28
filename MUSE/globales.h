@@ -31,6 +31,9 @@ pthread_mutex_t bitmap_memory_semaphore;
 pthread_mutex_t bitmap_swap_semaphore;
 pthread_mutex_t segmentation_table_semaphore;
 pthread_mutex_t memory_controller_semaphore;
+pthread_mutex_t client_table_semaphore; // Este sem lo meti adentro de la funcion FIND_CLIENT_SOCKET y ADD_CLIENT
+pthread_mutex_t addresses_space_semaphore;
+
 
 int listen_port;
 int memory_size;

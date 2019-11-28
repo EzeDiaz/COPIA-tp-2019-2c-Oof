@@ -36,6 +36,8 @@
 #include <fcntl.h>
 #include <pthread.h>
 
+
+
 void atenderCliente(int cliente){
 
 	void* buffer;
@@ -126,9 +128,17 @@ void* recibirBuffer(int* alocador, int cliente){
 	//Entonces, lo saco de prepo del sistema. Deberia chequear si, en una de esas, no salio antes?
 	if(recv_result < 0) {
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		sem_wait(&mp_semaphore);
+		sem_wait(&mapped_files_semaphore);
+		sem_wait(&logger_semaphore);
 		LOG_METRICS(cliente);
+		sem_post(&logger_semaphore);
+		sem_post(&mp_semaphore);
+		sem_post(&mapped_files_semaphore);
 		return buffer; //Creo que tambien hay que retornarlo aca
 	}
+
+	return NULL;
 }
 
 void realizarRequest(void *buffer, int cliente){
@@ -164,6 +174,7 @@ void realizarRequest(void *buffer, int cliente){
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
 
 		//TODO: crearle los semaforos particulares de este proceso
+		sem_init(&client->client_sempahore,0,1);
 
 		buffer=(void*)malloc(sizeof(int));
 		memcpy(buffer,&resultado,sizeof(int));
@@ -176,7 +187,14 @@ void realizarRequest(void *buffer, int cliente){
 		//close
 	case 101:
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		sem_wait(&mp_semaphore);
+		sem_wait(&mapped_files_semaphore);
+		sem_wait(&logger_semaphore);
 		LOG_METRICS(cliente);
+		sem_post(&logger_semaphore);
+		sem_post(&mp_semaphore);
+		sem_post(&mapped_files_semaphore);
+
 		// Agrego al struct _client_ 2 int que sirven para las metricas
 
 		break;
@@ -417,7 +435,13 @@ void realizarRequest(void *buffer, int cliente){
 
 		client->total_memory_requested += bytes_a_reservar;
 
+		sem_wait(&mp_semaphore);
+		sem_wait(&mapped_files_semaphore);
+		sem_wait(&logger_semaphore);
 		LOG_METRICS(cliente);
+		sem_post(&logger_semaphore);
+		sem_post(&mp_semaphore);
+		sem_post(&mapped_files_semaphore);
 
 		free(buffer);
 		break;
@@ -515,6 +539,13 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		addressSpace* addrs_spc = GET_ADDRESS_SPACE(cliente);
+		sem_wait(&mp_semaphore);
+		sem_wait(&mapped_files_semaphore);
+		WRITE_N_BYTES_DATA_TO_MUSE(dest, addrs_spc, n, source);
+		sem_post(&mp_semaphore);
+		sem_post(&mapped_files_semaphore);
+
 
 		/* Armamos el paquetito de respuesta
 		void* buffer;
