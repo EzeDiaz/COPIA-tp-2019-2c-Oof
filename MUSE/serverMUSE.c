@@ -192,6 +192,7 @@ void realizarRequest(void *buffer, int cliente){
 		sem_wait(&logger_semaphore);
 		LOG_METRICS(cliente);
 		CLIENT_LEFT_THE_SYSTEM(cliente);
+		log_info(logger,"Cliente %d dejo el sistema", cliente);
 		sem_post(&logger_semaphore);
 		sem_post(&mp_semaphore);
 
@@ -485,6 +486,11 @@ void realizarRequest(void *buffer, int cliente){
 		//send
 
 		free(buffer);
+
+		sem_wait(&logger_semaphore);
+		log_info(logger,"Free realizado");
+		sem_post(&logger_semaphore);
+
 		break;
 
 		//get
@@ -527,6 +533,11 @@ void realizarRequest(void *buffer, int cliente){
 
 		free(buffer);
 		free(dst);
+
+		sem_wait(&logger_semaphore);
+		log_info(logger,"Get realizado");
+		sem_post(&logger_semaphore);
+
 		break;
 
 		//cpy
@@ -578,6 +589,11 @@ void realizarRequest(void *buffer, int cliente){
 
 		free(buffer);
 		free(source);
+
+		sem_wait(&logger_semaphore);
+		log_info(logger,"Cpy realizado");
+		sem_post(&logger_semaphore);
+
 		break;
 
 		//map

@@ -110,6 +110,7 @@ int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment);
 void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment);
 int FREE_USED_FRAME(uint32_t address, addressSpace* address_space);
 heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_table);
+void BRING_FROM_SWAP(segment* a_segment, pageFrame* current_page);
 
 //Potentially deprecated
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name);
