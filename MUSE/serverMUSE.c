@@ -156,7 +156,9 @@ void realizarRequest(void *buffer, int cliente){
 	int longitudDelSiguiente=0;
 	void* buffer;
 	size_t n;
+	sem_wait(&client_table_semaphore);
 	client* client = FIND_CLIENT_BY_SOCKET(cliente);
+	sem_post(&client_table_semaphore);
 
 	//init
 	case 100:
@@ -173,7 +175,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
 
-		//TODO: crearle los semaforos particulares de este proceso
+		//Semaforo del adress space del cliente
 		sem_init(&client->client_sempahore,0,1);
 
 		buffer=(void*)malloc(sizeof(int));
@@ -186,14 +188,12 @@ void realizarRequest(void *buffer, int cliente){
 
 		//close
 	case 101:
-		CLIENT_LEFT_THE_SYSTEM(cliente);
 		sem_wait(&mp_semaphore);
-		sem_wait(&mapped_files_semaphore);
 		sem_wait(&logger_semaphore);
 		LOG_METRICS(cliente);
+		CLIENT_LEFT_THE_SYSTEM(cliente);
 		sem_post(&logger_semaphore);
 		sem_post(&mp_semaphore);
-		sem_post(&mapped_files_semaphore);
 
 		// Agrego al struct _client_ 2 int que sirven para las metricas
 
@@ -214,8 +214,12 @@ void realizarRequest(void *buffer, int cliente){
 		uint32_t segment_base;
 
 		//MUSE YO TE INVOCO
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* client_address_space = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
 
+
+		sem_wait(&client->client_sempahore);
 		if(memory_left >= bytes_a_reservar) {
 			if(THERE_ARE_EXISTING_HEAP_SEGMENTS(client_address_space)) {
 				//El proceso que pide ya tiene segmentos de heap
@@ -425,7 +429,7 @@ void realizarRequest(void *buffer, int cliente){
 		}
 		virtual_direction = a_segment->base + displacement_until_page + page_offset;
 
-
+		sem_post(&client->client_sempahore);
 		//////////// END MUSE
 
 		buffer=(void*)malloc(sizeof(uint32_t));
@@ -455,9 +459,13 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
 
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* address_space = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
 		sem_wait(&mp_semaphore);
+		sem_wait(&client->client_sempahore);
 		int bytes_freed = FREE_USED_FRAME(dir , address_space);
+		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
 		client->total_memory_freed += bytes_freed;
 
@@ -501,10 +509,14 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
 		sem_wait(&mp_semaphore);
 		sem_wait(&mapped_files_semaphore); //Siempre agarrar los semaforos asi para evitar potenciales deadlocks. Si llega a haber, revisar aca
+		sem_wait(&client->client_sempahore);
 		void* data = GET_N_BYTES_DATA_FROM_MUSE(addr_sp , src, n);
+		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
 		buffer=(void*)malloc(n);
@@ -539,10 +551,14 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* addrs_spc = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
 		sem_wait(&mp_semaphore);
 		sem_wait(&mapped_files_semaphore);
+		sem_wait(&client->client_sempahore);
 		WRITE_N_BYTES_DATA_TO_MUSE(dest, addrs_spc, n, source);
+		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
 
@@ -587,14 +603,19 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* cli_address_space = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
 		sem_wait(&mapped_files_semaphore);
+		sem_wait(&client->client_sempahore);
 		if(FILE_ALREADY_MAPPED(path)) {
 			mappedFile* mapped_file = GET_MAPPED_FILE(path);
 			mapped_file->references++;
 		} else {
 			mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
+			sem_wait(&client_table_semaphore);
 			client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
+			sem_post(&client_table_semaphore);
 			char* mapped_file = malloc(length); //Lo que tendra el return de mmap
 			new_map->path=(char*)malloc(sizeof(path));
 			memcpy(new_map->path, path, sizeof(path));
@@ -644,7 +665,9 @@ void realizarRequest(void *buffer, int cliente){
 		new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 		new_segment->base = FIRST_FIT(cli_address_space->segment_table, 0, new_segment->size);
 		list_add(client_address_space->segment_table, new_segment);
+		sem_wait(&client->client_sempahore);
 
+		//////////////////
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &new_segment->base, sizeof(uint32_t));
 
@@ -670,7 +693,10 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 
 		//MUSE YO TE INVOCO
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* address_space_client = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
+		sem_wait(&client->client_sempahore);
 		segment* segment_requested = GET_SEGMENT_FROM_ADDRESS(addr, address_space_client);
 		int writen_pages = 0;
 
@@ -719,6 +745,11 @@ void realizarRequest(void *buffer, int cliente){
 		}
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
+		sem_post(&client->client_sempahore);
+
+		////////////////////////////////////
+
+
 		resultado = 0;//(en los casos feos lo pongo en -1... y el seg fault no entonces?)
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &resultado, sizeof(uint32_t));
@@ -740,7 +771,11 @@ void realizarRequest(void *buffer, int cliente){
 		int res;
 
 		//MUSE YO TE INVOCO
+		sem_wait(&addresses_space_semaphore);
 		addressSpace* addr_space = GET_ADDRESS_SPACE(cliente);
+		sem_post(&addresses_space_semaphore);
+
+		sem_wait(&client->client_sempahore);
 		segment* a_segm = GET_SEGMENT_FROM_BASE(direc,addr_space);
 		//Controlar que la direccion que me pasan este OK
 		sem_wait(&mapped_files_semaphore);
@@ -763,6 +798,9 @@ void realizarRequest(void *buffer, int cliente){
 		//Borro el segmento
 		int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segm->base);
 		list_remove_and_destroy_element(addr_space->segment_table, index, DESTROY_SEGMENT);
+
+		sem_post(&client->client_sempahore);
+		////////////////////////////
 
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &res, sizeof(uint32_t));

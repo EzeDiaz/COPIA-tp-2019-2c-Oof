@@ -28,6 +28,7 @@
 
 void DESTROY_CLIENT(client* a_client) {
 	free(a_client->clientProcessId);
+	sem_destroy(&a_client->client_sempahore);
 	free(a_client);
 }
 
@@ -97,8 +98,6 @@ void CLIENT_LEFT_THE_SYSTEM(int client_socket) {
 	list_iterate(client_ad_sp->segment_table, liberar_frames);
 	list_remove_and_destroy_by_condition(all_address_spaces, el_address_spaces_es_del_cliente, DESTROY_ADDRESS_SPACE);
 	list_remove_and_destroy_by_condition(client_list, es_el_cliente, DESTROY_CLIENT);
-
-	//TODO: destruir tambien los semaforos particulares del proceso
 }
 
 void FREE_SWAP_FRAME_BITMAP(int frame_number) {
@@ -476,7 +475,9 @@ int CREATE_ADDRESS_SPACE(char* IP_ID) {
 	memcpy(new_address_space->owner, IP_ID, sizeof(IP_ID));
 	new_address_space->segment_table = list_create();
 
+	sem_wait(&addresses_space_semaphore);
 	list_add(all_address_spaces, new_address_space);
+	sem_post(&addresses_space_semaphore);
 
 	return 0; //En que caso podria retornar -1?
 }
