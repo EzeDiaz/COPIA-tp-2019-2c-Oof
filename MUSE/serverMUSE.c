@@ -427,6 +427,7 @@ void realizarRequest(void *buffer, int cliente){
 			iterator++;
 			displacement_until_page = displacement_until_page + page_size;
 		}
+		//De aca me fui con la page. Quizas me sirve para el tema del clock
 		virtual_direction = a_segment->base + displacement_until_page + page_offset;
 
 		sem_post(&client->client_sempahore);
