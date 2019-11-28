@@ -618,9 +618,15 @@ void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 		memcpy(pointer+sizeof(uint32_t),&status,sizeof(bool));
 		SUBSTRACT_MEMORY_LEFT(5);
 		sem_post(&mp_semaphore);
+		log_info(logger,"Se escribio la metadata en memoria");
 	}else{
 		//aca hay que ver que hacemos si no hay espacio en memoria
 		//para escribir un metadata
+
+		sem_wait(&logger_semaphore);
+		log_error(logger,"No hay espacio en memoria");
+		sem_post(&logger_semaphore);
+
 	}
 }
 
@@ -816,28 +822,7 @@ void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 
 		while(page_frame_table->elements_count > page_number && bytes > 0){
 			if(!current_page->presenceBit){
-				//swap
-				int swap_frame =  current_page->frame_number;
-				int swap_pos = swap_frame * page_size;
-				int free_frame = CLOCK();
-				void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
-				if(a_segment->isHeap){
-					for(int i = 0; i < page_size; i++){
-						memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
-					}
-					FREE_SWAP_FRAME_BITMAP(swap_frame);
-
-				} else{
-					mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
-
-					for(int i = 0; i < page_size; i++){
-						memcpy(ptr_to_free_frame + i, mapped_file->pointer[swap_pos + i], 1);
-					}
-					FREE_SWAP_FRAME_BITMAP(swap_frame);
-				}
-
-				current_page->frame_number = free_frame;
-				current_page->presenceBit = 1;
+				BRING_FROM_SWAP(a_segment, current_page);
 			}
 
 			void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
@@ -889,28 +874,7 @@ void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_
 
 		while(page_frame_table->elements_count > page_number && bytes > 0){
 			if(!current_page->presenceBit){
-				//swap
-				int swap_frame =  current_page->frame_number;
-				int swap_pos = swap_frame * page_size;
-				int free_frame = CLOCK();
-				void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
-				if(a_segment->isHeap){
-					for(int i = 0; i < page_size; i++){
-						memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
-					}
-					FREE_SWAP_FRAME_BITMAP(swap_frame);
-
-				} else{
-					mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
-
-					for(int i = 0; i < page_size; i++){
-						memcpy(ptr_to_free_frame + i, mapped_file->pointer[swap_pos + i], 1);
-					}
-					FREE_SWAP_FRAME_BITMAP(swap_frame);
-				}
-
-				current_page->frame_number = free_frame;
-				current_page->presenceBit = 1;
+				BRING_FROM_SWAP(a_segment, current_page);
 			}
 
 			heapMetadata* metadata = GET_METADATA_BEHIND_ADDRESS(dst, page_frame_table);
@@ -1164,6 +1128,30 @@ void LOG_METRICS(int socket){
 	LOG_SYSTEM_METRICS();
 }
 
+void BRING_FROM_SWAP(segment* a_segment, pageFrame* current_page){
+	//swap
+	int swap_frame =  current_page->frame_number;
+	int swap_pos = swap_frame * page_size;
+	int free_frame = CLOCK();
+	void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
+	if(a_segment->isHeap){
+		for(int i = 0; i < page_size; i++){
+			memcpy(ptr_to_free_frame + i, swap_file[swap_pos + i], 1);
+		}
+		FREE_SWAP_FRAME_BITMAP(swap_frame);
+
+	} else{
+		mappedFile* mapped_file = GET_MAPPED_FILE(a_segment->path);
+
+		for(int i = 0; i < page_size; i++){
+			memcpy(ptr_to_free_frame + i, mapped_file->pointer[swap_pos + i], 1);
+		}
+		//FREE_SWAP_FRAME_BITMAP(swap_frame); va o no?
+	}
+
+	current_page->frame_number = free_frame;
+	current_page->presenceBit = 1;
+}
 
 
 
