@@ -16,7 +16,7 @@
 
 //Funcionalidades con archivos
 bool crear_archivo();
-bool escribir_archivo();
+bool escribir_archivo(uint32_t direccion,const void *cosas_a_escribir, size_t cantidad_a_escribir);
 void* leer_archivo(uint32_t , void *, size_t );
 bool borrar_archivo(char*);
 bool agregar_metadata_de_archivo();

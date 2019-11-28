@@ -123,13 +123,15 @@ void start_up(){
 	int cantidad_bloques= CANT_MAX_BLOQUES;
 	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
 
-	crear_bitmap(config);
-	setear_fs();
 	comando=string_new();
 	string_append(&comando,"./sac-format disco.bin");
 
 	system(comando);
 	free(comando);
+
+	crear_bitmap(config);
+	setear_fs();
+
 
 	comando=string_new();
 	string_append(&comando,"./sac-dump disco.bin");
@@ -158,9 +160,10 @@ void setear_fs(){
 	primer_nodo->file_size=0;
 	crear_vector_de_punteros(primer_nodo->blk_indirect,1000);
 
-	for(int i=0; i<71;i++){
+	strcpy(primer_nodo->fname, "/") ;
+	/*for(int i=0; i<71;i++){
 		primer_nodo->fname[i]=PUNTO_DE_MONTAJE[i];
-	}
+	}*/
 	escribir_en_disco(preparar_nodo_para_grabar(primer_nodo),buscar_bloque_libre(BUSQUEDA_NODO));
 }
 
@@ -177,10 +180,22 @@ void crear_bitmap(t_config* config){
 		cantidad_bloques = (cantidad_bloques / 8) + 1;
 	}
 
+	char* vectorBloques=(char*)malloc(cantidad_bloques);
+	vectorBloques=string_repeat('\0',cantidad_bloques);
+
+	memcpy(primer_bloque+BLOCK_SIZE,vectorBloques,cantidad_bloques);
+
+
+
+
 	char* direccion_bitmap=(char*)(primer_bloque+BLOCK_SIZE);
 	bitarray = bitarray_create_with_mode(direccion_bitmap,cantidad_bloques,LSB_FIRST);
 
 
+	int bloques_usados=((cantidad_bloques)/BLOCK_SIZE)+2;
+	for(int i=0;i<bloques_usados;i++){
+	bitarray_set_bit(bitarray,i);
+	}
 }
 void eliminar_semaforos(){ //TODO
 	sem_destroy(&mutex_log_servidor);
