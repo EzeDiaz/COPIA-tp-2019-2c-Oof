@@ -278,7 +278,7 @@ void realizarRequest(void *buffer, int cliente){
 							for(int i=0; i < frames_to_require; i++) {
 								int frame_number = CLOCK();
 								pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
-								new_page->modifiedBit = 1; //Not sure
+								new_page->modifiedBit = 0; //Not sure
 								new_page->presenceBit = 1;
 								list_add(un_segmento->pageFrameTable, new_page);
 								if(bytes_que_quedan - page_size > 0)
@@ -340,7 +340,7 @@ void realizarRequest(void *buffer, int cliente){
 							pointer = pointer + 5;
 						}
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
-						new_page->modifiedBit = 1; //Not sure
+						new_page->modifiedBit = 0; //Not sure
 						new_page->presenceBit = 1;
 						list_add(new_segment->pageFrameTable, new_page);
 						if(bytes_que_quedan - page_size > 0)
@@ -422,6 +422,7 @@ void realizarRequest(void *buffer, int cliente){
 
 		segment* a_segment = GET_SEGMENT_FROM_BASE(segment_base, client_address_space);
 		while(a_segment->pageFrameTable->elements_count > iterator) {
+			//Ojo si hay que swapear aca. Me podrian sacar el frame antes de llegar aca?
 			pageFrame* a_page = list_get(a_segment->pageFrameTable, iterator);
 			if(a_page->frame_number == frame_number)
 				break;
@@ -739,21 +740,27 @@ void realizarRequest(void *buffer, int cliente){
 					//Las paginas que no estan presentes, las salteo
 					//A las que copio al archivo, les pongo el bit de modificado en 0
 					//Bit de uso en 1?
+					int page_number = GET_PAGE_NUMBER_FROM_ADDRESS(addr, segment_requested);
 					mappedFile* mapped_file = GET_MAPPED_FILE(segment_requested->path);
 					int bytes_traveled = addr - segment_requested->base;
 					if(bytes_traveled % page_size > 0) //Si arranco corrido en la pagina
 						pages_to_write++;
 					int offset = bytes_traveled;
 					while(writen_pages < pages_to_write) {
-						int current_frame = GET_FRAME_FROM_ADDRESS(bytes_traveled, segment_requested);
-						void* pointer = GET_FRAME_POINTER(current_frame);
-						for(int i = (offset % page_size); i < page_size ; i++) {
-							mapped_file->pointer[bytes_traveled] = (char*)(pointer + i);
-							//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
-							bytes_traveled++;
+						pageFrame* current_page = list_get(segment_requested->pageFrameTable, page_number);
+						if(current_page->presenceBit && current_page->modifiedBit) {
+							int current_frame = GET_FRAME_FROM_ADDRESS(bytes_traveled, segment_requested);
+							void* pointer = GET_FRAME_POINTER(current_frame);
+							for(int i = (offset % page_size); i < page_size ; i++) {
+								mapped_file->pointer[bytes_traveled] = (char*)(pointer + i);
+								//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
+								bytes_traveled++;
+							}
 						}
 						offset = 0;
 						writen_pages++;
+						page_number++;
+						current_page->useBit = 1;
 					}
 				}
 			}
@@ -797,6 +804,23 @@ void realizarRequest(void *buffer, int cliente){
 		//Controlar que la direccion que me pasan este OK
 		sem_wait(&mapped_files_semaphore);
 		mappedFile* mapped_file = GET_MAPPED_FILE(a_segm->path);
+
+		//Hago igual que en sync, actualizo el archivo (ctrl+c - ctrl+v)
+		int bytes_traveled = 0;
+		for(int i = 0; a_segm->pageFrameTable->elements_count > i; i++) {
+			pageFrame* current_page = list_get(segment_requested->pageFrameTable, i);
+			if(current_page->presenceBit && current_page->modifiedBit) {
+				int current_frame = current_page->frame_number;
+				void* pointer = GET_FRAME_POINTER(current_frame);
+				for(int j = 0; j < page_size ; j++) {
+					mapped_file->pointer[bytes_traveled] = (char*)(pointer + j);
+					//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
+					bytes_traveled++;
+				}
+			}
+			current_page->useBit = 1;
+		}
+
 		mapped_file->references--;
 		if(!mapped_file->references) {
 			close(mapped_file->file_desc);

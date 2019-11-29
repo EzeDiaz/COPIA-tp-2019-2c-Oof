@@ -350,8 +350,12 @@ void* GET_LAST_METADATA(segment* a_segment) {
 	void* pointer;
 
 	while(segment_move_counter < segment_size && page_number < page_frame_table->elements_count) { //Mientras este en mi segmento
-		int current_frame = list_get(page_frame_table, page_number);
-		pointer = GET_FRAME_POINTER(current_frame);
+		pageFrame* current_frame = list_get(page_frame_table, page_number);
+
+		if(!current_frame->presenceBit)
+			BRING_FROM_SWAP(a_segment, current_frame);
+
+		pointer = GET_FRAME_POINTER(current_frame->frame_number);
 		while(page_move_counter < page_size) {
 			heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer);
 			if(new_metadata->isFree && page_number == (page_frame_table->elements_count - 1)) {
@@ -408,8 +412,12 @@ void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size) {
 		return NULL;
 
 	while(segment_move_counter < segment_size && page_number < page_frame_table->elements_count) { //Mientras este en mi segmento
-		int current_frame = list_get(page_frame_table, page_number);
-		pointer = GET_FRAME_POINTER(current_frame);
+		pageFrame* current_frame = list_get(page_frame_table, page_number);
+
+		if(!current_frame->presenceBit)
+			BRING_FROM_SWAP(a_segment, current_frame);
+
+		pointer = GET_FRAME_POINTER(current_frame->frame_number);
 		while(page_move_counter < page_size) {
 			heapMetadata* new_metadata = READ_HEAPMETADATA_IN_MEMORY(pointer);
 			if(new_metadata->isFree)
@@ -663,6 +671,10 @@ int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment){
 		page_size_plus_base = page_size + a_segment->base; // Estoy sumando un int y un uint32 ¿Se puede?
 		if(page_size_plus_base > address){
 			pageFrame* page = list_get(page_frame_table, page_number);
+
+			if(!page->presenceBit)
+				BRING_FROM_SWAP(a_segment, page);
+
 			return page->frame_number;
 		}
 		page_number++;
@@ -722,7 +734,7 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 					log_info(logger,"Mergeo metadatas");
 				} else{ // si el proximo no esta free... me paro en ese y se vuelve mi actual
 					ptr_to_current_metadata = ptr_to_next_metadata;
-					log_trace("Proxima metadata usada");
+					log_trace(logger, "Proxima metadata usada");
 					log_info(logger,"Me paro en la proxima metadata");
 				}
 			} else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
@@ -747,7 +759,7 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 					} else{ // si no esta libre
 						ptr_to_current_metadata = ptr_to_first_metadata_new_frame;
 						page_move_counter = new_page_move_counter;
-						log_trace("Proxima metadata usada");
+						log_trace(logger, "Proxima metadata usada");
 						log_info(logger,"Me paro en la proxima metadata");
 
 					}
@@ -1151,6 +1163,7 @@ void BRING_FROM_SWAP(segment* a_segment, pageFrame* current_page){
 
 	current_page->frame_number = free_frame;
 	current_page->presenceBit = 1;
+	current_page->useBit = 1;
 }
 
 
