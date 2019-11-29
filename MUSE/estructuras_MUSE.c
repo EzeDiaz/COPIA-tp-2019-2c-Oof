@@ -544,9 +544,9 @@ void CHECK_LOGGER(){
 }
 
 void CHECK_CONFIG(){
-	if(config!=NULL)
+	if(config!=NULL) {
 		log_info(logger,"Archivo config levantado");
-	else{
+	} else {
 		log_error(logger,"No se pudo levantar el archivo de configuracion base, cierro el administrador\n");
 		exit(0);	//si no encuentro el config inicial, me muero
 	}

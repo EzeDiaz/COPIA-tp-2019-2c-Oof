@@ -114,6 +114,10 @@ void* recibirBuffer(int* alocador, int cliente){
 	void* buffer;
 
 	int recv_result = recv(cliente, alocador, 4, MSG_WAITALL);
+	sem_wait(&logger_semaphore);
+	log_info(logger,"Recv al recibirBuffer dio %d", recv_result);
+	sem_post(&logger_semaphore);
+
 
 	if(recv_result > 0){
 		buffer = malloc(*alocador);
@@ -187,6 +191,10 @@ void realizarRequest(void *buffer, int cliente){
 
 		send(cliente, buffer, sizeof(buffer),0);
 
+		sem_wait(&logger_semaphore);
+		log_info(logger,"Se inicializo el cliente %d (muse_init)", cliente);
+		sem_post(&logger_semaphore);
+
 		free(buffer);
 		break;
 
@@ -196,7 +204,7 @@ void realizarRequest(void *buffer, int cliente){
 		sem_wait(&logger_semaphore);
 		LOG_METRICS(cliente);
 		CLIENT_LEFT_THE_SYSTEM(cliente);
-		log_info(logger,"Cliente %d dejo el sistema", cliente);
+		log_info(logger,"Cliente %d dejo el sistema (muse_close)", cliente);
 		sem_post(&logger_semaphore);
 		sem_post(&mp_semaphore);
 
@@ -223,6 +231,9 @@ void realizarRequest(void *buffer, int cliente){
 		addressSpace* client_address_space = GET_ADDRESS_SPACE(cliente);
 		sem_post(&addresses_space_semaphore);
 
+		sem_wait(&logger_semaphore);
+		log_info(logger,"El cliente %d pidio memoria, laburamos... (muse_alloc)", cliente);
+		sem_post(&logger_semaphore);
 
 		sem_wait(&client->client_sempahore);
 		if(memory_left >= bytes_a_reservar) {
@@ -306,9 +317,16 @@ void realizarRequest(void *buffer, int cliente){
 
 				t_list* heap_segments_list = GET_HEAP_SEGMENTS(client_address_space);
 				list_iterate(heap_segments_list, usar_segmento_si_tiene_espacio);
+				sem_wait(&logger_semaphore);
+				log_info(logger,"Se intento usar espacio de algun segmento (cliente %d)", cliente);
+				sem_post(&logger_semaphore);
 
-				if(!se_pudo_reservar_flag) //Ningun segmento tenia espacio, trato de agrandar
+				if(!se_pudo_reservar_flag) { //Ningun segmento tenia espacio, trato de agrandar
 					list_iterate(heap_segments_list, usar_segmento_si_se_puede_agrandar);
+					sem_wait(&logger_semaphore);
+					log_info(logger,"No habia espacio, se intento extender algun segmento (cliente %d)", cliente);
+					sem_post(&logger_semaphore);
+				}
 
 				debe_crearse_segmento_flag = !se_pudo_reservar_flag;
 				//borrar la heap_segments_list (porque es resultado de un filter)
@@ -317,9 +335,15 @@ void realizarRequest(void *buffer, int cliente){
 				debe_crearse_segmento_flag = 1;
 			}
 			if(debe_crearse_segmento_flag) {
+				sem_wait(&logger_semaphore);
+				log_info(logger,"Debe crearse un nuevo segmento (cliente %d)", cliente);
+				sem_post(&logger_semaphore);
 				sem_wait(&mp_semaphore);
 				//Crear nuevo segmento
 				if(client_address_space->segment_table->elements_count) {
+					sem_wait(&logger_semaphore);
+					log_info(logger,"Ya habia segmentos, creo uno nuevo (cliente %d)", cliente);
+					sem_post(&logger_semaphore);
 					//Ya hay segmentos
 					segment* new_segment = (segment*)malloc(sizeof(segment*));
 					new_segment->isHeap = true;
@@ -330,6 +354,10 @@ void realizarRequest(void *buffer, int cliente){
 					} else {
 						frames_to_require = (bytes_a_reservar + 10) / page_size;
 					}
+
+					sem_wait(&logger_semaphore);
+					log_info(logger,"Se reservaron %d frames (cliente %d)", frames_to_require, cliente);
+					sem_post(&logger_semaphore);
 
 					pageFrame* last_page;
 					uint32_t bytes_que_quedan = bytes_a_reservar;
@@ -366,6 +394,10 @@ void realizarRequest(void *buffer, int cliente){
 					list_add(client_address_space->segment_table, new_segment);
 					segment_base = new_segment->base;
 				} else {
+					sem_wait(&logger_semaphore);
+					log_info(logger,"No habia segmentos. Creo el primero (cliente %d)", cliente);
+					sem_post(&logger_semaphore);
+
 					//Es el primer segmento
 					segment* new_segment = (segment*)malloc(sizeof(segment*));
 					new_segment->base = 0;
@@ -377,6 +409,10 @@ void realizarRequest(void *buffer, int cliente){
 					} else {
 						frames_to_require = (bytes_a_reservar + 10) / page_size;
 					}
+
+					sem_wait(&logger_semaphore);
+					log_info(logger,"Se reservaron %d frames (cliente %d)", frames_to_require, cliente);
+					sem_post(&logger_semaphore);
 
 					pageFrame* last_page;
 					uint32_t bytes_que_quedan = bytes_a_reservar;
@@ -438,6 +474,10 @@ void realizarRequest(void *buffer, int cliente){
 		}
 		//De aca me fui con la page. Quizas me sirve para el tema del clock
 		virtual_direction = a_segment->base + displacement_until_page + page_offset;
+
+		sem_wait(&logger_semaphore);
+		log_info(logger,"Se otorgo la direccion virtual %d (cliente %d)", virtual_direction, cliente);
+		sem_post(&logger_semaphore);
 
 		sem_post(&client->client_sempahore);
 		//////////// END MUSE
@@ -518,6 +558,10 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&n, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
+		sem_wait(&logger_semaphore);
+		log_info(logger,"El cliente %d leyo %d bytes (muse_get)", cliente, n);
+		sem_post(&logger_semaphore);
+
 		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
 		addressSpace* addr_sp = GET_ADDRESS_SPACE(cliente);
@@ -565,6 +609,10 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&n, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
+
+		sem_wait(&logger_semaphore);
+		log_info(logger,"El cliente %d escribio %d bytes)", cliente, n);
+		sem_post(&logger_semaphore);
 
 		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
@@ -617,6 +665,10 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&flag, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
+
+		sem_wait(&logger_semaphore);
+		log_info(logger,"El cliente %d mapeo el archivo %s a memoria (muse_map)", cliente, path);
+		sem_post(&logger_semaphore);
 
 		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
@@ -709,6 +761,10 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(&len, (buffer + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
+		sem_wait(&logger_semaphore);
+		log_info(logger,"El cliente %d pidio actualizar %d bytes de su direccion virtual mapeada %d (muse_sync)", cliente, len, addr);
+		sem_post(&logger_semaphore);
+
 		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
 		addressSpace* address_space_client = GET_ADDRESS_SPACE(cliente);
@@ -794,6 +850,10 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+longitudDelSiguiente;
 		int res;
 
+		sem_wait(&logger_semaphore);
+		log_info(logger,"El cliente %d unmapeo el archivo que estaba en la direccion virtual %d (muse_unmap)", cliente, direc);
+		sem_post(&logger_semaphore);
+
 		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
 		addressSpace* addr_space = GET_ADDRESS_SPACE(cliente);
@@ -857,7 +917,7 @@ void realizarRequest(void *buffer, int cliente){
 	}
 
 	sem_wait(&logger_semaphore);
-	log_info(logger,"Terminamos el request\n");
+	log_info(logger,"Terminamos el request del cliente %d", cliente);
 	sem_post(&logger_semaphore);
 }
 
