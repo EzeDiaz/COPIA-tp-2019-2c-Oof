@@ -3,7 +3,6 @@
 	<name>test_file_system</name>
 	<comment></comment>
 	<projects>
-		<project>_SAC</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
