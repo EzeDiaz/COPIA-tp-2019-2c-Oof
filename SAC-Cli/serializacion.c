@@ -429,7 +429,7 @@ void usar_y_liberar_resultado(void* resultado){
 	offset+=sizeof(int);
 	for(int i=0; i< cantidad_de_archivos;i++){
 
-		nodo_t* un_nodo= malloc(sizeof(nodo_t));
+		/*nodo_t* un_nodo= malloc(sizeof(nodo_t));
 
 		memcpy(un_nodo->estado,resultado+offset,1);//TODO esto puede romper
 		offset+=1;
@@ -445,7 +445,7 @@ void usar_y_liberar_resultado(void* resultado){
 		offset+=72;
 
 		list_add(lista_de_nodos,un_nodo);
-
+*/
 	}
 
 	printear_lista_de_nodos(lista_de_nodos);
@@ -455,6 +455,7 @@ void usar_y_liberar_resultado(void* resultado){
 
 void printear_lista_de_nodos(lista_de_nodos){
 
+/*
 	void printear_nodo(nodo_t* un_nodo){
 		printf("Miren... un nodo! \n");
 		printf("Su estado es: %s \n",un_nodo->estado);
@@ -466,4 +467,5 @@ void printear_lista_de_nodos(lista_de_nodos){
 	}
 	list_iterate(lista_de_nodos, printear_nodo);
 
+*/
 }

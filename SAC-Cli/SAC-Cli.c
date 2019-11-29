@@ -5,9 +5,9 @@
  *      Author: utnso
  */
 
+#define _FILE_OFFSET_BITS 64
 #define SERVER_NAME_LEN_MAX 255
-#define _FILE_OFFSET_BITS  64
-#define FUSE_USE_VERSION 26
+#define FUSE_USE_VERSION 27
 
 #include "SAC-Cli.h"
 #include <readline/readline.h>
@@ -19,7 +19,17 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#define DEFAULT_FILE_PATH "/" DEFAULT_FILE_NAME
+#include <stdio.h>
+#include <stdlib.h>
+#include "SAC-Cli.h"
+
+#define DEFAULT_MOUNT_POINT "/"
+
+#define DEFAULT_FILE_CONTENT ""
+
+#define DEFAULT_FILE_NAME ""
+
+#define DEFAULT_FILE_PATH "/"
 
 struct t_runtime_options {
 	char* welcome_msg;
@@ -50,7 +60,7 @@ static struct fuse_operations fs_oper = {
 		.rmdir       = serializar_fs_rmdir,
 		.mkdir       = serializar_fs_mkdir,
 		.getattr     = serializar_fs_getattr,
-	/*	.readlink    = fs_readlink,
+		/*	.readlink    = fs_readlink,
 		.mknod       = fs_mknod,
 		.unlink      = fs_unlink,
 		.symlink     = fs_symlink,
@@ -81,55 +91,78 @@ static struct fuse_operations fs_oper = {
 		.poll        = fs_poll,*/
 };
 
-int run_sac(int argc, char *argv[]){
-	config= leer_config();
-	conectar_SAC_SERVER(argc,argv);
+
+
+int main(int argc, char **argv){
+	remove("/home/utnso/SAC");
+
+	leer_config();
+	printf("vamos a conectar con server \n");
+
+	conectar_SAC_SERVER(argc,argv[1]);
+
+	printf("conecta3\n");
+
+
+	printf("vamos a iniciar fuse_args_init \n");
+
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
+	printf("memseteamos runtime options \n");
+
 	// Limpio la estructura que va a contener los parametros
-	//memset(&runtime_options, 0, sizeof(struct t_runtime_options));
+	memset(&runtime_options, 0, sizeof(struct t_runtime_options));
+
+	printf("vamos a iniciar fuse_opt_parse \n");
 
 	// Esta funcion de FUSE lee los parametros recibidos y los intepreta
-	//if (fuse_opt_parse(&args, &runtime_options, fuse_options, NULL) == -1){
-	/** error parsing options */
-	//perror("Invalid arguments!");
-	//return EXIT_FAILURE;
-	//}
+	if (fuse_opt_parse(&args, &runtime_options, fuse_options, NULL) == -1){
+		/** error parsing options */
+		perror("Invalid arguments!");
+		return EXIT_FAILURE;
+	}
 
 	// Si se paso el parametro --welcome-msg
 	// el campo welcome_msg deberia tener el
 	// valor pasado
 
+	if( runtime_options.welcome_msg != NULL ){
+		printf("%s\n", runtime_options.welcome_msg);
+	}
 	// Esta es la funcion principal de FUSE, es la que se encarga
 	// de realizar el montaje, comuniscarse con el kernel, delegar todo
 	// en varios threads
-	return /*fuse_main(argc, argv, &fs_oper,NULL)*/ 0;
-}
+	printf("vamos a iniciar fuse_main \n");
+	fuse_main(args.argc, args.argv, &fs_oper,NULL) ;
 
-t_config* leer_config(){
+	// system("fusermount -u /home/utnso/New_SAC");
+	 return 0;
+
+	}
+
+void leer_config(){
 
 	char* nombre_config= readline("Ingresar nombre de config: \n>");
-	return config_create(nombre_config);
+	config= config_create(nombre_config);
+
+	IP=config_get_string_value(config,"IP");
+	puerto=config_get_int_value(config,"PUERTO_ESCUCHA");
 
 }
 
-void conectar_SAC_SERVER(int argc, char *argv[]) {
+void conectar_SAC_SERVER(int argc, char *argv) {
 
-	char* server_name=config_get_string_value(config,"IP");
+	printf("vamos a leer ip \n");
+
+	char* server_name=IP;
 	int server_port, socket_fd;
 	struct hostent *server_host;
 	struct sockaddr_in server_address;
 
-	/* Get server name from command line arguments or stdin. */
+		printf("vamos a leer puerto \n");
 
-
-	/* Get server port from command line arguments or stdin. */
-	server_port = argc > 2 ? atoi(argv[2]) : 0;
-	if (!server_port) {
-		server_port=config_get_int_value(config,"PUERTO_ESCUCHA");
-	}
-
-	/* Get server host from server name. */
+		server_port=puerto;
+		/* Get server host from server name. */
 	server_host = gethostbyname(server_name);
 
 	/* Initialise IPv4 server address with server host. */
