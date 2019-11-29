@@ -67,13 +67,13 @@ void iniciarServidor(){
 
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
-	direccionServidor.sin_addr.s_addr= inet_addr(get_local_IP()); //INADDR_ANY;
+	direccionServidor.sin_addr.s_addr= inet_addr("127.0.0.1"); //INADDR_ANY; //127.0.0.1 //get_local_IP()
 	direccionServidor.sin_port=htons(config_get_int_value(config,"LISTEN_PORT"));
 
 
 	int servidor = socket(AF_INET, SOCK_STREAM , 0);
 	sem_wait(&logger_semaphore);
-	log_info(logger, "Levantamos el servidor");
+	log_info(logger, "Levantamos el servidor con la ip %s", get_local_IP());
 	sem_post(&logger_semaphore);
 
 	int activado = 1;
@@ -145,45 +145,40 @@ void* recibirBuffer(int* alocador, int cliente){
 	return NULL;
 }
 
-void realizarRequest(void *buffer, int cliente){
+void realizarRequest(void *buffer_recibido, int cliente){
 
 	bool falseStatus = 0;
 	bool trueStatus = 1;
 
 	int cod_op;
-	memcpy(&cod_op, buffer, sizeof(int));
-
-	switch(cod_op){
+	memcpy(&cod_op, buffer_recibido, sizeof(int));
 
 	//Variables que uso en todos los cases
 	int offset= sizeof(int);
 	int longitudDelSiguiente=0;
 	void* buffer;
 	size_t n;
-	sem_wait(&client_table_semaphore);
 	client* client = FIND_CLIENT_BY_SOCKET(cliente);
-	sem_post(&client_table_semaphore);
+
+	switch(cod_op){
 
 	//init
 	case 100:
 		;
 		char* IP_ID;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		IP_ID=(char*)malloc(longitudDelSiguiente);
 		offset= offset+sizeof(int);
-		memcpy(IP_ID, (buffer + offset), longitudDelSiguiente);
+		memcpy(IP_ID, (buffer_recibido + offset), longitudDelSiguiente);
 
 		//MUSE YO TE INVOCO
-		sem_wait(&client_table_semaphore);
 		ADD_CLIENT_TO_LIST(IP_ID, cliente);
-		sem_post(&client_table_semaphore);
 
-		sem_wait(&addresses_space_semaphore);
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
-		sem_post(&addresses_space_semaphore);
 
 		//Semaforo del adress space del cliente
+		client = FIND_CLIENT_BY_SOCKET(cliente);
 		sem_init(&client->client_sempahore,0,1);
 
 		buffer=(void*)malloc(sizeof(int));
@@ -217,9 +212,9 @@ void realizarRequest(void *buffer, int cliente){
 		;
 		uint32_t bytes_a_reservar;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&bytes_a_reservar, (buffer + offset), longitudDelSiguiente);
+		memcpy(&bytes_a_reservar, (buffer_recibido + offset), longitudDelSiguiente);
 
 		int debe_crearse_segmento_flag = 0;
 		int se_pudo_reservar_flag = 0;
@@ -505,9 +500,9 @@ void realizarRequest(void *buffer, int cliente){
 		;
 		uint32_t dir;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
+		memcpy(&dir, (buffer_recibido + offset), longitudDelSiguiente);
 
 		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
@@ -543,20 +538,20 @@ void realizarRequest(void *buffer, int cliente){
 		void* dst;
 		uint32_t src;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		dst = (void*)malloc(longitudDelSiguiente);
-		memcpy(dst, (buffer + offset), longitudDelSiguiente);
+		memcpy(dst, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&src, (buffer + offset), longitudDelSiguiente);
+		memcpy(&src, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&n, (buffer + offset), longitudDelSiguiente);
+		memcpy(&n, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
 		sem_wait(&logger_semaphore);
@@ -600,20 +595,20 @@ void realizarRequest(void *buffer, int cliente){
 		uint32_t dest;
 		void* source;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&dest, (buffer + offset), longitudDelSiguiente);
+		memcpy(&dest, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		source = (void*)malloc(longitudDelSiguiente);
-		memcpy(source, (buffer + offset), longitudDelSiguiente);
+		memcpy(source, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&n, (buffer + offset), longitudDelSiguiente);
+		memcpy(&n, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
 		sem_wait(&logger_semaphore);
@@ -655,20 +650,20 @@ void realizarRequest(void *buffer, int cliente){
 		size_t length;
 		int flag;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		path = (char*)malloc(longitudDelSiguiente);
-		memcpy(path, (buffer + offset), longitudDelSiguiente);
+		memcpy(path, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&length, (buffer + offset), longitudDelSiguiente);
+		memcpy(&length, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&flag, (buffer + offset), longitudDelSiguiente);
+		memcpy(&flag, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
 		sem_wait(&logger_semaphore);
@@ -686,9 +681,7 @@ void realizarRequest(void *buffer, int cliente){
 			mapped_file->references++;
 		} else {
 			mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
-			sem_wait(&client_table_semaphore);
 			client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
-			sem_post(&client_table_semaphore);
 			char* mapped_file = malloc(length); //Lo que tendra el return de mmap
 			new_map->path=(char*)malloc(sizeof(path));
 			memcpy(new_map->path, path, sizeof(path));
@@ -756,14 +749,14 @@ void realizarRequest(void *buffer, int cliente){
 		uint32_t addr;
 		size_t len;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&addr, (buffer + offset), longitudDelSiguiente);
+		memcpy(&addr, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&len, (buffer + offset), longitudDelSiguiente);
+		memcpy(&len, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
 		sem_wait(&logger_semaphore);
@@ -850,9 +843,9 @@ void realizarRequest(void *buffer, int cliente){
 		;
 		uint32_t direc;
 
-		memcpy(&longitudDelSiguiente, (buffer + offset), sizeof(int));
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
-		memcpy(&direc, (buffer + offset), longitudDelSiguiente);
+		memcpy(&direc, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 		int res;
 

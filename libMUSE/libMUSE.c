@@ -76,10 +76,12 @@ int muse_init(int id, char* ip, int puerto){
 	strcat(IP_id, id_como_char);
 
 	void* paquete_init = crear_paquete_init(100,IP_id);
-	send(socket_MUSE, paquete_init,sizeof(paquete_init),0);
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_init, 4);
+	send(socket_MUSE, paquete_init,tamanio_paquete+4,0); //El +4 es para contemplar el peso del atributo peso
 	free(paquete_init);
 
-	free(IP_como_char);
+	//free(IP_como_char);
 	free(id_como_char);
 	free(IP_id);
 
@@ -146,10 +148,13 @@ int muse_get(void* dst, uint32_t src, size_t n){
 	int tamanio_recepcion = n; //MUSE me manda la cantidad de bytes que le pedi
 	var_recepcion = malloc(tamanio_recepcion);
 	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
-
 	int resultado;
 
-	if(var_recepcion[0] != '\0') { //Puedo hacer eso con var_recepcion? //Sera un problema comparar por \0?
+	//Agarro el primer caracter de lo que recibi para ver que onda
+	char* primer_caracter_var_recepcion = (char*) malloc(1);
+	memcpy(primer_caracter_var_recepcion, var_recepcion, 1);
+
+	if(primer_caracter_var_recepcion != '\0') { //Puedo hacer eso con var_recepcion? //Sera un problema comparar por \0?
 		//Tutti OK
 		memcpy(dst, var_recepcion, tamanio_recepcion);
 		resultado = 0;

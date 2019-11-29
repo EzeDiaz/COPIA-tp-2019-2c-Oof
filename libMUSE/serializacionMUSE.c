@@ -19,10 +19,13 @@ void* crear_paquete_init(int codigo_de_operacion, char* IP_id) {
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
 
-	void* paquete=(void*)malloc(peso_total);
+	void* paquete=(void*)malloc(peso_total+4);
 
 	int offset=0;
 	peso_del_siguiente=0;
+
+	memcpy(paquete+offset, &peso_total, sizeof(int));
+	offset+=sizeof(int);
 
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;
@@ -30,7 +33,9 @@ void* crear_paquete_init(int codigo_de_operacion, char* IP_id) {
 	peso_del_siguiente=strlen(IP_id)+1;
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
-	memcpy(paquete+offset, strlen(IP_id)+1, peso_del_siguiente);
+	memcpy(paquete+offset, IP_id, peso_del_siguiente);
+	offset+=peso_del_siguiente;
+
 
 	return paquete;
 }

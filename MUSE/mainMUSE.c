@@ -28,7 +28,7 @@
 
 int main(){
 	remove("MUSE_logger.log");
-	logger = log_create("MUSE_logger.log","main_server", 0, LOG_LEVEL_DEBUG);	//hacemo' el log
+	logger = log_create("MUSE_logger.log","main_server", 1, LOG_LEVEL_DEBUG);	//hacemo' el log
 
 	CHECK_LOGGER();
 
