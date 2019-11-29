@@ -171,9 +171,13 @@ void realizarRequest(void *buffer, int cliente){
 		memcpy(IP_ID, (buffer + offset), longitudDelSiguiente);
 
 		//MUSE YO TE INVOCO
+		sem_wait(&client_table_semaphore);
 		ADD_CLIENT_TO_LIST(IP_ID, cliente);
+		sem_post(&client_table_semaphore);
 
+		sem_wait(&addresses_space_semaphore);
 		int resultado = CREATE_ADDRESS_SPACE(IP_ID);
+		sem_post(&addresses_space_semaphore);
 
 		//Semaforo del adress space del cliente
 		sem_init(&client->client_sempahore,0,1);
@@ -462,6 +466,7 @@ void realizarRequest(void *buffer, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&dir, (buffer + offset), longitudDelSiguiente);
 
+		//MUSE YO TE INVOCO
 		sem_wait(&addresses_space_semaphore);
 		addressSpace* address_space = GET_ADDRESS_SPACE(cliente);
 		sem_post(&addresses_space_semaphore);
@@ -472,19 +477,13 @@ void realizarRequest(void *buffer, int cliente){
 		sem_post(&mp_semaphore);
 		client->total_memory_freed += bytes_freed;
 
-		//MUSE YO TE INVOCO
 
-		/* Armamos el paquetito de respuesta
-		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		uint32_t respuesta = 0; //En que momento pondria -1?
+
+		buffer=(void*)malloc(sizeof(uint32_t));
+		memcpy(buffer, &respuesta, sizeof(uint32_t));
+
+		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
 
@@ -527,6 +526,7 @@ void realizarRequest(void *buffer, int cliente){
 		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
+
 		buffer=(void*)malloc(n);
 		memcpy(buffer, data, n);
 
@@ -576,17 +576,12 @@ void realizarRequest(void *buffer, int cliente){
 		sem_post(&mapped_files_semaphore);
 
 
-		/* Armamos el paquetito de respuesta
-		void* buffer;
-		int peso=0;
-		offset=0;
-		peso+=strlen(resultado)+1;
-		buffer=(void*)malloc(peso+sizeof(int));
-		memcpy(buffer,&peso,sizeof(int));
-		offset=sizeof(int);
-		memcpy(buffer+offset,resultado,peso);
-		 */
-		//send
+		buffer=(void*)malloc(sizeof(int));
+		int rta = 0; //En que caso seria -1?
+		memcpy(buffer, rta, sizeof(int));
+
+		send(cliente, buffer, sizeof(buffer),0);
+
 
 		free(buffer);
 		free(source);
