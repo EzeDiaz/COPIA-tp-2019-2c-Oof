@@ -33,7 +33,7 @@ enum estado{
 typedef struct{
 
 	t_list* hilos_del_programa;//lista de hilos_t*
-	sem_t* procesos_en_Ready;
+	sem_t* procesos_en_ready;
 
 }proceso_t;
 

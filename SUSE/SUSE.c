@@ -174,7 +174,7 @@ void liberar_recursos(){
 
 	void destructor_de_procesos(char* PID, proceso_t* un_proceso){
 		free(PID);
-		sem_destroy(&un_proceso->procesos_en_Ready);
+		sem_destroy(&un_proceso->procesos_en_ready);
 
 		list_destroy_and_destroy_elements(un_proceso->hilos_del_programa,destructor_hilos);
 	}
@@ -321,7 +321,10 @@ int _hilolay_init(int PID){
 	vector_queues[COLA_EXEC]=queue_create();
 	dictionary_put(diccionario_procesos_x_queues,pid, vector_queues);
 	pthread_mutex_t* semaforo_exec_x_proceso;
+	sem_t* semaforo_procesos_en_ready=(sem_t*)malloc(sizeof(sem_t));
 
+	sem_init(semaforo_procesos_en_ready,0,0);
+	un_proceso->procesos_en_ready=semaforo_procesos_en_ready;
 	sem_init(&semaforo_exec_x_proceso,0,1);
 	dictionary_put(diccionario_de_procesos_x_semaforo,pid,semaforo_exec_x_proceso);
 	pthread_t* un_hilo;
@@ -343,9 +346,10 @@ int suse_create(int tid, int socket){
 	hilo->metricas = malloc(sizeof(metricas_t));
 	proceso_t* un_proceso;
 
-	if(dictionary_has_key(diccionario_de_procesos, socket)){
+	char* pid= string_itoa(socket);
+	if(dictionary_has_key(diccionario_de_procesos,pid)){
 
-		un_proceso = dictionary_get(diccionario_de_procesos, socket);
+		un_proceso = dictionary_get(diccionario_de_procesos, pid);
 
 
 	}else{
@@ -355,6 +359,7 @@ int suse_create(int tid, int socket){
 	}
 
 
+	sem_post(&un_proceso->procesos_en_ready);
 	list_add(un_proceso->hilos_del_programa,hilo);
 
 	encolar_en_new(hilo);

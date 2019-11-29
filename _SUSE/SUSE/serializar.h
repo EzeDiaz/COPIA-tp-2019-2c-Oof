@@ -24,13 +24,13 @@
 
 
 enum codigo_de_operacion{
-	HILOLAY_INIT = 0,
-	SUSE_CREATE = 1,
-	SUSE_SCHEDULER_NEXT = 2,
-	SUSE_WAIT = 3,
-	SUSE_SIGNAL = 4,
-	SUSE_JOIN = 5,
-	SUSE_CLOSE = 6,
+	HILOLAY_INIT = 100,
+	SUSE_CREATE = 101,
+	SUSE_SCHEDULER_NEXT = 102,
+	SUSE_WAIT = 103,
+	SUSE_SIGNAL = 104,
+	SUSE_JOIN = 105,
+	SUSE_CLOSE = 106,
 };
 
 void* serializar_suse_close(int);

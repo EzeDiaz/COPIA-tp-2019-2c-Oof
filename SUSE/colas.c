@@ -40,7 +40,7 @@ void newToReady(){
 	sem_wait(&semaforo_diccionario_de_procesos);
 	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,hilo->PID);
 	sem_post(&semaforo_diccionario_de_procesos);
-	sem_post(&un_proceso->procesos_en_Ready);
+	sem_post(&un_proceso->procesos_en_ready);
 
 	sem_wait(&semaforo_log_colas);
 
@@ -126,7 +126,8 @@ void readyToExec(int PID)
 
 bool esta_vacia(t_queue* cola_exec){
 	bool cacona = queue_is_empty(cola_exec);
-	return queue_is_empty(cola_exec);
+	cacona=cola_exec->elements->elements_count==0;
+	return cacona;
 
 }
 void * estadoReady(int PID)
@@ -142,7 +143,7 @@ void * estadoReady(int PID)
 			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
 			sem_post(&semaforo_diccionario_de_procesos);
 
-			sem_wait(&un_proceso->procesos_en_Ready);
+			sem_wait(un_proceso->procesos_en_ready);
 
 
 			readyToExec(PID);

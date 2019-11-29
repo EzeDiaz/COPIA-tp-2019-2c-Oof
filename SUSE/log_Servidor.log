@@ -1,8 +1,8 @@
-[INFO] 01:42:51:342 Servidor/(23387:23387): Levantamos el servidor
+[INFO] 12:01:53:542 Servidor/(4848:4848): Levantamos el servidor
 
-[INFO] 01:42:51:343 Servidor/(23387:23387): Servidor listo para recibir un cliente
+[INFO] 12:01:53:542 Servidor/(4848:4848): Servidor listo para recibir un cliente
 
-[INFO] 01:43:13:639 Servidor/(23387:23387): Recibimos un cliente
+[INFO] 12:02:28:123 Servidor/(4848:4848): Recibimos un cliente
 
-[INFO] 01:43:13:644 Servidor/(23387:23459): Recibimos conexion 
+[INFO] 12:02:28:133 Servidor/(4848:4959): Recibimos conexion 
 
