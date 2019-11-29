@@ -522,7 +522,8 @@ client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
 
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
 	client* new_client = (client*)malloc(sizeof(client));
-	new_client->clientProcessId = (char*)malloc(sizeof(client_ID));
+	new_client->clientProcessId = (char*)malloc(sizeof(client_ID)+1);
+	bzero(new_client->clientProcessId, sizeof(client_ID)+1);
 
 	memcpy(new_client->clientProcessId, client_ID, sizeof(client_ID));
 	memcpy(&new_client->clientSocket, &client_socket, sizeof(int));
