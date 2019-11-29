@@ -709,6 +709,10 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 	heapMetadata* next_metadata;
 	t_list* page_frame_table = a_segment->pageFrameTable;
 	pageFrame* first_page = list_get(page_frame_table, page_number);
+
+	if(!first_page->presenceBit)
+		BRING_FROM_SWAP(a_segment, first_page);
+
 	int current_frame = first_page->frame_number;
 	void* ptr_to_current_frame = GET_FRAME_POINTER(current_frame);
 	void* ptr_to_current_metadata = ptr_to_current_frame;
@@ -743,6 +747,10 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 				log_trace(logger,"Paso de pagina despues de moverme");
 				if(page_number < page_frame_table->elements_count){
 					pageFrame* next_page = list_get(page_frame_table, page_number);
+
+					if(!next_page->presenceBit)
+						BRING_FROM_SWAP(a_segment, next_page);
+
 					current_frame = next_page->frame_number;
 					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
 					void* ptr_to_first_metadata_new_frame = ptr_to_new_frame + new_page_move_counter;
@@ -1145,6 +1153,7 @@ void BRING_FROM_SWAP(segment* a_segment, pageFrame* current_page){
 	int swap_frame =  current_page->frame_number;
 	int swap_pos = swap_frame * page_size;
 	int free_frame = CLOCK();
+	clock_table[free_frame] = current_page;
 	void* ptr_to_free_frame = GET_FRAME_POINTER(free_frame);
 	if(a_segment->isHeap){
 		for(int i = 0; i < page_size; i++){

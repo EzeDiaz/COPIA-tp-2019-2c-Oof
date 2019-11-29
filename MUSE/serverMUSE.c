@@ -288,6 +288,7 @@ void realizarRequest(void *buffer, int cliente){
 								if(bytes_que_quedan - page_size > 0)
 									bytes_que_quedan = bytes_que_quedan - page_size;
 								last_page = new_page;
+								clock_table[frame_number] = new_page;
 							}
 
 							//Escribo la nueva metadata
@@ -350,6 +351,7 @@ void realizarRequest(void *buffer, int cliente){
 						if(bytes_que_quedan - page_size > 0)
 							bytes_que_quedan = bytes_que_quedan - page_size;
 						last_page = new_page;
+						clock_table[frame_number] = new_page;
 					}
 
 					//Escribo la nueva metadata
@@ -396,6 +398,7 @@ void realizarRequest(void *buffer, int cliente){
 						if(bytes_que_quedan - page_size > 0)
 							bytes_que_quedan = bytes_que_quedan - page_size;
 						last_page = new_page;
+						clock_table[frame_number] = new_page;
 					}
 
 					//Escribo la nueva metadata
@@ -671,6 +674,7 @@ void realizarRequest(void *buffer, int cliente){
 			new_page->useBit = 0;
 			new_page->presenceBit = 0;
 			list_add(new_segment->pageFrameTable, new_page);
+			clock_table[frame_number] = new_page;
 		}
 
 		new_segment->path = (char*)malloc(sizeof(path));
@@ -755,6 +759,7 @@ void realizarRequest(void *buffer, int cliente){
 						offset = 0;
 						writen_pages++;
 						page_number++;
+						current_page->modifiedBit = 0;
 						current_page->useBit = 1;
 					}
 				}
@@ -814,6 +819,7 @@ void realizarRequest(void *buffer, int cliente){
 				}
 			}
 			current_page->useBit = 1;
+			current_page->modifiedBit = 0;
 		}
 
 		mapped_file->references--;
