@@ -35,12 +35,7 @@ int main(int argc, char *argv[])
 {
 	struct hilolay_t afinador;
 
-	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
-	config = config_create(nombre_de_config);
-
-	conectar_con_servidor(argc, argv[1]);
-
-	_hilolay_init();
+	hilolay_init();
 	init_internal(&hiloops);
 
 

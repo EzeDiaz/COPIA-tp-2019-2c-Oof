@@ -242,7 +242,9 @@ void agregar_al_diccionario(int PID, sem_t* semaforo_exec){
 
 hilo_t* suse_schedule_next(int PID){
 
-	t_queue* cola_Ready = obtener_cola_ready_de(PID);
+	char* pid=string_itoa(PID);
+
+	t_queue* cola_Ready = obtener_cola_ready_de(pid);
 
 	// TODO REVISAR ESTE SJF
 	void sjf(hilo_t* un_hilo){
@@ -252,10 +254,11 @@ hilo_t* suse_schedule_next(int PID){
 	list_iterate(cola_Ready->elements,sjf);
 
 	bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
-		return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
+		return hilo_mas_prioridad->prioridad > hilo_menor_prioridad->prioridad;
 	}
 	list_sort(cola_Ready->elements,elemento_mas_grande);
 
+	free(pid);
 	return list_remove(cola_Ready->elements,0);
 
 
@@ -316,9 +319,13 @@ int _hilolay_init(int PID){
 	un_proceso->hilos_del_programa=list_create();
 
 	dictionary_put(diccionario_de_procesos, pid ,un_proceso);
-	t_queue* vector_queues[2];
-	vector_queues[COLA_READY]=queue_create();
-	vector_queues[COLA_EXEC]=queue_create();
+	t_list* vector_queues=list_create();
+	t_queue* cola_ready=queue_create();
+	list_add_in_index(vector_queues,COLA_READY,cola_ready);
+	t_queue* cola_exec=queue_create();
+	list_add_in_index(vector_queues,COLA_EXEC,cola_exec);
+
+
 	dictionary_put(diccionario_procesos_x_queues,pid, vector_queues);
 	pthread_mutex_t* semaforo_exec_x_proceso;
 	sem_t* semaforo_procesos_en_ready=(sem_t*)malloc(sizeof(sem_t));
@@ -359,10 +366,11 @@ int suse_create(int tid, int socket){
 	}
 
 
-	sem_post(&un_proceso->procesos_en_ready);
+	encolar_en_new(hilo);
+
+	sem_post(un_proceso->procesos_en_ready);
 	list_add(un_proceso->hilos_del_programa,hilo);
 
-	encolar_en_new(hilo);
 
 	return tid;
 }

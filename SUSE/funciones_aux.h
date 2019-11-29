@@ -14,9 +14,9 @@
 #include <commons/collections/queue.h>
 
 //Prototipos
-t_queue* obtener_cola_ready_de(int );
-t_queue* obtener_cola_exec_de(int);
-t_queue* obtener_cola_de(int, int);
+t_queue* obtener_cola_ready_de(char* );
+t_queue* obtener_cola_exec_de(char*);
+t_queue* obtener_cola_de(char*, int);
 float calcular_sjf(hilo_t*);
 void destruir_logs_sistema();
 void incializar_logs_sistema();

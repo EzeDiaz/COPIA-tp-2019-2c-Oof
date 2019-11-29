@@ -30,15 +30,15 @@ void newToReady(){
 
 	sem_wait(&grado_de_multiprogramacion_contador);
 	hilo_t*  hilo = queue_pop(cola_new);
-
-	t_queue*cola_ready = obtener_cola_ready_de(hilo->PID);
+	char* pid=string_itoa(hilo->PID);
+	t_queue*cola_ready = obtener_cola_ready_de(pid);
 
 	queue_push(cola_ready,hilo);
 
 	hilo->estado_del_hilo = READY;
 
 	sem_wait(&semaforo_diccionario_de_procesos);
-	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,hilo->PID);
+	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
 	sem_post(&semaforo_diccionario_de_procesos);
 	sem_post(&un_proceso->procesos_en_ready);
 
@@ -46,6 +46,7 @@ void newToReady(){
 
 	log_info(log_colas,"Se paso el hilo a la cola Ready \n");
 
+	free(pid);
 
 }
 
@@ -83,7 +84,8 @@ void readyToExec(int PID)
 {
 	// Habria que chequear que entre UN SOLO thread a exec POR proceso
 
-	t_queue* cola_exec = obtener_cola_exec_de(PID);
+	char* pid=string_itoa(PID);
+	t_queue* cola_exec = obtener_cola_exec_de(pid);
 
 	while(1){
 
@@ -98,7 +100,7 @@ void readyToExec(int PID)
 
 			}else{
 			sem_wait(&semaforo_diccionario_procesos_x_semaforo);
-			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
+			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,pid);
 			sem_post(&semaforo_diccionario_procesos_x_semaforo);
 
 			sem_wait(&semaforo_exec_x_proceso);
@@ -114,6 +116,7 @@ void readyToExec(int PID)
 
 			sem_post(&semaforo_exec_x_proceso);
 
+			//TODO HASTA ACA
 			sem_wait(&semaforo_log_colas);
 			log_info(log_colas,"Se paso el proceso a Exec \n");
 			sem_post(&semaforo_log_colas);
@@ -121,6 +124,7 @@ void readyToExec(int PID)
 		}
 	}
 
+	free(pid);
 }
 
 

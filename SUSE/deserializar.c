@@ -144,7 +144,7 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 		size=(sizeof(bool));
 		paquete=malloc(sizeof(bool)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(bool),dato,sizeof(bool));
+		memcpy(paquete+ sizeof(bool),&dato,sizeof(bool));
 		break;
 	case INT:
 		size=(sizeof(int));
@@ -156,13 +156,13 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 		size=(sizeof(char));
 		paquete=malloc(sizeof(char)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(char),dato,sizeof(char));
+		memcpy(paquete+ sizeof(char),&dato,sizeof(char));
 		break;
 	case LONG:
 		size=(sizeof(long));
 		paquete=malloc(sizeof(long)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(long),dato,sizeof(long));
+		memcpy(paquete+ sizeof(long),&dato,sizeof(long));
 		break;
 	}
 
