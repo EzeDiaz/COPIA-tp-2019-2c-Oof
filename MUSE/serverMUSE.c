@@ -518,10 +518,11 @@ void realizarRequest(void *buffer, int cliente){
 		int bytes_freed = FREE_USED_FRAME(dir , address_space);
 		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
-		client->total_memory_freed += bytes_freed;
+		if(bytes_freed >= 0)
+			client->total_memory_freed += bytes_freed;
 
 
-		uint32_t respuesta = 0; //En que momento pondria -1?
+		uint32_t respuesta = (uint32_t) bytes_freed; //FREE_USED_FRAME puede devolver -1
 
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &respuesta, sizeof(uint32_t));
@@ -531,7 +532,7 @@ void realizarRequest(void *buffer, int cliente){
 		free(buffer);
 
 		sem_wait(&logger_semaphore);
-		log_info(logger,"Free realizado");
+		log_info(logger,"Free realizado con retorno %d", respuesta);
 		sem_post(&logger_semaphore);
 
 		break;
@@ -573,6 +574,11 @@ void realizarRequest(void *buffer, int cliente){
 		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
+
+		if(data == NULL) {
+			//Si es NULL es porque no pudo leer, entonces seteo tutti el data en '\0'
+			memset(data, '\0', n); //Pongo tutti el data en \0. Sera mala idea?
+		}
 
 		buffer=(void*)malloc(n);
 		memcpy(buffer, data, n);
@@ -621,15 +627,14 @@ void realizarRequest(void *buffer, int cliente){
 		sem_wait(&mp_semaphore);
 		sem_wait(&mapped_files_semaphore);
 		sem_wait(&client->client_sempahore);
-		WRITE_N_BYTES_DATA_TO_MUSE(dest, addrs_spc, n, source);
+		int retorno = WRITE_N_BYTES_DATA_TO_MUSE(dest, addrs_spc, n, source);
 		sem_post(&client->client_sempahore);
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
 
 
 		buffer=(void*)malloc(sizeof(int));
-		int rta = 0; //En que caso seria -1?
-		memcpy(buffer, rta, sizeof(int));
+		memcpy(buffer, retorno, sizeof(int));
 
 		send(cliente, buffer, sizeof(buffer),0);
 
@@ -777,13 +782,14 @@ void realizarRequest(void *buffer, int cliente){
 		sem_wait(&mapped_files_semaphore);
 		if(segment_requested != NULL) {
 			if(segment_requested->isHeap) {
-				//ERROR: no es un segmento de map
+				resultado = -1;
 			} else {
 				if(addr + len > segment_requested->base + segment_requested->size) {
 					//Quiere escribir mas bytes del tamanio del archivo/segmento
 					//escribo tutti lo que puedo y luego rompo? No escribo nada y rompo?
 					//escribo lo que pueda y no chillo?
 					//En caso de romper, seguramente tire SEG FAULT (porque me zarpe del limite)
+					resultado = -1;
 				} else {
 					//Do your job buddy...
 					int pages_to_write;
@@ -818,10 +824,12 @@ void realizarRequest(void *buffer, int cliente){
 						current_page->modifiedBit = 0;
 						current_page->useBit = 1;
 					}
+					resultado = 0;
 				}
 			}
 		} else {
 			//seg_fault porque la direccion pedida no es valida
+			resultado = -1;
 		}
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
@@ -829,8 +837,6 @@ void realizarRequest(void *buffer, int cliente){
 
 		////////////////////////////////////
 
-
-		resultado = 0;//(en los casos feos lo pongo en -1... y el seg fault no entonces?)
 		buffer=(void*)malloc(sizeof(uint32_t));
 		memcpy(buffer, &resultado, sizeof(uint32_t));
 
@@ -862,44 +868,55 @@ void realizarRequest(void *buffer, int cliente){
 		sem_wait(&client->client_sempahore);
 		segment* a_segm = GET_SEGMENT_FROM_BASE(direc,addr_space);
 		//Controlar que la direccion que me pasan este OK
-		sem_wait(&mapped_files_semaphore);
-		mappedFile* mapped_file = GET_MAPPED_FILE(a_segm->path);
+		if(a_segm != NULL) {
+			if(a_segm->isHeap) {
+				res = -1;
+			} else {
+				//OK
+				sem_wait(&mapped_files_semaphore);
+				mappedFile* mapped_file = GET_MAPPED_FILE(a_segm->path);
 
-		//Hago igual que en sync, actualizo el archivo (ctrl+c - ctrl+v)
-		int bytes_traveled = 0;
-		for(int i = 0; a_segm->pageFrameTable->elements_count > i; i++) {
-			pageFrame* current_page = list_get(segment_requested->pageFrameTable, i);
-			if(current_page->presenceBit && current_page->modifiedBit) {
-				int current_frame = current_page->frame_number;
-				void* pointer = GET_FRAME_POINTER(current_frame);
-				for(int j = 0; j < page_size ; j++) {
-					mapped_file->pointer[bytes_traveled] = (char*)(pointer + j);
-					//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
-					bytes_traveled++;
+				//Hago igual que en sync, actualizo el archivo (ctrl+c - ctrl+v)
+				int bytes_traveled = 0;
+				for(int i = 0; a_segm->pageFrameTable->elements_count > i; i++) {
+					pageFrame* current_page = list_get(segment_requested->pageFrameTable, i);
+					if(current_page->presenceBit && current_page->modifiedBit) {
+						int current_frame = current_page->frame_number;
+						void* pointer = GET_FRAME_POINTER(current_frame);
+						for(int j = 0; j < page_size ; j++) {
+							mapped_file->pointer[bytes_traveled] = (char*)(pointer + j);
+							//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
+							bytes_traveled++;
+						}
+					}
+					current_page->useBit = 1;
+					current_page->modifiedBit = 0;
 				}
+
+				mapped_file->references--;
+				if(!mapped_file->references) {
+					close(mapped_file->file_desc);
+					munmap(mapped_file->pointer, mapped_file->length);
+					//Borrar entrada de la lista mapped_files
+					int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
+					list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
+				}
+				sem_post(&mapped_files_semaphore);
+
+				sem_wait(&mp_semaphore);
+				//Libero los frames que tenga tomados en memoria
+				//TODO - ver CLIENT_LEFT_THE_SYSTEM
+				sem_post(&mp_semaphore);
+
+				//Borro el segmento
+				int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segm->base);
+				list_remove_and_destroy_element(addr_space->segment_table, index, DESTROY_SEGMENT);
+				res = 0;
 			}
-			current_page->useBit = 1;
-			current_page->modifiedBit = 0;
+		} else {
+			//ERROR
+			res = -1;
 		}
-
-		mapped_file->references--;
-		if(!mapped_file->references) {
-			close(mapped_file->file_desc);
-			munmap(mapped_file->pointer, mapped_file->length);
-			//Borrar entrada de la lista mapped_files
-			int index = GET_MAPPED_FILE_INDEX(mapped_file->path);
-			list_remove_and_destroy_element(mapped_files, index, DESTROY_MAPPED_FILE);
-		}
-		sem_post(&mapped_files_semaphore);
-
-		sem_wait(&mp_semaphore);
-		//Libero los frames que tenga tomados en memoria
-		//TODO - ver CLIENT_LEFT_THE_SYSTEM
-		sem_post(&mp_semaphore);
-
-		//Borro el segmento
-		int index = GET_SEGMENT_INDEX(addr_space->segment_table, a_segm->base);
-		list_remove_and_destroy_element(addr_space->segment_table, index, DESTROY_SEGMENT);
 
 		sem_post(&client->client_sempahore);
 		////////////////////////////

@@ -821,8 +821,8 @@ int FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 			MERGE_CONSECUTIVES_FREE_BLOCKS(a_segment);
 			return frame_metadata->size; // Asi puedo saber cuanto libera y registrarlo en las metricas
 		} else log_error(logger,"La pagina no se encuentra en memoria"); // generar page fault y swappear
-	} else log_error(logger,"El segmento no se encuentra en memoria");
-	return NULL;
+	} else log_error(logger,"El segmento no se encuentra en memoria o no es de heap");
+	return -1;
 }
 
 void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar) {
@@ -868,6 +868,8 @@ void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 				}
 			}
 		}
+	} else {
+		data = NULL;
 	}
 	return data;
 }
@@ -880,7 +882,7 @@ int TRANSLATE_DL_TO_DF(uint32_t dl){
 }
 
 // no estoy seguro de como me llega la data por parametro lo dejo como void* data
-void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar, void* data){
+int WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar, void* data){
 	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(dst, address_space);
 	t_list* page_frame_table = a_segment->pageFrameTable;
 	int page_move_counter = 0;
@@ -922,8 +924,13 @@ void WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_
 						offset = offset + bytes_en_frame_anterior;
 					} //ultima pagina, no se puede seguir
 				}
-			} // else no tengo espacio suficiente
+			} else {
+				return -1; // else no tengo espacio suficiente
+			}
 		}
+		return 0;
+	} else {
+		return -1;
 	}
 }
 

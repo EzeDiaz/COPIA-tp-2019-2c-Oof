@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <signal.h>
 
 //Para poder pedir el pid
 #include <unistd.h>
@@ -118,29 +119,51 @@ uint32_t muse_alloc(uint32_t tam){
 }
 
 void muse_free(uint32_t dir) {
-    //Siendo void quiere decir que nada puede malir sal? --> No hacer recv (?)
+	//Siendo void quiere decir que nada puede malir sal? --> No hacer recv (?)
 	void* paquete_free = crear_paquete_free(103,dir);
 	send(socket_MUSE, paquete_free,sizeof(paquete_free),0);
+
+	void* var_recepcion;
+	int tamanio_recepcion = sizeof(uint32_t);
+	var_recepcion = malloc(tamanio_recepcion);
+	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
+	uint32_t resultado;
+	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+	free(var_recepcion);
+
+	if(resultado == -1)
+		raise(SIGSEGV);
+
 	free(paquete_free);
 }
 
 int muse_get(void* dst, uint32_t src, size_t n){
-    void* paquete_get = crear_paquete_get(104, dst, src, n);
-    send(socket_MUSE, paquete_get,sizeof(paquete_get),0);
-    free(paquete_get);
+	void* paquete_get = crear_paquete_get(104, dst, src, n);
+	send(socket_MUSE, paquete_get,sizeof(paquete_get),0);
+	free(paquete_get);
 
-    void* var_recepcion;
+	void* var_recepcion;
 	int tamanio_recepcion = n; //MUSE me manda la cantidad de bytes que le pedi
 	var_recepcion = malloc(tamanio_recepcion);
 	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
-	memcpy(dst, var_recepcion, tamanio_recepcion);
+
+	int resultado;
+
+	if(var_recepcion[0] != '\0') { //Puedo hacer eso con var_recepcion? //Sera un problema comparar por \0?
+		//Tutti OK
+		memcpy(dst, var_recepcion, tamanio_recepcion);
+		resultado = 0;
+	} else {
+		//Algo fallo
+		resultado = -1;
+		raise(SIGSEGV); //Aca es necesario o simplemente devuelvo -1?
+	}
 	free(var_recepcion);
 
-	int resultado = 0;
 	//En que caso devuelvo -1?
 	//Tendria que, entonces, recibir los bytes y ademas un int con exito/fracaso?
 
-    return resultado; //Si falla --> return -1
+	return resultado;
 }
 
 int muse_cpy(uint32_t dst, void* src, int n){
@@ -155,6 +178,9 @@ int muse_cpy(uint32_t dst, void* src, int n){
 	int resultado;
 	memcpy(&resultado, var_recepcion, tamanio_recepcion);
 	free(var_recepcion);
+
+	if(resultado < 0)
+		raise(SIGSEGV);
 
 	return resultado;
 }
@@ -187,6 +213,10 @@ int muse_sync(uint32_t addr, size_t len){
 	recv(socket_MUSE, var_recepcion, tamanio_recepcion, 0);
 	int resultado;
 	memcpy(&resultado, var_recepcion, tamanio_recepcion);
+
+	if(resultado < 0)
+		raise(SIGSEGV);
+
 	free(var_recepcion);
 
 	return resultado;
@@ -204,6 +234,9 @@ int muse_unmap(uint32_t dir){
 	int resultado;
 	memcpy(&resultado, var_recepcion, tamanio_recepcion);
 	free(var_recepcion);
+
+	if(resultado < 0)
+		raise(SIGSEGV);
 
 	return resultado;
 }

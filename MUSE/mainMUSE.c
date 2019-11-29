@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <signal.h>
 
 //Para poder pedir el pid
 #include <unistd.h>
