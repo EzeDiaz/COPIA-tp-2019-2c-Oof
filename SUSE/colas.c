@@ -83,11 +83,11 @@ void readyToExec(int PID)
 {
 	// Habria que chequear que entre UN SOLO thread a exec POR proceso
 
-	t_queue* cola_Exec = obtener_cola_exec_de(PID);
+	t_queue* cola_exec = obtener_cola_exec_de(PID);
 
 	while(1){
 
-		if(esta_vacia(cola_Exec)){
+		if(esta_vacia(cola_exec)){
 			char* tiempo_inicio= temporal_get_string_time();
 			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
 			long milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
@@ -102,7 +102,7 @@ void readyToExec(int PID)
 			sem_post(&semaforo_diccionario_procesos_x_semaforo);
 
 			sem_wait(&semaforo_exec_x_proceso);
-			queue_push(cola_Exec,hilo);
+			queue_push(cola_exec,hilo);
 
 			hilo->estado_del_hilo = EXECUTE;
 
@@ -124,9 +124,9 @@ void readyToExec(int PID)
 }
 
 
-bool esta_vacia(t_queue* cola_Exec){
-
-	return queue_is_empty(cola_Exec);
+bool esta_vacia(t_queue* cola_exec){
+	bool cacona = queue_is_empty(cola_exec);
+	return queue_is_empty(cola_exec);
 
 }
 void * estadoReady(int PID)

@@ -28,7 +28,9 @@ void* recibir_resultado(int* alocador){
 
 	void* buffer;
 
-	if(recv(socket_suse_server, alocador, 4, MSG_WAITALL)!=0){
+	int resultado = recv(socket_suse_server, alocador, 4, MSG_WAITALL);
+
+	if(resultado!=0){
 		buffer = malloc(*alocador);
 		recv(socket_suse_server, buffer, *alocador, MSG_WAITALL);
 		return buffer;

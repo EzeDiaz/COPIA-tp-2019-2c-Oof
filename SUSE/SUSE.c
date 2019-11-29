@@ -104,15 +104,17 @@ void leer_config(){
 	char* nombre_del_config = readline("Ingresar ruta del config:");
 	t_config* un_config = config_create(nombre_del_config);
 
-	IP=(char*)malloc(50);
-	strncpy(IP ,config_get_string_value(un_config, "IP"),strlen(config_get_string_value(un_config, "IP")));
+	//IP=(char*)malloc(50);
+	//strncpy(IP ,config_get_string_value(un_config, "IP"),strlen(config_get_string_value(un_config, "IP")));
+	IP = malloc(strlen(config_get_string_value(un_config,"IP")));
+	strcpy(IP ,config_get_string_value(un_config, "IP"));
 	PUERTO_ESCUCHA = config_get_int_value(un_config,"LISTEN_PORT");
 	METRICS_TIMER = config_get_int_value(un_config,"METRICS_TIMER");
 	MAX_MULTIPROG = config_get_int_value(un_config,"MAX_MULTIPROG");
 	SEM_IDS = config_get_array_value(un_config,"SEM_IDS");
 	SEM_INIT = config_get_array_value(un_config,"SEM_INIT");
 	SEM_MAX = config_get_array_value(un_config,"SEM_MAX");
-	ALPHA_SJF = config_get_int_value(un_config,"ALPHA_SJF")/100;
+	ALPHA_SJF = config_get_double_value(un_config,"ALPHA_SJF");
 
 	free(nombre_del_config);
 	config_destroy(un_config);

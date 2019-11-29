@@ -119,8 +119,8 @@ void atender_cliente(int cliente){
 void* recibir_buffer(int* alocador, int cliente){
 
 	void* buffer;
-
-	if(recv(cliente, alocador, 4, MSG_WAITALL)!=0){
+	int resultado = recv(cliente, alocador, 4, MSG_WAITALL);
+	if(resultado!=0){
 		buffer = malloc(*alocador);
 		recv(cliente, buffer,*alocador, MSG_WAITALL);
 		return buffer;

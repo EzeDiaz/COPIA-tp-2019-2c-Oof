@@ -15,7 +15,6 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	log_info(logger_de_deserializacion, "Estamos por deserializar el codigo de operacion\n");
 	int codigo_de_operacion=determinar_protocolo(buffer);
-	void* resultado;
 
 	int TID;
 
@@ -24,68 +23,59 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case HILOLAY_INIT:
 			log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
-			resultado=armar_paquete(_hilolay_init(cliente_socket),INT);
-			enviar_resultado(resultado,cliente_socket);
+			armar_paquete((void*)_hilolay_init(cliente_socket),INT,cliente_socket);
 			break;
 
 
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
 		int tid=descifrar_suse_create(buffer);
-		resultado=armar_paquete(suse_create(tid,cliente_socket),BOOLEAN);
-		enviar_resultado(resultado,cliente_socket);
+		armar_paquete(suse_create(tid,cliente_socket),BOOLEAN,cliente_socket);
 		break;
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
 		hilo_t* hilo_siguiente=suse_schedule_next(cliente_socket);
-		resultado= armar_paquete(hilo_siguiente->hilo_informacion->tid,INT);
-		enviar_resultado(resultado,cliente_socket);
+		armar_paquete(hilo_siguiente->hilo_informacion->tid,INT,cliente_socket);
 		break;
 
 	case SUSE_WAIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_wait', comenzando la deserializacion de parametros\n");
 		char* nombre_semaforo_wait=descifrar_suse_wait(buffer);
 		bool paquete=suse_wait(nombre_semaforo_wait ,cliente_socket);
-		resultado=armar_paquete((void*)paquete,BOOLEAN );
-		enviar_resultado(resultado,cliente_socket);
+		armar_paquete((void*)paquete,BOOLEAN ,cliente_socket);
 		free(nombre_semaforo_wait);
 		break;
 
 	case SUSE_SIGNAL:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
 		char* nombre_semaforo_signal=descifrar_suse_signal(buffer);
-		resultado=armar_paquete(suse_signal(nombre_semaforo_signal,cliente_socket),BOOLEAN);
-		enviar_resultado(resultado,cliente_socket);
+		armar_paquete(suse_signal(nombre_semaforo_signal,cliente_socket),BOOLEAN,cliente_socket);
 		free(nombre_semaforo_signal);
 		break;
 
 	case SUSE_JOIN:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_join', comenzando la deserializacion de parametros\n");
 		TID=descifrar_suse_join(buffer);
-		resultado=armar_paquete(suse_join(TID),BOOLEAN);
-		enviar_resultado(resultado,cliente_socket);
+		armar_paquete(suse_join(TID),BOOLEAN,cliente_socket);
+
 		break;
 
 	case SUSE_CLOSE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_close', comenzando la deserializacion de parametros\n");
 		TID = descifrar_suse_close(buffer);
-		resultado = armar_paquete(suse_close(TID),BOOLEAN);
-		enviar_resultado(resultado,cliente_socket);
+		armar_paquete(suse_close(TID),BOOLEAN,cliente_socket);
+
 		break;
 
 	default:
 		send(cliente_socket, "Codigo Invalido", 16, 0);
 		log_info(logger_de_deserializacion, "Nos llego un codigo invalido\n");
 	}
-	free(resultado);
 
 }
 
-void enviar_resultado(void* param1,int param2){
 
-
-}
 /*
 void* serializar_bool(bool dato){
 
@@ -144,11 +134,11 @@ int descifrar_suse_close(void* buffer){
 	return TID;
 }
 
-void* armar_paquete(void* dato, int tipo_de_dato){
+void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 
 	void* paquete;
 	int size;
-
+	paquete = malloc(12);
 	switch(tipo_de_dato){
 	case BOOLEAN:
 		size=(sizeof(bool));
@@ -158,7 +148,7 @@ void* armar_paquete(void* dato, int tipo_de_dato){
 		break;
 	case INT:
 		size=(sizeof(int));
-		paquete=(void*)malloc(sizeof(*dato)+sizeof(int));
+		paquete=(void*)malloc(sizeof(int)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
 		memcpy(paquete+ sizeof(int),&dato,sizeof(int));
 		break;
@@ -176,5 +166,8 @@ void* armar_paquete(void* dato, int tipo_de_dato){
 		break;
 	}
 
-	return paquete;
+
+	send(cliente,paquete,size+sizeof(int),0);
+
+
 }

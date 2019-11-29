@@ -5,6 +5,7 @@
  *      Author: utnso
  */
 
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -22,7 +23,7 @@ void *test1(void *arg) {
     for (i = 0; i < 10; i++) {
         tid = hilolay_get_tid();
         printf("Soy el ult %d mostrando el numero %d \n", tid, i);
-        usleep(5000 * i * tid); /* Randomizes the sleep, so it gets larger after a few iterations */
+        usleep(5000 * i * tid); /* Randomizes the sleep, so it gets larger after a few iterations
 
         recursiva(i);
 
@@ -39,7 +40,7 @@ void *test2(void *arg) {
     for (i = 0; i < 5; i++) {
         tid = hilolay_get_tid();
         printf("Soy el ult %d mostrando el numero %d \n", tid, i);
-        usleep(2000 * i * tid); /* Randomizes the sleep, so it gets larger after a few iterations */
+        usleep(2000 * i * tid); /* Randomizes the sleep, so it gets larger after a few iterations
         recursiva(i);
         hilolay_yield();
     }
@@ -48,7 +49,7 @@ void *test2(void *arg) {
 }
 
 
-/* Main program */
+/* Main program
 int main(int argc, char *argv[]) {
 
 	int i;
@@ -75,3 +76,4 @@ int main(int argc, char *argv[]) {
 	hilolay_join(&th1);
     return 0;
 }
+*/

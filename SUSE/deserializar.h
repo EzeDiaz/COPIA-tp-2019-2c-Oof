@@ -35,9 +35,8 @@ enum{
 	LONG = 3,
 };
 
-void enviar_resultado(void*,int);
 void* serializar_bool(bool);
-void* armar_paquete(void* , int );
+void armar_paquete(void* , int ,int);
 void* descifrar_hilolay_init(void*);
 //void* hilolay_init(void*);
 int determinar_protocolo(void* );

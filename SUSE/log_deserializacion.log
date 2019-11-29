@@ -1,6 +1,12 @@
-[INFO] 19:42:49:583 Deserializacion/(12383:12458): Estamos por deserializar el codigo de operacion
+[INFO] 01:43:13:644 Deserializacion/(23387:23459): Estamos por deserializar el codigo de operacion
 
-[INFO] 19:42:49:583 Deserializacion/(12383:12458): Obtuvimos el codigo de operacion 
+[INFO] 01:43:13:644 Deserializacion/(23387:23459): Obtuvimos el codigo de operacion 
 
-[INFO] 19:42:49:583 Deserializacion/(12383:12458): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 01:43:13:644 Deserializacion/(23387:23459): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+
+[INFO] 01:43:13:655 Deserializacion/(23387:23459): Estamos por deserializar el codigo de operacion
+
+[INFO] 01:43:13:655 Deserializacion/(23387:23459): Obtuvimos el codigo de operacion 
+
+[INFO] 01:43:13:655 Deserializacion/(23387:23459): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
