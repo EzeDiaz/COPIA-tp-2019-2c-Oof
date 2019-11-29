@@ -38,6 +38,7 @@
 								</option>
 								<option id="gnu.c.link.option.libs.749136845" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="_SAC"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="fuse"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1810045410" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

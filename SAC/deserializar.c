@@ -87,6 +87,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	default:
 		send(cliente_socket, "Codigo Invalido", 16, 0);
 		log_info(logger_de_deserializacion, "Nos llego un codigo invalido\n");
+		resultado=malloc(1);
 	}
 	free(resultado);
 	//free(paquete_decifrado);

@@ -15,9 +15,15 @@
 #include <fcntl.h>
 #include "serializacion.h"
 
-void conectar_SAC_SERVER(int , char**);
+
+void leer_config();
+void conectar_SAC_SERVER(int , char*);
 int run_sac(int,char**);
 
-t_config* leer_config();
+
+
+char* IP;
+int puerto;
+
 
 #endif /* SAC_CLI_H_ */
