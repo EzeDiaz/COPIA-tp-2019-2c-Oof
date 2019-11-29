@@ -116,7 +116,7 @@ void readyToExec(int PID)
 
 			sem_post(&semaforo_exec_x_proceso);
 
-			//TODO HASTA ACA
+
 			sem_wait(&semaforo_log_colas);
 			log_info(log_colas,"Se paso el proceso a Exec \n");
 			sem_post(&semaforo_log_colas);
@@ -164,8 +164,8 @@ void * estadoReady(int PID)
 /// ****************************************** PROCESOS EN EXEC  ******************************************* ///
 /// ******************************************************************************************************** ///
 
-void exec(hilo_t* hilo)
-{
+void exec(hilo_t* hilo){
+
 	char* tiempo_inicio= temporal_get_string_time();
 	char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
 	int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
@@ -179,7 +179,7 @@ void exec(hilo_t* hilo)
 	hilo->metricas->tiempo_de_uso_del_cpu += milisegundos_final-milisegundos_inicial;
 
 
-	exec_to_exit(hilo);
+
 
 
 
@@ -188,7 +188,7 @@ void exec(hilo_t* hilo)
 
 void ejecutar_funcion(hilo_t* hilo){
 
-
+//TODO
 
 
 }
@@ -239,9 +239,9 @@ void exec_to_exit(hilo_t* hilo){
 
 void exit_thread(hilo_t* hilo){
 	//Cuando termina de ejecutar la funcion del hilo, este "muere" y viene a exit ¿haciendo una cola de threads terminados?
+
+	exec_to_exit(hilo);
 	sem_wait(&semaforo_lista_procesos_finalizados);
-
-
 	list_add(hilos_finalizados,hilo);
 	sem_post(&semaforo_lista_procesos_finalizados);
 	sem_post(&grado_de_multiprogramacion_contador);

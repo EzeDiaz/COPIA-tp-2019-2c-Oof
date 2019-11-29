@@ -1,24 +1,6 @@
-[INFO] 13:37:15:370 Deserializacion/(8186:8233): Estamos por deserializar el codigo de operacion
+[INFO] 19:48:43:310 Deserializacion/(6206:6256): Estamos por deserializar el codigo de operacion
 
-[INFO] 13:37:15:370 Deserializacion/(8186:8233): Obtuvimos el codigo de operacion 
+[INFO] 19:48:43:310 Deserializacion/(6206:6256): Obtuvimos el codigo de operacion 
 
-[INFO] 13:37:15:370 Deserializacion/(8186:8233): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
-
-[INFO] 13:38:06:677 Deserializacion/(8186:8233): Estamos por deserializar el codigo de operacion
-
-[INFO] 13:38:06:677 Deserializacion/(8186:8233): Obtuvimos el codigo de operacion 
-
-[INFO] 13:38:06:677 Deserializacion/(8186:8233): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
-
-[INFO] 13:39:28:317 Deserializacion/(8186:8233): Estamos por deserializar el codigo de operacion
-
-[INFO] 13:39:28:317 Deserializacion/(8186:8233): Obtuvimos el codigo de operacion 
-
-[INFO] 13:39:28:317 Deserializacion/(8186:8233): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
-
-[INFO] 13:43:56:727 Deserializacion/(8186:8233): Estamos por deserializar el codigo de operacion
-
-[INFO] 13:43:56:727 Deserializacion/(8186:8233): Obtuvimos el codigo de operacion 
-
-[INFO] 13:43:56:727 Deserializacion/(8186:8233): Es el codigo de 'suse_join', comenzando la deserializacion de parametros
+[INFO] 19:48:43:310 Deserializacion/(6206:6256): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 

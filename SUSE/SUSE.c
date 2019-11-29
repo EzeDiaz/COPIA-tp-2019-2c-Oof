@@ -268,20 +268,33 @@ hilo_t* suse_schedule_next(int PID){
 
 
 void* suse_join(int TID_que_quiero_ejecutar){
-
 	hilo_t* hilo_a_ejecutar=buscar_hilo_por_TID(TID_que_quiero_ejecutar);
 	int PID=hilo_a_ejecutar->PID;
-	t_queue* cola_exec= obtener_cola_exec_de(PID);
-	hilo_t* hilo_a_bloquear=list_get(cola_exec->elements,0);
+
+
+	char* tid=string_itoa(TID_que_quiero_ejecutar);
+	char* pid=string_itoa(PID);
+
 	char* clave=string_new();
-	string_append(&clave,string_itoa(PID));
-	string_append(&clave,string_itoa(TID_que_quiero_ejecutar));
-	//OPTIMIZABLE, OJO CON LOS LEAKS DE LOS STRINGS Todo
+	string_append(&clave,pid);
+	string_append(&clave,tid);
+
+
+	t_queue* cola_exec= obtener_cola_exec_de(pid);
+	hilo_t* hilo_a_bloquear=list_get(cola_exec->elements,0);
+	if(hilo_a_bloquear==NULL){
+		free(clave);
+		free(tid);
+		free(pid);
+
+
+		//TODO loguear el error; no hay hilos a los cuales joinear
+		return  -1;
+
+	}
 
 	bloquear_hilo(clave,hilo_a_bloquear);
 	queue_push(cola_exec,hilo_a_ejecutar);
-
-	free(clave);
 
 	return 1;
 }
@@ -335,8 +348,11 @@ int _hilolay_init(int PID){
 	sem_init(&semaforo_exec_x_proceso,0,1);
 	dictionary_put(diccionario_de_procesos_x_semaforo,pid,semaforo_exec_x_proceso);
 	pthread_t* un_hilo;
+	pthread_t* otro_hilo;
 	pthread_create(&un_hilo, NULL, estadoReady, PID);
 	pthread_detach(un_hilo);
+	pthread_create(&otro_hilo,NULL,readyToExec,PID);
+	pthread_detach(otro_hilo);
 
 	return PID;
 
@@ -368,7 +384,7 @@ int suse_create(int tid, int socket){
 
 	encolar_en_new(hilo);
 
-	sem_post(un_proceso->procesos_en_ready);
+	sem_post(&un_proceso->procesos_en_ready);
 	list_add(un_proceso->hilos_del_programa,hilo);
 
 

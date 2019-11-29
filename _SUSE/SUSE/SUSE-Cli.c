@@ -127,7 +127,20 @@ void conectar_con_servidor(int argc, char* argv) {
 }
 
 
+void hilolay_init(void){
 
+	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
+	config = config_create(nombre_de_config);
+
+	int parm1;
+	char** param2;
+	conectar_con_servidor(parm1, param2[1]);
+
+	_hilolay_init();
+
+
+
+}
 
 
 

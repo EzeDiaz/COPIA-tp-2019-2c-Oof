@@ -22,7 +22,7 @@ return ( (1-ALPHA_SJF)* un_hilo->prioridad + ALPHA_SJF * un_hilo->metricas->tiem
 hilo_t* buscar_hilo_por_TID(int TID){
 
 	hilo_t* hilo_a_retornar;
-	void machear_tid(proceso_t* un_proceso){
+	void machear_tid(char* pid,proceso_t* un_proceso){
 
 		void buscar_hilo(hilo_t* un_hilo){
 			if(un_hilo->hilo_informacion->tid==TID)

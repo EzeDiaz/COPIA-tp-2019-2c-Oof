@@ -10,7 +10,8 @@
 
 void bloquear_hilo(char* nombre_semaforo, int PID){
 
-	t_queue* cola_exec = obtener_cola_exec_de(PID);
+	char*pid= string_itoa(PID);
+	t_queue* cola_exec = obtener_cola_exec_de(pid);
 	hilo_t* hilo=queue_pop(cola_exec);
 	sem_wait(&semaforo_estado_blocked);
 	t_list* lista_bloqueados = dictionary_get(diccionario_bloqueados_por_semafaro,nombre_semaforo);

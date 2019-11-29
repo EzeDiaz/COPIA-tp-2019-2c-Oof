@@ -30,7 +30,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
 		int tid=descifrar_suse_create(buffer);
-		armar_paquete(suse_create(tid,cliente_socket),BOOLEAN,cliente_socket);
+		armar_paquete(suse_create(tid,cliente_socket),INT,cliente_socket);
 		break;
 
 	case SUSE_SCHEDULER_NEXT:
@@ -167,7 +167,7 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 	}
 
 
-	send(cliente,paquete,size+sizeof(int),0);
+	int cosa=send(cliente,paquete,size+sizeof(int),0);
 
 
 }
