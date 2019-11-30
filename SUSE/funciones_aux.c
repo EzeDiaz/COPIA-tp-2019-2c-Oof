@@ -22,17 +22,22 @@ return ( (1-ALPHA_SJF)* un_hilo->prioridad + ALPHA_SJF * un_hilo->metricas->tiem
 hilo_t* buscar_hilo_por_TID(int TID,int PID){
 
 	hilo_t* hilo_a_retornar;
-	void machear_tid(char* pid,proceso_t* un_proceso){
+
+	char*pid= string_itoa(pid);
+
+	if(dictionary_has_key(diccionario_de_procesos,pid)){
+
+		proceso_t* un_proceso=dictionary_get(diccionario_de_procesos,pid);
 
 		void buscar_hilo(hilo_t* un_hilo){
-			if(un_hilo->hilo_informacion->tid==TID && un_hilo->PID==PID)
+			if(un_hilo->hilo_informacion->tid==TID)
 			hilo_a_retornar=un_hilo;
 		}
 
 		list_iterate(un_proceso->hilos_del_programa,buscar_hilo);
 
 	}
-	dictionary_iterator(diccionario_de_procesos,machear_tid);
+
 
 	return hilo_a_retornar;
 

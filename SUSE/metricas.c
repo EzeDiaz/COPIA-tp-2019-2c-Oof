@@ -51,9 +51,9 @@ void metricas_por_sistema(){//Son mas de 1 semaforo TODO
 	sem_getvalue(&grado_de_multiprogramacion_contador,&grado_multiprogramacion);
 	log_info(log_metricas_sistema,"grado de programacion actual: %d \n",grado_multiprogramacion);
 
-	void loguear_semaforo(char* nombre_del_semaforo, int valor){
+	void loguear_semaforo(char* nombre_del_semaforo, valores_semaforo_t* valor){
 		log_info(log_metricas_sistema,"el semaforo %s",nombre_del_semaforo);
-		log_info(log_metricas_sistema," tiene un valor de %d \n",valor);
+		log_info(log_metricas_sistema," tiene un valor de %d \n",valor->valor_actual);
 	}
 
 	dictionary_iterator(diccionario_de_valor_por_semaforo,loguear_semaforo);

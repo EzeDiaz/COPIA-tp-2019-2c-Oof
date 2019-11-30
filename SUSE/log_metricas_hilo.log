@@ -1,0 +1,20 @@
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): TIEMPO DE EJECUCION--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): TIEMPO DE ESPERA--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): TIEMPO DE USO DE CPU--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): PORCENTAJE DE TIEMPO DE EJECUCION--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): TIEMPO DE EJECUCION--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): TIEMPO DE ESPERA--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): TIEMPO DE USO DE CPU--> 
+
+[INFO] 06:08:18:418 log_metricas_hilo/(22204:22254): PORCENTAJE DE TIEMPO DE EJECUCION--> 
+

@@ -67,7 +67,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case SUSE_CLOSE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_close', comenzando la deserializacion de parametros\n");
 		TID = descifrar_suse_close(buffer);
-		armar_paquete(suse_close(TID,cliente_socket),BOOLEAN,cliente_socket);
+		armar_paquete(suse_close(TID,cliente_socket),INT,cliente_socket);
 
 		break;
 

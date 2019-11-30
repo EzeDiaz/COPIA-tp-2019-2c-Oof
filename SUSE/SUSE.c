@@ -71,7 +71,7 @@ void suse_init(){
 	sem_init(&semaforo_diccionario_de_procesos,0,1);
 	sem_init(&semaforo_diccionario_procesos_x_queues,0,1);
 	sem_init(&semaforo_diccionario_procesos_x_semaforo,0,1);
-	//sem_init(&semaforo_lista_procesos_finalizados,0,1); ESTOY PROBANDO ALGO
+	sem_init(&semaforo_lista_procesos_finalizados,0,1);
 	sem_init(&mutex_log_servidor,0,1);
 	sem_init(&semaforo_estado_blocked,0,1);
 	sem_init(&semaforo_diccionario_por_semaforo,0,1);

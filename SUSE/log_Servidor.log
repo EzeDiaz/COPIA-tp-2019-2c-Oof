@@ -1,8 +1,10 @@
-[INFO] 05:29:08:727 Servidor/(20162:20162): Levantamos el servidor
+[INFO] 06:06:21:951 Servidor/(22204:22204): Levantamos el servidor
 
-[INFO] 05:29:08:728 Servidor/(20162:20162): Servidor listo para recibir un cliente
+[INFO] 06:06:21:951 Servidor/(22204:22204): Servidor listo para recibir un cliente
 
-[INFO] 05:30:40:987 Servidor/(20162:20162): Recibimos un cliente
+[INFO] 06:06:49:993 Servidor/(22204:22204): Recibimos un cliente
 
-[INFO] 05:30:40:996 Servidor/(20162:20405): Recibimos conexion 
+[INFO] 06:06:49:997 Servidor/(22204:22254): Recibimos conexion 
+
+[INFO] 06:09:52:694 Servidor/(22204:22254): Se desconecto el cliente
 

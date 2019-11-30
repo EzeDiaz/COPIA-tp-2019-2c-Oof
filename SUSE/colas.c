@@ -221,11 +221,8 @@ void ejecutar_funcion(hilo_t* hilo){
 
 void exec_to_exit(hilo_t* hilo){
 
-	char* clave=string_new();
 	char* pid = string_itoa(hilo->PID);
 	char* hilo_info = string_itoa(hilo->hilo_informacion->tid);
-	string_append(&clave,pid);
-	string_append(&clave,hilo_info);
 
 	proceso_t* el_proceso=dictionary_get(diccionario_de_procesos,pid);
 	t_list* bloqueados_por_join=el_proceso->lista_de_joineados;

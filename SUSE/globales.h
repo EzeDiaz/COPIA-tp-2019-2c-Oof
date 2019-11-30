@@ -31,8 +31,8 @@ pthread_mutex_t semaforo_estado_blocked;
 pthread_mutex_t semaforo_diccionario_por_semaforo;
 
 //Contador
-sem_t* grado_de_multiprogramacion_contador;
-sem_t* procesos_en_new;
+sem_t grado_de_multiprogramacion_contador;
+sem_t procesos_en_new;
 //sem_t* semaforo_lista_procesos_finalizados;
 
 //LOGS
