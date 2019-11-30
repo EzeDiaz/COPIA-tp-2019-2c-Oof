@@ -116,9 +116,11 @@ void* crear_paquete_get(int codigo_de_operacion, void* dst, uint32_t src, size_t
 	//El peso del codigo_de_operacion no tiene sentido ponerlo, ya se que es un int.
 	peso_total+=peso_codigo_de_operacion;
 
+	/* NO MANDO EL dst
 	peso_del_siguiente=sizeof(dst);
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
+	*/
 
 	peso_del_siguiente=sizeof(src);
 	peso_total+=sizeof(peso_del_siguiente);
@@ -139,15 +141,18 @@ void* crear_paquete_get(int codigo_de_operacion, void* dst, uint32_t src, size_t
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;
 
+	/* NO MANDO EL dst
 	peso_del_siguiente=sizeof(dst);
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
 	memcpy(paquete+offset, dst, peso_del_siguiente);
+	*/
 
 	peso_del_siguiente=sizeof(src);
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
 	memcpy(paquete+offset, &src, peso_del_siguiente);
+	offset+=peso_del_siguiente;
 
 	peso_del_siguiente=sizeof(n);
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));

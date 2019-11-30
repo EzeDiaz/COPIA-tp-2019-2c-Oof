@@ -538,14 +538,16 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		//get
 	case 104:
 		;
-		void* dst;
+		//void* dst;
 		uint32_t src;
 
+		/* NO MANDO EL dst
 		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		dst = (void*)malloc(longitudDelSiguiente);
 		memcpy(dst, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
+		 */
 
 		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
@@ -584,7 +586,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
-		free(dst);
+		//free(dst);
 
 		sem_wait(&logger_semaphore);
 		log_info(logger,"Get realizado");
