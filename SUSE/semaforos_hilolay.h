@@ -11,6 +11,7 @@
 #include "TADs.h"
 #include "funciones_aux.h"
 #include <commons/collections/dictionary.h>
+#include <commons/collections/list.h>
 
 //DICCIONARIOS
 t_dictionary* diccionario_de_valor_por_semaforo;
@@ -18,6 +19,6 @@ t_dictionary* diccionario_de_valor_por_semaforo;
 //PROTOTIPOS
 bool wait(char*,int);
 int signal(char*,int);
-void bloquear_hilo(char*, int);
-void desbloquear_hilo(char* , int );
+void bloquear_hilo(t_list*, hilo_t*);
+void desbloquear_hilo(t_list* , int );
 #endif /* SEMAFOROS_HILOLAY_H_ */

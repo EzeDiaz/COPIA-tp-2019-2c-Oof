@@ -80,6 +80,7 @@ void suse_init(){
 	sem_init(&grado_de_multiprogramacion_contador,0,MAX_MULTIPROG);
 
 
+
 	//sem_init(&semaforo_lista_procesos_finalizados,0,0);
 
 	/*INICIALIZO DICCIONARIOS*/
@@ -88,6 +89,21 @@ void suse_init(){
 	diccionario_procesos_x_queues = dictionary_create();
 	diccionario_de_procesos_x_semaforo = dictionary_create();
 	diccionario_bloqueados_por_semafaro = dictionary_create();
+	diccionario_de_valor_por_semaforo = dictionary_create();
+
+
+	/*Semaforos de SUSE*/
+
+	int i=0;
+	while(SEM_IDS[i]!=NULL){
+
+	valores_semaforo_t* un_valor= (valores_semaforo_t*)malloc(sizeof(valores_semaforo_t));
+	un_valor->valor_inicial=atoi(SEM_INIT[i]);
+	un_valor->valor_max=atoi(SEM_MAX[i]);
+	un_valor->valor_actual=un_valor->valor_inicial;
+	dictionary_put(diccionario_de_valor_por_semaforo,SEM_IDS[i],un_valor);
+	i++;
+	}
 
 
 	/*INICIALIZO HILOS*/
@@ -242,8 +258,11 @@ void agregar_al_diccionario(int PID, sem_t* semaforo_exec){
 
 hilo_t* suse_schedule_next(int PID){
 
-	t_queue* cola_Ready = obtener_cola_ready_de(PID);
+	char* pid=string_itoa(PID);
 
+	t_queue* cola_Ready = obtener_cola_ready_de(pid);
+
+	if(cola_Ready->elements!=0){
 	// TODO REVISAR ESTE SJF
 	void sjf(hilo_t* un_hilo){
 		un_hilo->prioridad = calcular_sjf(un_hilo);
@@ -252,11 +271,15 @@ hilo_t* suse_schedule_next(int PID){
 	list_iterate(cola_Ready->elements,sjf);
 
 	bool elemento_mas_grande(hilo_t* hilo_mas_prioridad,hilo_t*hilo_menor_prioridad){
-		return hilo_mas_prioridad->prioridad>hilo_menor_prioridad->PID;
+		return hilo_mas_prioridad->prioridad > hilo_menor_prioridad->prioridad;
 	}
 	list_sort(cola_Ready->elements,elemento_mas_grande);
 
-	return list_remove(cola_Ready->elements,0);
+	free(pid);
+	return list_get(cola_Ready->elements,0);
+	}else{
+		return NULL;
+	}
 
 
 }
@@ -264,21 +287,29 @@ hilo_t* suse_schedule_next(int PID){
 
 
 
-void* suse_join(int TID_que_quiero_ejecutar){
-
+int suse_join(int TID_que_quiero_ejecutar){
 	hilo_t* hilo_a_ejecutar=buscar_hilo_por_TID(TID_que_quiero_ejecutar);
 	int PID=hilo_a_ejecutar->PID;
-	t_queue* cola_exec= obtener_cola_exec_de(PID);
-	hilo_t* hilo_a_bloquear=list_get(cola_exec->elements,0);
-	char* clave=string_new();
-	string_append(&clave,string_itoa(PID));
-	string_append(&clave,string_itoa(TID_que_quiero_ejecutar));
-	//OPTIMIZABLE, OJO CON LOS LEAKS DE LOS STRINGS Todo
 
-	bloquear_hilo(clave,hilo_a_bloquear);
+
+	char* tid=string_itoa(TID_que_quiero_ejecutar);
+	char* pid=string_itoa(PID);
+
+	proceso_t* un_proceso= obtener_proceso(PID);
+	t_queue* cola_exec= obtener_cola_exec_de(pid);
+	hilo_t* hilo_a_bloquear=queue_pop(cola_exec);
+	if(hilo_a_bloquear==NULL){
+		free(tid);
+		free(pid);
+
+
+		//TODO loguear el error; no hay hilos a los cuales joinear
+		return  -1;
+
+	}
+
+	bloquear_hilo(un_proceso->lista_de_bloqueados,hilo_a_bloquear);
 	queue_push(cola_exec,hilo_a_ejecutar);
-
-	free(clave);
 
 	return 1;
 }
@@ -310,26 +341,35 @@ void* suse_close(int TID){
 
 int _hilolay_init(int PID){
 	//char* pid=(char*)malloc(6);
-	char* pid=string_itoa(PID);
+	//pid =string_itoa(PID);
+	char* pid = string_itoa(PID);
 	proceso_t* un_proceso;
 	un_proceso =malloc(sizeof(proceso_t));
 	un_proceso->hilos_del_programa=list_create();
+	un_proceso->lista_de_bloqueados=list_create();
 
 	dictionary_put(diccionario_de_procesos, pid ,un_proceso);
-	t_queue* vector_queues[2];
-	vector_queues[COLA_READY]=queue_create();
-	vector_queues[COLA_EXEC]=queue_create();
+	t_list* vector_queues=list_create();
+	t_queue* cola_ready=queue_create();
+	list_add_in_index(vector_queues,COLA_READY,cola_ready);
+	t_queue* cola_exec=queue_create();
+	list_add_in_index(vector_queues,COLA_EXEC,cola_exec);
+
+
 	dictionary_put(diccionario_procesos_x_queues,pid, vector_queues);
-	pthread_mutex_t* semaforo_exec_x_proceso;
+	pthread_mutex_t semaforo_exec_x_proceso;
 	sem_t* semaforo_procesos_en_ready=(sem_t*)malloc(sizeof(sem_t));
 
 	sem_init(semaforo_procesos_en_ready,0,0);
 	un_proceso->procesos_en_ready=semaforo_procesos_en_ready;
 	sem_init(&semaforo_exec_x_proceso,0,1);
-	dictionary_put(diccionario_de_procesos_x_semaforo,pid,semaforo_exec_x_proceso);
+	dictionary_put(diccionario_de_procesos_x_semaforo,pid,&semaforo_exec_x_proceso);
 	pthread_t* un_hilo;
+	pthread_t* otro_hilo;
 	pthread_create(&un_hilo, NULL, estadoReady, PID);
 	pthread_detach(un_hilo);
+	pthread_create(&otro_hilo,NULL,readyToExec,PID);
+	pthread_detach(otro_hilo);
 
 	return PID;
 
@@ -359,10 +399,11 @@ int suse_create(int tid, int socket){
 	}
 
 
+	encolar_en_new(hilo);
+
 	sem_post(&un_proceso->procesos_en_ready);
 	list_add(un_proceso->hilos_del_programa,hilo);
 
-	encolar_en_new(hilo);
 
 	return tid;
 }

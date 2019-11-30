@@ -22,7 +22,7 @@ return ( (1-ALPHA_SJF)* un_hilo->prioridad + ALPHA_SJF * un_hilo->metricas->tiem
 hilo_t* buscar_hilo_por_TID(int TID){
 
 	hilo_t* hilo_a_retornar;
-	void machear_tid(proceso_t* un_proceso){
+	void machear_tid(char* pid,proceso_t* un_proceso){
 
 		void buscar_hilo(hilo_t* un_hilo){
 			if(un_hilo->hilo_informacion->tid==TID)
@@ -41,21 +41,21 @@ hilo_t* buscar_hilo_por_TID(int TID){
 
 // COLAS
 
-t_queue* obtener_cola_ready_de(int PID){
+t_queue* obtener_cola_ready_de(char* PID){
 	return obtener_cola_de(PID,COLA_READY);
 }
 
-t_queue* obtener_cola_exec_de(int PID){
+t_queue* obtener_cola_exec_de(char* PID){
 	return obtener_cola_de(PID,COLA_EXEC);
 }
 
-t_queue* obtener_cola_de(int PID, int cola){
-	char*pid=string_itoa(PID);
+t_queue* obtener_cola_de(char* PID, int cola){
+
 	sem_wait(&semaforo_diccionario_procesos_x_queues);
-	t_queue** vector_cola = dictionary_get(diccionario_procesos_x_queues,pid);
+	t_list* vector_cola= dictionary_get(diccionario_procesos_x_queues,PID);
 
 	sem_post(&semaforo_diccionario_procesos_x_queues);
-	return vector_cola[cola];
+	return list_get(vector_cola,cola);
 }
 
 // LOGS

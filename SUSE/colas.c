@@ -30,22 +30,23 @@ void newToReady(){
 
 	sem_wait(&grado_de_multiprogramacion_contador);
 	hilo_t*  hilo = queue_pop(cola_new);
-
-	t_queue*cola_ready = obtener_cola_ready_de(hilo->PID);
+	char* pid=string_itoa(hilo->PID);
+	t_queue*cola_ready = obtener_cola_ready_de(pid);
 
 	queue_push(cola_ready,hilo);
 
 	hilo->estado_del_hilo = READY;
 
 	sem_wait(&semaforo_diccionario_de_procesos);
-	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,hilo->PID);
+	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
 	sem_post(&semaforo_diccionario_de_procesos);
 	sem_post(&un_proceso->procesos_en_ready);
 
 	sem_wait(&semaforo_log_colas);
-
 	log_info(log_colas,"Se paso el hilo a la cola Ready \n");
+	sem_post(&semaforo_log_colas);
 
+	free(pid);
 
 }
 
@@ -83,44 +84,55 @@ void readyToExec(int PID)
 {
 	// Habria que chequear que entre UN SOLO thread a exec POR proceso
 
-	t_queue* cola_exec = obtener_cola_exec_de(PID);
+	char* pid=string_itoa(PID);
+	t_queue* cola_exec = obtener_cola_exec_de(pid);
+	t_queue* cola_ready = obtener_cola_ready_de(pid);
 
 	while(1){
 
-		if(esta_vacia(cola_exec)){
+		if(esta_vacia(cola_exec)&& !esta_vacia(cola_ready)){
 			char* tiempo_inicio= temporal_get_string_time();
 			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-			long milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
+			long milisegundos_inicial= atol(tiempo_inicio_separado_por_dos_puntos[3]);
 
 			hilo_t* hilo=suse_schedule_next(PID);
+			/*
+			bool tienen_mismo_tid(hilo_t*un_hilo){
+
+				return un_hilo->hilo_informacion->tid == hilo->hilo_informacion->tid;
+			}*/
+
+			list_remove(cola_ready->elements,0);
 
 			if(hilo == NULL){
 
 			}else{
-			sem_wait(&semaforo_diccionario_procesos_x_semaforo);
-			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,string_itoa(PID));
-			sem_post(&semaforo_diccionario_procesos_x_semaforo);
+				sem_wait(&semaforo_diccionario_procesos_x_semaforo);
+				pthread_mutex_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,pid);
+				sem_post(&semaforo_diccionario_procesos_x_semaforo);
 
-			sem_wait(&semaforo_exec_x_proceso);
-			queue_push(cola_exec,hilo);
+				sem_wait(semaforo_exec_x_proceso);
+				queue_push(cola_exec,hilo);
 
-			hilo->estado_del_hilo = EXECUTE;
+				hilo->estado_del_hilo = EXECUTE;
 
-			char* tiempo_fin= temporal_get_string_time();
-			char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-			int milisegundos_final= string_itoa(tiempo_fin_separado_por_dos_puntos[3]);
+				char* tiempo_fin= temporal_get_string_time();
+				char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+				int milisegundos_final= atoi(tiempo_fin_separado_por_dos_puntos[3]);
 
-			hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
+				hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
 
-			sem_post(&semaforo_exec_x_proceso);
+				sem_post(semaforo_exec_x_proceso);
 
-			sem_wait(&semaforo_log_colas);
-			log_info(log_colas,"Se paso el proceso a Exec \n");
-			sem_post(&semaforo_log_colas);
+
+				sem_wait(&semaforo_log_colas);
+				log_info(log_colas,"Se paso el proceso a Exec \n");
+				sem_post(&semaforo_log_colas);
 			}
 		}
 	}
 
+	free(pid);
 }
 
 
@@ -153,6 +165,7 @@ void * estadoReady(int PID)
 		// Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec.
 		// En caso de no encontrar uno para poder trabajar no hago nada
 	}
+	free(pid);
 	return NULL;
 }
 
@@ -160,22 +173,22 @@ void * estadoReady(int PID)
 /// ****************************************** PROCESOS EN EXEC  ******************************************* ///
 /// ******************************************************************************************************** ///
 
-void exec(hilo_t* hilo)
-{
+void exec(hilo_t* hilo){
+
 	char* tiempo_inicio= temporal_get_string_time();
 	char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-	int milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
+	int milisegundos_inicial= atoi(tiempo_inicio_separado_por_dos_puntos[3]);
 
 	ejecutar_funcion(hilo);
 
 	char* tiempo_final= temporal_get_string_time();
 	char** tiempo_final_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-	int milisegundos_final= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
+	int milisegundos_final= atoi(tiempo_inicio_separado_por_dos_puntos[3]);
 
 	hilo->metricas->tiempo_de_uso_del_cpu += milisegundos_final-milisegundos_inicial;
 
 
-	exec_to_exit(hilo);
+
 
 
 
@@ -184,7 +197,7 @@ void exec(hilo_t* hilo)
 
 void ejecutar_funcion(hilo_t* hilo){
 
-
+	//TODO
 
 
 }
@@ -209,8 +222,10 @@ void ejecutar_funcion(hilo_t* hilo){
 void exec_to_exit(hilo_t* hilo){
 
 	char* clave=string_new();
-	string_append(&clave,string_itoa(hilo->PID));
-	string_append(&clave,string_itoa(hilo->hilo_informacion->tid));
+	char* pid = string_itoa(hilo->PID);
+	char* hilo_info = string_itoa(hilo->hilo_informacion->tid);
+	string_append(&clave,pid);
+	string_append(&clave,hilo_info);
 
 	t_list* bloqueados_por_join=dictionary_get(diccionario_bloqueados_por_semafaro,clave);
 
@@ -228,6 +243,9 @@ void exec_to_exit(hilo_t* hilo){
 	queue_push(cola_exit,hilo);
 	hilo->estado_del_hilo=EXIT;
 
+	free(pid);
+	free(hilo_info);
+
 }
 
 
@@ -235,9 +253,9 @@ void exec_to_exit(hilo_t* hilo){
 
 void exit_thread(hilo_t* hilo){
 	//Cuando termina de ejecutar la funcion del hilo, este "muere" y viene a exit ¿haciendo una cola de threads terminados?
+
+	exec_to_exit(hilo);
 	sem_wait(&semaforo_lista_procesos_finalizados);
-
-
 	list_add(hilos_finalizados,hilo);
 	sem_post(&semaforo_lista_procesos_finalizados);
 	sem_post(&grado_de_multiprogramacion_contador);

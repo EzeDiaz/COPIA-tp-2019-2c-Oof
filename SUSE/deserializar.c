@@ -30,13 +30,16 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case SUSE_CREATE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
 		int tid=descifrar_suse_create(buffer);
-		armar_paquete(suse_create(tid,cliente_socket),BOOLEAN,cliente_socket);
+		armar_paquete((void*)suse_create(tid,cliente_socket),INT,cliente_socket);
 		break;
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
 		hilo_t* hilo_siguiente=suse_schedule_next(cliente_socket);
-		armar_paquete(hilo_siguiente->hilo_informacion->tid,INT,cliente_socket);
+		if(hilo_siguiente!=NULL){
+		armar_paquete((void*)hilo_siguiente->hilo_informacion->tid,INT,cliente_socket);
+		}
+		else{armar_paquete((void*) (-1),INT,cliente_socket);}
 		break;
 
 	case SUSE_WAIT:
@@ -50,14 +53,14 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case SUSE_SIGNAL:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
 		char* nombre_semaforo_signal=descifrar_suse_signal(buffer);
-		armar_paquete(suse_signal(nombre_semaforo_signal,cliente_socket),BOOLEAN,cliente_socket);
+		armar_paquete((void*)suse_signal(nombre_semaforo_signal,cliente_socket),BOOLEAN,cliente_socket);
 		free(nombre_semaforo_signal);
 		break;
 
 	case SUSE_JOIN:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_join', comenzando la deserializacion de parametros\n");
 		TID=descifrar_suse_join(buffer);
-		armar_paquete(suse_join(TID),BOOLEAN,cliente_socket);
+		armar_paquete((void*)suse_join(TID),INT,cliente_socket);
 
 		break;
 
@@ -144,7 +147,7 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 		size=(sizeof(bool));
 		paquete=malloc(sizeof(bool)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(bool),dato,sizeof(bool));
+		memcpy(paquete+ sizeof(bool),&dato,sizeof(bool));
 		break;
 	case INT:
 		size=(sizeof(int));
@@ -156,18 +159,18 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 		size=(sizeof(char));
 		paquete=malloc(sizeof(char)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(char),dato,sizeof(char));
+		memcpy(paquete+ sizeof(char),&dato,sizeof(char));
 		break;
 	case LONG:
 		size=(sizeof(long));
 		paquete=malloc(sizeof(long)+sizeof(int));
 		memcpy(paquete,&size,sizeof(int));
-		memcpy(paquete+ sizeof(long),dato,sizeof(long));
+		memcpy(paquete+ sizeof(long),&dato,sizeof(long));
 		break;
 	}
 
 
-	send(cliente,paquete,size+sizeof(int),0);
+	int cosa=send(cliente,paquete,size+sizeof(int),0);
 
 
 }

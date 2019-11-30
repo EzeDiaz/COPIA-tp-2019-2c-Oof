@@ -1,12 +1,30 @@
-[INFO] 12:02:28:897 Deserializacion/(4848:4959): Estamos por deserializar el codigo de operacion
+[INFO] 01:58:32:649 Deserializacion/(12188:12239): Estamos por deserializar el codigo de operacion
 
-[INFO] 12:02:28:897 Deserializacion/(4848:4959): Obtuvimos el codigo de operacion 
+[INFO] 01:58:32:800 Deserializacion/(12188:12239): Obtuvimos el codigo de operacion 
 
-[INFO] 12:02:28:897 Deserializacion/(4848:4959): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 01:58:33:117 Deserializacion/(12188:12239): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 12:04:25:803 Deserializacion/(4848:4959): Estamos por deserializar el codigo de operacion
+[INFO] 01:58:43:432 Deserializacion/(12188:12239): Estamos por deserializar el codigo de operacion
 
-[INFO] 12:04:25:803 Deserializacion/(4848:4959): Obtuvimos el codigo de operacion 
+[INFO] 01:58:43:432 Deserializacion/(12188:12239): Obtuvimos el codigo de operacion 
 
-[INFO] 12:04:25:803 Deserializacion/(4848:4959): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 01:58:43:432 Deserializacion/(12188:12239): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+
+[INFO] 01:58:58:161 Deserializacion/(12188:12239): Estamos por deserializar el codigo de operacion
+
+[INFO] 01:58:58:161 Deserializacion/(12188:12239): Obtuvimos el codigo de operacion 
+
+[INFO] 01:58:58:161 Deserializacion/(12188:12239): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+
+[INFO] 01:59:30:102 Deserializacion/(12188:12239): Estamos por deserializar el codigo de operacion
+
+[INFO] 01:59:30:278 Deserializacion/(12188:12239): Obtuvimos el codigo de operacion 
+
+[INFO] 01:59:31:423 Deserializacion/(12188:12239): Es el codigo de 'suse_join', comenzando la deserializacion de parametros
+
+[INFO] 02:00:42:129 Deserializacion/(12188:12239): Estamos por deserializar el codigo de operacion
+
+[INFO] 02:00:42:825 Deserializacion/(12188:12239): Obtuvimos el codigo de operacion 
+
+[INFO] 02:00:43:904 Deserializacion/(12188:12239): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
 
