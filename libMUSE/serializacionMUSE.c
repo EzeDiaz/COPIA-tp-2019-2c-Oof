@@ -128,10 +128,13 @@ void* crear_paquete_get(int codigo_de_operacion, void* dst, uint32_t src, size_t
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
 
-	void* paquete=(void*)malloc(peso_total);
+	void* paquete=(void*)malloc(peso_total+4);
 
 	int offset=0;
 	peso_del_siguiente=0;
+
+	memcpy(paquete+offset, &peso_total, sizeof(int));
+	offset+=sizeof(int);
 
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;

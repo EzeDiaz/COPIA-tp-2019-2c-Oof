@@ -149,7 +149,11 @@ void muse_free(uint32_t dir) {
 
 int muse_get(void* dst, uint32_t src, size_t n){
 	void* paquete_get = crear_paquete_get(104, dst, src, n);
-	send(socket_MUSE, paquete_get,sizeof(paquete_get),0);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_get, 4);
+
+	send(socket_MUSE, paquete_get,tamanio_paquete+4,0);
 	free(paquete_get);
 
 	void* var_recepcion;
