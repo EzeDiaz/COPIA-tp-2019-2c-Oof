@@ -1,8 +1,8 @@
-[INFO] 12:26:13:923 Servidor/(4002:4002): Levantamos el servidor
+[INFO] 13:58:09:152 Servidor/(7798:7798): Levantamos el servidor
 
-[INFO] 12:26:13:924 Servidor/(4002:4002): Servidor listo para recibir un cliente
+[INFO] 13:58:09:271 Servidor/(7798:7798): Servidor listo para recibir un cliente
 
-[INFO] 12:26:53:237 Servidor/(4002:4002): Recibimos un cliente
+[INFO] 13:58:50:315 Servidor/(7798:7798): Recibimos un cliente
 
-[INFO] 12:26:53:252 Servidor/(4002:4072): Recibimos conexion 
+[INFO] 13:58:50:328 Servidor/(7798:7842): Recibimos conexion 
 

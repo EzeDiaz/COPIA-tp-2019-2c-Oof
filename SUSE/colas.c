@@ -227,7 +227,7 @@ void exec_to_exit(hilo_t* hilo){
 	proceso_t* el_proceso=dictionary_get(diccionario_de_procesos,pid);
 	t_list* bloqueados_por_join=el_proceso->lista_de_joineados;
 	if(bloqueados_por_join->elements_count>0){
-		t_queue* cola_ready=obtener_cola_ready_de(hilo->PID);
+		t_queue* cola_ready=obtener_cola_ready_de(pid);
 		void pusheador(int TID){
 			bool mismoTID(hilo_t* hilo){
 				return hilo->hilo_informacion->tid==TID;

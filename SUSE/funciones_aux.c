@@ -23,7 +23,7 @@ hilo_t* buscar_hilo_por_TID(int TID,int PID){
 
 	hilo_t* hilo_a_retornar;
 
-	char*pid= string_itoa(pid);
+	char*pid= string_itoa(PID);
 
 	if(dictionary_has_key(diccionario_de_procesos,pid)){
 

@@ -70,6 +70,7 @@ void suse_create(int tid){
 
 
 void _hilolay_init(){
+
 	void* paquete = serializar_hilolay_init();
 	enviar_paquete(paquete);
 }

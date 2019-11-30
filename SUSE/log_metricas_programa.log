@@ -1,0 +1,10 @@
+[INFO] 13:58:50:490 log_metricas_programa/(7798:7842): El programa con PID 12 tiene los siguientes hilos en estos estados: 
+
+[INFO] 13:58:50:509 log_metricas_programa/(7798:7842): NEW---> 0 hilos
+
+[INFO] 13:58:50:574 log_metricas_programa/(7798:7842): READY---> 0 hilos
+
+[INFO] 13:58:59:972 log_metricas_programa/(7798:7842): EXECUTE---> 1 hilos
+
+[INFO] 13:58:59:973 log_metricas_programa/(7798:7842): BLOCKED---> 1 hilos
+

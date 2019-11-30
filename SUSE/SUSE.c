@@ -313,6 +313,7 @@ int suse_join(int TID_que_quiero_ejecutar,int PID){
 
 	list_add(un_proceso->lista_de_joineados,hilo_a_bloquear->hilo_informacion->tid);
 	bloquear_hilo(bloqueados,hilo_a_bloquear);
+	hilo_a_ejecutar->estado_del_hilo=EXECUTE;
 	queue_push(cola_exec,hilo_a_ejecutar);
 
 	return 1;

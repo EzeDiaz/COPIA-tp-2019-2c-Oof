@@ -4,7 +4,7 @@
  *  Created on: 29 nov. 2019
  *      Author: utnso
  */
-
+/*
 #include <stdlib.h>
 #include <stdio.h>
 #include <hilolay/hilolay.h>
@@ -54,4 +54,4 @@ int main(int argc, char *argv[])
 
 
 return hilolay_return(0);
-}
+}*/

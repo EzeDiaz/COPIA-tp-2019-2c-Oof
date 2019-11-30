@@ -1,6 +1,8 @@
-[INFO] 12:27:16:525 log_colas/(4002:4012): Se paso el hilo a la cola Ready 
+[INFO] 13:58:50:396 log_colas/(7798:7805): Se paso el hilo a la cola Ready 
 
-[INFO] 12:27:16:528 log_colas/(4002:4076): Se paso el proceso a Exec 
+[INFO] 13:58:50:404 log_colas/(7798:7805): Se paso el hilo a la cola Ready 
 
-[INFO] 12:27:17:767 log_colas/(4002:4012): Se paso el hilo a la cola Ready 
+[INFO] 13:58:50:405 log_colas/(7798:7805): Se paso el hilo a la cola Ready 
+
+[INFO] 13:58:50:437 log_colas/(7798:7844): Se paso el proceso a Exec 
 
