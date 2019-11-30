@@ -103,10 +103,10 @@ void metricas_por_hilo(){
 		void loguear_hilo(hilo_t* un_hilo){
 			un_hilo->metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos=un_hilo->metricas->tiempo_de_uso_del_cpu/tiempo_total_de_ejecucion;
 			log_info(log_metricas_hilo,"Al hilo %d le corresponden las siguientes metricas: \n",un_hilo->hilo_informacion->tid);
-			log_info(log_metricas_hilo,"TIEMPO DE EJECUCION--> %d \n",un_hilo->metricas->tiempo_de_ejecucion);
-			log_info(log_metricas_hilo,"TIEMPO DE ESPERA--> %d\n",un_hilo->metricas->tiempo_de_espera);
-			log_info(log_metricas_hilo,"TIEMPO DE USO DE CPU--> %d\n",un_hilo->metricas->tiempo_de_uso_del_cpu);
-			log_info(log_metricas_hilo,"PORCENTAJE DE TIEMPO DE EJECUCION--> %d\n",un_hilo->metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos);
+			log_info(log_metricas_hilo,"TIEMPO DE EJECUCION--> %d ms\n",un_hilo->metricas->tiempo_de_ejecucion);
+			log_info(log_metricas_hilo,"TIEMPO DE ESPERA--> %d ms\n",un_hilo->metricas->tiempo_de_espera);
+			log_info(log_metricas_hilo,"TIEMPO DE USO DE CPU--> %d ms\n",un_hilo->metricas->tiempo_de_uso_del_cpu);
+			log_info(log_metricas_hilo,"PORCENTAJE DE TIEMPO DE EJECUCION--> %d ms\n",un_hilo->metricas->porcentaje_total_tiempo_de_ejecucion_de_hilos);
 
 		}
 		list_iterate(un_proceso->hilos_del_programa,loguear_hilo);

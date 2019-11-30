@@ -183,9 +183,9 @@ void exec(hilo_t* hilo){
 
 	char* tiempo_final= temporal_get_string_time();
 	char** tiempo_final_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-	int milisegundos_final= atoi(tiempo_inicio_separado_por_dos_puntos[3]);
+	int milisegundos_final= atoi(tiempo_final_separado_por_dos_puntos[3]);
 
-	hilo->metricas->tiempo_de_uso_del_cpu += milisegundos_final-milisegundos_inicial;
+	hilo->metricas->tiempo_de_uso_del_cpu += (milisegundos_final-milisegundos_inicial);
 
 
 
