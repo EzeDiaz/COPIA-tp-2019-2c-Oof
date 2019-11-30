@@ -290,6 +290,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 								pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 								new_page->modifiedBit = 0; //Not sure
 								new_page->presenceBit = 1;
+								new_page->frame_number = frame_number;
 								list_add(un_segmento->pageFrameTable, new_page);
 								if(bytes_que_quedan - page_size > 0)
 									bytes_que_quedan = bytes_que_quedan - page_size;
@@ -299,9 +300,9 @@ void realizarRequest(void *buffer_recibido, int cliente){
 
 							//Escribo la nueva metadata
 							bytes_sobrantes = page_size - bytes_que_quedan - 5;
-							void* pointer = GET_FRAME_POINTER(last_page->frame_number);
-							memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-							memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
+							void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
+							memcpy(last_page_pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
+							memcpy(last_page_pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
 
 							se_pudo_reservar_flag = 1;
 							segment_base = un_segmento->base;
@@ -370,6 +371,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 						new_page->modifiedBit = 0; //Not sure
 						new_page->presenceBit = 1;
+						new_page->frame_number = frame_number;
 						list_add(new_segment->pageFrameTable, new_page);
 						if(bytes_que_quedan - page_size > 0)
 							bytes_que_quedan = bytes_que_quedan - page_size;
@@ -379,9 +381,9 @@ void realizarRequest(void *buffer_recibido, int cliente){
 
 					//Escribo la nueva metadata
 					bytes_sobrantes = page_size - bytes_que_quedan - 5;
-					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
-					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
+					void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
+					memcpy(last_page_pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
+					memcpy(last_page_pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 					new_segment->base = FIRST_FIT(client_address_space->segment_table, 0, new_segment->size);
@@ -394,7 +396,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 					sem_post(&logger_semaphore);
 
 					//Es el primer segmento
-					segment* new_segment = (segment*)malloc(sizeof(segment*));
+					segment* new_segment = (segment*)malloc(sizeof(segment));
 					new_segment->base = 0;
 					new_segment->isHeap = true;
 					new_segment->pageFrameTable = list_create();
@@ -410,14 +412,14 @@ void realizarRequest(void *buffer_recibido, int cliente){
 					sem_post(&logger_semaphore);
 
 					pageFrame* last_page;
-					uint32_t bytes_que_quedan = bytes_a_reservar;
+					int bytes_que_quedan = bytes_a_reservar;
 					uint32_t bytes_sobrantes = 0;
 
 					for(int i=0; i < frames_to_require; i++) {
 						int frame_number = CLOCK();
 						if(i == 0) {
 							//Escribo la primer metadata
-							void* pointer = GET_FRAME_POINTER(frame_number);
+							pointer = GET_FRAME_POINTER(frame_number);
 							memcpy(pointer, &bytes_a_reservar, sizeof(uint32_t));
 							memcpy(pointer + sizeof(uint32_t), &falseStatus, sizeof(bool));
 							pointer = pointer + 5;
@@ -425,6 +427,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 						pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 						new_page->modifiedBit = 1; //Not sure
 						new_page->presenceBit = 1;
+						new_page->frame_number = frame_number;
 						list_add(new_segment->pageFrameTable, new_page);
 						if(bytes_que_quedan - page_size > 0)
 							bytes_que_quedan = bytes_que_quedan - page_size;
@@ -433,10 +436,10 @@ void realizarRequest(void *buffer_recibido, int cliente){
 					}
 
 					//Escribo la nueva metadata
-					bytes_sobrantes = page_size - bytes_que_quedan - 5;
-					void* pointer = GET_FRAME_POINTER(last_page->frame_number);
-					memcpy(pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-					memcpy(pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
+					bytes_sobrantes = page_size - bytes_que_quedan - 5 - 5;
+					void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
+					memcpy(last_page_pointer + bytes_que_quedan + 5, &bytes_sobrantes, sizeof(uint32_t));
+					memcpy(last_page_pointer + bytes_que_quedan + 5 + sizeof(uint32_t), &trueStatus, sizeof(bool));
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 

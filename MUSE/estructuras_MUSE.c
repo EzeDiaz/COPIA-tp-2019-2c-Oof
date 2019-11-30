@@ -338,6 +338,8 @@ int GET_OFFSET_FROM_POINTER(void* pointer) {
 }
 
 int GET_FRAME_NUMBER_FROM_POINTER(void* pointer) {
+	if((pointer - mp_pointer) < page_size)
+		return 0;
 	return (pointer - mp_pointer) / page_size;
 }
 
@@ -480,9 +482,9 @@ void* GET_FRAME_POINTER(int frame_number) {
 
 int CREATE_ADDRESS_SPACE(char* IP_ID) {
 	addressSpace* new_address_space = (addressSpace*)malloc(sizeof(addressSpace));
-	new_address_space->owner = (char*)malloc(sizeof(IP_ID));
+	new_address_space->owner = (char*)malloc(strlen(IP_ID)+1);
 
-	memcpy(new_address_space->owner, IP_ID, sizeof(IP_ID));
+	memcpy(new_address_space->owner, IP_ID, strlen(IP_ID)+1);
 	new_address_space->segment_table = list_create();
 
 	sem_wait(&addresses_space_semaphore);
@@ -522,10 +524,12 @@ client* FIND_CLIENT_BY_SOCKET(int a_client_socket) {
 
 int ADD_CLIENT_TO_LIST(char* client_ID, int client_socket){
 	client* new_client = (client*)malloc(sizeof(client));
-	new_client->clientProcessId = (char*)malloc(sizeof(client_ID)+1);
-	bzero(new_client->clientProcessId, sizeof(client_ID)+1);
+	new_client->clientProcessId = (char*)malloc(strlen(client_ID)+1);
+	bzero(new_client->clientProcessId, strlen(client_ID)+1);
+	new_client->total_memory_freed = 0;
+	new_client->total_memory_requested = 0;
 
-	memcpy(new_client->clientProcessId, client_ID, sizeof(client_ID));
+	memcpy(new_client->clientProcessId, client_ID, strlen(client_ID)+1);
 	memcpy(&new_client->clientSocket, &client_socket, sizeof(int));
 
 	sem_wait(&client_table_semaphore);
@@ -642,10 +646,8 @@ void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 heapMetadata* READ_HEAPMETADATA_IN_MEMORY(void* pointer){
 	heapMetadata* new_metadata = (heapMetadata*)malloc(sizeof(heapMetadata));
 
-	sem_wait(&mp_semaphore);
 	memcpy(&new_metadata->size, pointer,sizeof(uint32_t));
 	memcpy(&new_metadata->isFree, pointer+sizeof(uint32_t),sizeof(bool));
-	sem_post(&mp_semaphore);
 
 	return new_metadata;
 }
@@ -988,7 +990,7 @@ int FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(int a_client_socket){
 	int page_number = 0;
 	int page_move_counter = 0;
 	int new_page_move_counter = 0;
-	heapMetadata* current_metadata;
+	heapMetadata* current_metadata; //No hay que maloquearlo porque lo llena READ_HEAPMETADATA
 	pageFrame* first_page = list_get(page_frame_table, page_number);
 	int current_frame = first_page->frame_number;
 	void* ptr_to_current_frame = GET_FRAME_POINTER(current_frame);
@@ -1002,6 +1004,20 @@ int FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(int a_client_socket){
 			page_move_counter = page_move_counter + current_metadata->size + 5; // el +5 es para avanzar los 5b de la primera metadata
 			free_bytes_in_segment += current_metadata->size;
 
+			if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
+				ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
+			}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
+				new_page_move_counter = page_move_counter - page_size; //lo que me sobro en una pagina va a estar en la otra
+				page_number++;
+				if(page_number < page_frame_table->elements_count){
+					pageFrame* next_page = list_get(page_frame_table, page_number);
+					current_frame = next_page->frame_number;
+					void* ptr_to_new_frame = GET_FRAME_POINTER(current_frame);
+					ptr_to_current_metadata = ptr_to_new_frame + new_page_move_counter;
+				}
+			}
+		} else {
+			page_move_counter = page_move_counter + current_metadata->size + 5; // el +5 es para avanzar los 5b de la primera metadata
 			if(page_move_counter < page_size){ // si sigo en mi pagina after moverme
 				ptr_to_current_metadata = ptr_to_current_metadata + current_metadata->size + 5;
 			}else{ // si no sigo en mi pagina after moverme... busco nuevo frame y puntero a la metadata del frame
@@ -1131,8 +1147,8 @@ void LOG_SOCKET_METRICS(int socket){
 	int percentage = PORCENTAJE_ASIGNACION_MEM(socket);
 	int free_bytes_last_segment = FREE_MEMORY_IN_LAST_SEGMENT_ASIGNED(socket);
 
-	log_info(logger,"Porcentaje de asignacion de memoria [socket %d]: %d", socket, percentage);
-	log_info(logger,"Memoria disponible en ultimo segmento asignado [socket %d]: %d", socket, free_bytes_last_segment);
+	log_info(logger,"Porcentaje de asignacion de memoria [socket %d]: %d%%", socket, percentage);
+	log_info(logger,"Memoria disponible en ultimo segmento asignado [socket %d]: %d bytes", socket, free_bytes_last_segment);
 }
 
 void LOG_PROGRAM_METRICS(int a_client_socket){
