@@ -154,3 +154,195 @@
 
 [INFO] 15:29:13:239 deserializacion/(12022:12132): Es el codigo de 'creacion de archivos', comenzando la deserializacion de parametros
 
+[INFO] 13:35:15:18 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 13:35:15:89 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 13:35:15:89 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 13:35:15:89 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 13:35:15:89 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 13:35:15:89 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 13:36:05:320 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 13:36:05:320 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 13:36:05:321 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 13:50:59:695 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 13:50:59:695 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 13:50:59:695 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 13:51:16:382 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 13:51:16:382 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 13:51:16:382 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 16:18:04:505 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 16:18:04:505 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 16:18:04:505 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 16:18:10:6 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 16:18:10:6 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 16:18:10:6 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 16:26:29:77 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 16:26:29:77 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 16:26:29:77 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 16:27:33:967 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 16:27:33:967 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 16:27:33:967 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 17:47:28:286 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 17:47:28:286 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 17:47:28:286 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 17:48:11:637 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 17:48:11:637 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 17:48:11:637 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 17:48:19:612 deserializacion/(3904:4004): Estamos por deserializar el codigo de operacion
+
+[INFO] 17:48:19:612 deserializacion/(3904:4004): Obtuvimos el codigo de operacion 
+
+[INFO] 17:48:19:612 deserializacion/(3904:4004): Nos llego un codigo invalido
+
+[INFO] 04:20:52:802 deserializacion/(7971:8125): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:20:52:907 deserializacion/(7971:8125): Obtuvimos el codigo de operacion 
+
+[INFO] 04:20:52:907 deserializacion/(7971:8125): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:25:14:905 deserializacion/(8217:8245): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:25:14:905 deserializacion/(8217:8245): Obtuvimos el codigo de operacion 
+
+[INFO] 04:25:14:905 deserializacion/(8217:8245): Nos llego un codigo invalido
+
+[INFO] 04:25:14:930 deserializacion/(8217:8245): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:25:14:931 deserializacion/(8217:8245): Obtuvimos el codigo de operacion 
+
+[INFO] 04:25:14:931 deserializacion/(8217:8245): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:25:38:466 deserializacion/(8217:8245): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:25:38:466 deserializacion/(8217:8245): Obtuvimos el codigo de operacion 
+
+[INFO] 04:25:38:466 deserializacion/(8217:8245): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:31:11:604 deserializacion/(8348:8388): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:31:11:604 deserializacion/(8348:8388): Obtuvimos el codigo de operacion 
+
+[INFO] 04:31:11:604 deserializacion/(8348:8388): Nos llego un codigo invalido
+
+[INFO] 04:31:11:606 deserializacion/(8348:8388): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:31:11:606 deserializacion/(8348:8388): Obtuvimos el codigo de operacion 
+
+[INFO] 04:31:11:606 deserializacion/(8348:8388): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:36:26:879 deserializacion/(8576:8600): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:36:26:879 deserializacion/(8576:8600): Obtuvimos el codigo de operacion 
+
+[INFO] 04:36:26:880 deserializacion/(8576:8600): Nos llego un codigo invalido
+
+[INFO] 04:38:25:468 deserializacion/(8642:8660): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:38:25:468 deserializacion/(8642:8660): Obtuvimos el codigo de operacion 
+
+[INFO] 04:38:25:468 deserializacion/(8642:8660): Nos llego un codigo invalido
+
+[INFO] 04:38:25:468 deserializacion/(8642:8660): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:38:25:468 deserializacion/(8642:8660): Obtuvimos el codigo de operacion 
+
+[INFO] 04:38:25:468 deserializacion/(8642:8660): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:42:12:55 deserializacion/(8832:8853): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:42:12:55 deserializacion/(8832:8853): Obtuvimos el codigo de operacion 
+
+[INFO] 04:42:12:55 deserializacion/(8832:8853): Nos llego un codigo invalido
+
+[INFO] 04:42:12:72 deserializacion/(8832:8853): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:42:12:72 deserializacion/(8832:8853): Obtuvimos el codigo de operacion 
+
+[INFO] 04:42:12:72 deserializacion/(8832:8853): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:44:41:164 deserializacion/(8985:9002): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:44:41:165 deserializacion/(8985:9002): Obtuvimos el codigo de operacion 
+
+[INFO] 04:44:41:165 deserializacion/(8985:9002): Nos llego un codigo invalido
+
+[INFO] 04:44:41:172 deserializacion/(8985:9002): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:44:41:172 deserializacion/(8985:9002): Obtuvimos el codigo de operacion 
+
+[INFO] 04:44:41:172 deserializacion/(8985:9002): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:45:54:215 deserializacion/(8985:9002): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:45:54:215 deserializacion/(8985:9002): Obtuvimos el codigo de operacion 
+
+[INFO] 04:45:54:215 deserializacion/(8985:9002): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:47:26:690 deserializacion/(9283:9300): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:47:26:691 deserializacion/(9283:9300): Obtuvimos el codigo de operacion 
+
+[INFO] 04:47:26:691 deserializacion/(9283:9300): Nos llego un codigo invalido
+
+[INFO] 04:47:26:696 deserializacion/(9283:9300): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:47:26:696 deserializacion/(9283:9300): Obtuvimos el codigo de operacion 
+
+[INFO] 04:47:26:696 deserializacion/(9283:9300): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:48:08:568 deserializacion/(9283:9300): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:48:08:568 deserializacion/(9283:9300): Obtuvimos el codigo de operacion 
+
+[INFO] 04:48:08:568 deserializacion/(9283:9300): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:50:33:633 deserializacion/(9414:9433): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:50:33:633 deserializacion/(9414:9433): Obtuvimos el codigo de operacion 
+
+[INFO] 04:50:33:633 deserializacion/(9414:9433): Nos llego un codigo invalido
+
+[INFO] 04:50:33:639 deserializacion/(9414:9433): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:50:33:640 deserializacion/(9414:9433): Obtuvimos el codigo de operacion 
+
+[INFO] 04:50:33:640 deserializacion/(9414:9433): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+
+[INFO] 04:50:54:629 deserializacion/(9414:9433): Estamos por deserializar el codigo de operacion
+
+[INFO] 04:50:54:629 deserializacion/(9414:9433): Obtuvimos el codigo de operacion 
+
+[INFO] 04:50:54:629 deserializacion/(9414:9433): Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros
+

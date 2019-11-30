@@ -10,6 +10,7 @@
 #include <commons/collections/list.h>
 
 int serializar_fs_rmdir(char* path){
+	printf("llego un rmdir\n");
 	void* paquete = serializar_paquete_para_eliminar_directorio(path);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
@@ -23,6 +24,7 @@ int serializar_fs_rmdir(char* path){
 
 int serializar_fs_opendir(const char* path){
 
+	printf("llego un opendir\n");
 	void* paquete = serializar_paquete_para_abrir_directorio(path);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
@@ -34,6 +36,7 @@ int serializar_fs_opendir(const char* path){
 }
 
 int serializar_fs_create(const char *path, mode_t mode , struct fuse_file_info * fi){
+	printf("llego un create\n");
 	void* paquete = serializar_paquete_para_crear_archivo(path,mode);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
@@ -44,9 +47,33 @@ int serializar_fs_create(const char *path, mode_t mode , struct fuse_file_info *
 
 	return 0;
 }
+int serializar_fs_mknod(char* name,mode_t mode,dev_t dev){
+	printf("llego un mknod\n");
+	void* paquete = serializar_paquete_fs_mknod(name,mode,dev);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	free(resultado);
+	return resultado;
+
+}
+
+int serializar_fs_rename(char* old_path,char* new_path,int flags){
+
+	printf("llego un rename\n");
+	void* paquete = serializar_paquete_fs_rename(old_path,new_path,flags);
+	void* resultado = enviar_paquete(paquete);
+	free(paquete);
+	int retorno;
+	memcpy(&retorno,resultado,sizeof(int));
+	free(resultado);
+	return resultado;
+}
 
 int serializar_fs_getattr(const char *path, struct stat *unos_stats){
 
+	printf("llego un getattr\n");
 	void* paquete = serializar_paquete_para_obtener_atributos(path);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
@@ -91,6 +118,7 @@ int serializar_fs_getattr(const char *path, struct stat *unos_stats){
 
 }
 
+
 int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t puntero_a_funcion, off_t offset, struct fuse_file_info *fi){
 	const struct stat *stbuf;
 	stat(path,stbuf);
@@ -118,6 +146,7 @@ int serializar_fs_mkdir(const char *path, mode_t mode){
 
 int serializar_fs_open(const char *pathname,
 		int flags, mode_t mode){
+	printf("llego un open \n");
 	void* paquete = serializar_paquete_para_abrir_archivo(pathname,flags,mode);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
@@ -173,6 +202,58 @@ void* serializar_paquete_para_crear_archivo(const char *path, mode_t mode){
 	return paquete;
 }
 
+void* serializar_paquete_fs_mknod(const char* name,mode_t mode,dev_t dev){
+	int peso=0;
+	int peso_path=string_length(name)+1;
+	int peso_mode= sizeof(mode);
+	int peso_dev=sizeof(dev);
+	peso=peso_path+peso_mode+peso_dev + 2* sizeof(int);
+	int offset=0;
+	int codigo_de_operacion= MKNOD;
+	void*paquete=malloc(peso+sizeof(int));
+
+	memcpy(paquete,&peso,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&peso_path,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,name,peso_path);
+	offset+=peso_path;
+	memcpy(paquete+offset,&mode,sizeof(mode_t));
+	offset+=sizeof(mode_t);
+	memcpy(paquete+offset,&dev,sizeof(dev_t));
+
+
+	return paquete;
+
+}
+void* serializar_paquete_fs_rename(const char *old_path, const char *new_path, unsigned int flags){
+
+	int peso_old_path=strlen(old_path);
+	int peso_new_path=strlen(new_path);
+	void* paquete=malloc(sizeof(int)*3+peso_old_path+peso_new_path);
+	int offset=0;
+	int codigo_de_operacion=RENAME;
+
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&flags,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&peso_old_path,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,old_path,peso_old_path);
+	offset+=peso_old_path;
+	memcpy(paquete+offset,&peso_new_path,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,new_path,peso_new_path);
+	offset+=peso_new_path;
+
+
+
+	return paquete;
+
+}
 
 
 void* serializar_paquete_para_eliminar_directorio(char* path){
@@ -344,20 +425,20 @@ void* serializar_paquete_para_abrir_archivo(const char *pathname,
 void* serializar_paquete_para_obtener_atributos(const char*path){
 
 	int peso_path = string_length(path)+1;
-		int peso=peso_path+ 2* sizeof(int);
-		int desplazamiento=0;
-		int codigo_de_operacion = GET_ATTRIBUTES;
-		void*paquete = malloc(peso+sizeof(int));
+	int peso=peso_path+ 2* sizeof(int);
+	int desplazamiento=0;
+	int codigo_de_operacion = GET_ATTRIBUTES;
+	void*paquete = malloc(peso+sizeof(int));
 
-		memcpy(paquete,&peso,sizeof(int));
-		desplazamiento+=sizeof(int);
-		memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
-		desplazamiento+=sizeof(int);
-		memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
-		desplazamiento+=sizeof(int);
-		memcpy(paquete+desplazamiento,path,peso_path);
+	memcpy(paquete,&peso,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
+	desplazamiento+=sizeof(int);
+	memcpy(paquete+desplazamiento,path,peso_path);
 
-		return paquete;
+	return paquete;
 
 
 
@@ -445,7 +526,7 @@ void usar_y_liberar_resultado(void* resultado){
 		offset+=72;
 
 		list_add(lista_de_nodos,un_nodo);
-*/
+		 */
 	}
 
 	printear_lista_de_nodos(lista_de_nodos);
@@ -455,7 +536,7 @@ void usar_y_liberar_resultado(void* resultado){
 
 void printear_lista_de_nodos(lista_de_nodos){
 
-/*
+	/*
 	void printear_nodo(nodo_t* un_nodo){
 		printf("Miren... un nodo! \n");
 		printf("Su estado es: %s \n",un_nodo->estado);
@@ -467,5 +548,5 @@ void printear_lista_de_nodos(lista_de_nodos){
 	}
 	list_iterate(lista_de_nodos, printear_nodo);
 
-*/
+	 */
 }

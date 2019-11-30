@@ -35,7 +35,10 @@ enum codigo_de_operacion{
 	ELIMINAR_DIRECTORIO=7,
 	ABRIR_DIRECTORIO=8,
 	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=9,
-	GET_ATTRIBUTES=10
+	GET_ATTRIBUTES=10,
+	MKNOD=11,
+	RENAME=12
+
 };
 
 
@@ -51,6 +54,8 @@ int serializar_fs_write(int , const void *, size_t );
 int serializar_fs_opendir(const char* path);
 int serializar_fs_create(const char *, mode_t  , struct fuse_file_info * );
 int serializar_fs_getattr(const char *, struct stat *);
+int serializar_fs_mknod( char* ,mode_t,dev_t );
+int serializar_fs_rename( char *, char *,  int);
 
 
 //envios a SAC_SERVER
@@ -64,8 +69,9 @@ void* serializar_paquete_para_abrir_archivo(const char *,int, mode_t );
 void* enviar_paquete(void*);
 void* recibir_resultado(int* );
 void* serializar_paquete_para_abrir_directorio(const char*);
-void* serializar_paquete_para_crear_archivo(const char *path,mode_t);
-
+void* serializar_paquete_para_crear_archivo(const char *,mode_t);
+void* serializar_paquete_fs_rename(const char *, const char *, unsigned int);
+void* serializar_paquete_fs_mknod(const char* ,mode_t,dev_t );
 
 
 
