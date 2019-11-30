@@ -29,9 +29,19 @@ typedef struct{
 	char* string_nombre_de_archivos;
 }directorio_a_listar_t;
 
+typedef struct{
+	char* old_path;
+	char* new_path;
+	int flag;
+}rename_params;
 
+typedef struct{
 
+	char* name;
+	mode_t mode;
+	dev_t dev;
 
+}mknod_params;
 
 //enums
 enum codigo_de_operacion{
@@ -45,7 +55,11 @@ enum codigo_de_operacion{
 	LISTAR_DIRECTORIO_Y_ARCHIVOS=6,
 	ELIMINAR_DIRECTORIO=7,
 	ABRIR_DIRECTORIO=8,
-	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=9
+	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=9,
+	GET_ATTRIBUTES=10,
+	MKNOD=11,
+	RENAME=12
+
 };
 
 
@@ -60,5 +74,8 @@ void* decifrar_archivo_a_borrar(void*);
 creacion* decifrar_creacion(void*);
 directorio_a_listar_t* decifrar_directorio_a_listar(void*);
 char* decifrar_directorio_a_borrar(void*);
+mknod_params* decifrar_mknod(void*);
+rename_params*decifrar_rename(void*);
+char* decifrar_get_atributes(void*);
 
 #endif /* DESERIALIZAR_H_ */

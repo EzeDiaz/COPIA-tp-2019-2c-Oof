@@ -21,7 +21,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "SAC-Cli.h"
 
 #define DEFAULT_MOUNT_POINT "/"
 
@@ -60,11 +59,12 @@ static struct fuse_operations fs_oper = {
 		.rmdir       = serializar_fs_rmdir,
 		.mkdir       = serializar_fs_mkdir,
 		.getattr     = serializar_fs_getattr,
+		.mknod       = serializar_fs_mknod,
+		.rename      = serializar_fs_rename,
+
 		/*	.readlink    = fs_readlink,
-		.mknod       = fs_mknod,
 		.unlink      = fs_unlink,
 		.symlink     = fs_symlink,
-		.rename      = fs_rename,
 		.link        = fs_link,
 		.chmod       = fs_chmod,
 		.chown       = fs_chown,
@@ -133,10 +133,9 @@ int main(int argc, char **argv){
 	// de realizar el montaje, comuniscarse con el kernel, delegar todo
 	// en varios threads
 	printf("vamos a iniciar fuse_main \n");
-	fuse_main(args.argc, args.argv, &fs_oper,NULL) ;
 
 	// system("fusermount -u /home/utnso/New_SAC");
-	 return 0;
+	 return fuse_main(args.argc, args.argv, &fs_oper,NULL) ;
 
 	}
 

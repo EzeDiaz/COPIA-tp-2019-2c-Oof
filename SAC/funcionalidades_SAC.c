@@ -32,6 +32,109 @@ t_list* listar_metadata(){
 	return lista_de_retorno;
 }
 
+
+void* obtener_atributos(char* path){
+
+	char* fname[71];
+	obtener_nombre_de_archivo(fname,path);
+	GFile* nodo=encontrar_en_tabla_de_nodos(fname);
+
+	int peso=sizeof(struct stat);
+	void* resultado=malloc(peso+sizeof(int));
+	int offset=0;
+	struct stat *unos_stats=(struct stat*)malloc(sizeof(struct stat));
+
+	if (strcmp(path, "/") == 0) {
+		unos_stats->st_mode = S_IFDIR | 0755;
+		unos_stats->st_nlink = 2;
+	}
+
+	if (strcmp(path, fname) == 0) {
+		unos_stats->st_mode = S_IFREG | 0777;
+		unos_stats->st_nlink = 1;
+		unos_stats->st_size = strlen(fname);
+
+	}
+
+
+	memcpy(resultado+offset,&peso,sizeof(int));
+		offset+=sizeof(int);
+
+
+	memcpy(resultado+offset,&unos_stats->__pad1,sizeof(unos_stats->__pad1));
+	offset+=sizeof(unos_stats->__pad1);
+
+	memcpy(resultado+offset,&unos_stats->__pad2,sizeof(unos_stats->__pad2));
+	offset+=sizeof(unos_stats->__pad2);
+
+
+	memcpy(resultado+offset,&unos_stats->st_atim,sizeof(unos_stats->st_atim));
+	offset+=sizeof(unos_stats->st_atim);
+
+	memcpy(resultado+offset,&unos_stats->st_blksize,sizeof(unos_stats->st_blksize));
+	offset+=sizeof(unos_stats->st_blksize);
+
+	memcpy(resultado+offset,&unos_stats->st_blocks,sizeof(unos_stats->st_blocks));
+	offset+=sizeof(unos_stats->st_blocks);
+
+	memcpy(resultado+offset,&unos_stats->st_ctim,sizeof(unos_stats->st_ctim));
+	offset+=sizeof(unos_stats->st_ctim);
+
+	memcpy(resultado+offset,&unos_stats->st_dev,sizeof(unos_stats->st_dev));
+	offset+=sizeof(unos_stats->st_dev);
+
+	memcpy(resultado+offset,&unos_stats->st_gid,sizeof(unos_stats->st_gid));
+	offset+=sizeof(unos_stats->st_gid);
+
+	memcpy(resultado+offset,&unos_stats->st_ino,sizeof(unos_stats->st_ino));
+	offset+=sizeof(unos_stats->st_ino);
+
+	memcpy(resultado+offset,&unos_stats->st_mode,sizeof(unos_stats->st_mode));
+	offset+=sizeof(unos_stats->st_mode);
+
+	memcpy(resultado+offset,&unos_stats->st_mtim,sizeof(unos_stats->st_mtim));
+	offset+=sizeof(unos_stats->st_mtim);
+
+	memcpy(resultado+offset,&unos_stats->st_nlink,sizeof(unos_stats->st_nlink));
+	offset+=sizeof(unos_stats->st_nlink);
+
+	memcpy(resultado+offset,&unos_stats->st_rdev,sizeof(unos_stats->st_rdev));
+	offset+=sizeof(unos_stats->st_rdev);
+
+	memcpy(resultado+offset,&unos_stats->st_size,sizeof(unos_stats->st_size));
+	offset+=sizeof(unos_stats->st_size);
+
+	memcpy(resultado+offset,&unos_stats->st_uid,sizeof(unos_stats->st_uid));
+
+
+
+
+
+
+	return resultado;
+}
+
+int realizar_mknod(char* name,mode_t mode,dev_t dev){
+
+	int current_node=0;
+	while(tabla_de_nodos[current_node]->state!=0 && current_node>1024){
+		current_node++;
+	}
+	if (current_node>1024){return -1;}
+	GFile* nodo_to_set= tabla_de_nodos+current_node;
+	nodo_to_set->state=OCUPADO;
+	nodo_to_set->c_date= (long int) time(NULL) ;
+	nodo_to_set->m_date=nodo_to_set->c_date;
+	obtener_nombre_de_archivo(nodo_to_set->fname,name);
+	nodo_to_set->file_size=0;
+	crear_vector_de_punteros(nodo_to_set->blk_indirect,1000);
+	nodo_to_set->parent_dir_block=obtener_puntero_padre(name);
+	escribir_en_disco(preparar_nodo_para_grabar(nodo_to_set),buscar_bloque_libre(BUSQUEDA_NODO));
+
+
+
+}
+
 bool escribir_archivo(uint32_t direccion,const void *cosas_a_escribir, size_t cantidad_a_escribir){
 	bool flag = false;
 	t_list* bloques_a_escribir=list_create();

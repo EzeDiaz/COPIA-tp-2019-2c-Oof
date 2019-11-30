@@ -34,6 +34,7 @@ void* leer_en_disco(void*, int );
 void* abrir_en_disco(int );
 bool esta_full_el_bloque_puntero(ptrGBloque);
 void* obtener_direccion_de_escritura(ptrGBloque );
+int realizar_mknod(char*,mode_t,dev_t );
 
 
 #endif /* FUNCIONES_AUX_H_ */

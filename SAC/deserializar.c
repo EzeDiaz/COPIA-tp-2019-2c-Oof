@@ -84,6 +84,29 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
+	case GET_ATTRIBUTES:
+
+		log_info(logger_de_deserializacion, "Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros\n");
+		char*ruta=decifrar_get_atributes(buffer);
+		resultado=obtener_atributos(ruta);
+		serializar_y_enviar_resultado(resultado,cliente_socket);
+		break;
+	case MKNOD:
+		log_info(logger_de_deserializacion, "Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros\n");
+		mknod_params* parametros=decifrar_mknod(buffer);
+		resultado=realizar_mknod(parametros->name,parametros->mode,parametros->dev);
+		serializar_y_enviar_resultado(resultado,cliente_socket);
+		break;
+
+	case RENAME:
+		log_info(logger_de_deserializacion, "Es el codigo de 'listado de metadata', comenzando la deserializacion de parametros\n");
+		rename_params*params=decifrar_rename(buffer);
+		resultado=obtener_atributos(params->old_path,params->new_path,params->flag);
+		serializar_y_enviar_resultado(resultado,cliente_socket);
+		break;
+
+
+
 	default:
 		send(cliente_socket, "Codigo Invalido", 16, 0);
 		log_info(logger_de_deserializacion, "Nos llego un codigo invalido\n");
@@ -188,29 +211,76 @@ void* listar_metadata_directorio_y_archivos(void*buffer){
 
 }
 
+mknod_params* decifrar_mknod(void*buffer){
+
+	mknod_params* parametros=(mknod_params*)malloc(sizeof(mknod_params));
+	int peso=0;
+	int peso_path;
+
+	int offset=0;
+
+	memcpy(&peso_path,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(parametros->name,buffer+offset,peso_path);
+	offset+=peso_path;
+	memcpy(parametros->mode,buffer+offset,sizeof(mode_t));
+	offset+=sizeof(mode_t);
+	memcpy(parametros->dev,buffer+offset,sizeof(dev_t));
+
+	return parametros;
+
+
+}
+rename_params*decifrar_rename(void*buffer){
+
+	rename_params* parametros= (rename_params*)malloc(sizeof(rename_params));
+
+	int peso_old_path;
+	int peso_new_path;
+	int offset=0;
+
+	memcpy(parametros->flag,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(&peso_old_path,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(parametros->old_path,buffer+offset,peso_old_path);
+	offset+=peso_old_path;
+	memcpy(&peso_new_path,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(parametros->new_path,buffer+offset,peso_new_path);
+	offset+=peso_new_path;
+
+
+	return parametros;
+}
+
+
+char* decifrar_get_atributes(void* buffer){
+
+	int desplazamiento=0;
+	int longitud_a_copiar=0;
+	char* nombre_del_path;
+
+	desplazamiento+=sizeof(int);
+	memcpy(&longitud_a_copiar,buffer+desplazamiento,sizeof(int));
+	desplazamiento+=sizeof(int);
+	nombre_del_path= malloc(longitud_a_copiar);
+	memcpy(nombre_del_path,buffer+desplazamiento,longitud_a_copiar);
+
+	return nombre_del_path;
+
+
+
+
+}
+
 void serializar_y_enviar_resultado(void* resultado,int cliente_socket){
-	/* ESTO QUEDO MUY BONITO, HAY QUE TESTEARLO. DESCONFIO DEMASIADO TODO
-	 *DESPUES DE UNA BUENA REVISADA, SI NO ANDA ES PROQUE ALGUIEN HIZO CHANCHADAS ANTES
-	 *IGUAL ESTARIA BUENO PERGARLE UNA TESTEADA
-	 *
-	 */
-
-	/*DECLARO VARIABLES LOCALES*/
-	int peso_total= sizeof(*resultado);
+	int peso_total;
 	int peso_paquete=peso_total+sizeof(int);
+	memcpy(&peso_total,resultado,sizeof(int));
 
-	/*ALOCO PAQUETE*/
-	void* paquete=malloc(peso_paquete);
 
-	/*ESCRIBO EN EL PAQUETE A ENVIAR, EL RESULTADO Y CUANTO PESA
-	 * ASI PUEDEN ALOCARLO DESDE EL OTRO LADO*/
-	memcpy(paquete,&peso_total,sizeof(int));
-	memcpy(paquete+sizeof(int),resultado,peso_total);
+	send(cliente_socket, resultado, peso_paquete+sizeof(int), 0);
 
-	/*ENVIO EL PAQUETE*/
-	send(cliente_socket, paquete, peso_paquete, 0);
-
-	/*LIBERO RECURSOS*/
-	free(paquete);
 
 }
