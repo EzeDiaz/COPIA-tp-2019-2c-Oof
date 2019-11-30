@@ -625,8 +625,8 @@ void SUBSTRACT_MEMORY_LEFT(int size){
 //usemos 1 como usado y 0 como libre en el bool (LIBRE 1 - USADO 0)
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 	if(memory_left>=5){
-		int aux = size-5;
-		memcpy(pointer,&aux,sizeof(uint32_t));
+		//int aux = size-5; why -5?
+		memcpy(pointer,&size,sizeof(uint32_t));
 		memcpy(pointer+sizeof(uint32_t),&status,sizeof(bool));
 		SUBSTRACT_MEMORY_LEFT(5);
 		log_info(logger,"Se escribio la metadata en memoria");
@@ -811,12 +811,12 @@ void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment){
 
 int FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 	segment* a_segment = GET_SEGMENT_FROM_ADDRESS(address, address_space);
-	int addr = TRANSLATE_DL_TO_DF(address);
+	int offset = TRANSLATE_DL_TO_DF(address);
 	if(a_segment != NULL && a_segment->isHeap){
 		int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
 		if(frame >= 0){
 			void* ptr_to_frame = GET_FRAME_POINTER(frame);
-			void* ptr_to_metadata = ptr_to_frame + addr;
+			void* ptr_to_metadata = ptr_to_frame + offset - 5;
 			heapMetadata* frame_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata); //donde hago el free
 			WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_metadata, frame_metadata->size, 1);
 			MERGE_CONSECUTIVES_FREE_BLOCKS(a_segment);
@@ -876,6 +876,7 @@ void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 }
 
 int TRANSLATE_DL_TO_DF(uint32_t dl){
+	//Is this an offset?
 	int r = dl / page_size;
 	int df = dl - (page_size * r);
 
@@ -1042,11 +1043,11 @@ void REMOVE_FREE_PAGES_FROM_SEGMENT(segment* a_segment){
 	int page = GET_PAGE_NUMBER_FROM_ADDRESS(address, a_segment);
 
 	if(last_metadata->isFree){
-		int pages = last_metadata->size / page_size;
+		int pages = last_metadata->size / page_size; //Cantidad de paginas que ocupa de mas
 		int new_free_size = last_metadata->size - pages * page_size;
 		WRITE_HEAPMETADATA_IN_MEMORY(ptr_to_last_metadata, new_free_size, 1);
 
-		while(page < a_segment->pageFrameTable->elements_count){
+		while(page + 1 < a_segment->pageFrameTable->elements_count){ //Mientras la page
 			list_remove_and_destroy_element(a_segment->pageFrameTable, page+1, DESTROY_PAGE);
 		}
 	}

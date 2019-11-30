@@ -131,7 +131,7 @@ void muse_free(uint32_t dir) {
 	int tamanio_paquete;
 	memcpy(&tamanio_paquete, paquete_free, 4);
 
-	send(socket_MUSE, paquete_free,tamanio_paquete,0);
+	send(socket_MUSE, paquete_free,tamanio_paquete+4,0);
 
 	void* var_recepcion;
 	int tamanio_recepcion = sizeof(uint32_t);
