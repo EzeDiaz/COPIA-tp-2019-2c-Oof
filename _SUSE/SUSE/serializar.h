@@ -23,7 +23,7 @@
 #include <readline/readline.h>
 
 
-enum codigo_de_operacion{
+enum {
 	HILOLAY_INIT = 100,
 	SUSE_CREATE = 101,
 	SUSE_SCHEDULER_NEXT = 102,

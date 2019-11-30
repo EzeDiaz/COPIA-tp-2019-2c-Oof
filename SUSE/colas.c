@@ -43,8 +43,8 @@ void newToReady(){
 	sem_post(&un_proceso->procesos_en_ready);
 
 	sem_wait(&semaforo_log_colas);
-
 	log_info(log_colas,"Se paso el hilo a la cola Ready \n");
+	sem_post(&semaforo_log_colas);
 
 	free(pid);
 
@@ -86,40 +86,48 @@ void readyToExec(int PID)
 
 	char* pid=string_itoa(PID);
 	t_queue* cola_exec = obtener_cola_exec_de(pid);
+	t_queue* cola_ready = obtener_cola_ready_de(pid);
 
 	while(1){
 
-		if(esta_vacia(cola_exec)){
+		if(esta_vacia(cola_exec)&& !esta_vacia(cola_ready)){
 			char* tiempo_inicio= temporal_get_string_time();
 			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
 			long milisegundos_inicial= string_itoa(tiempo_inicio_separado_por_dos_puntos[3]);
 
 			hilo_t* hilo=suse_schedule_next(PID);
+			/*
+			bool tienen_mismo_tid(hilo_t*un_hilo){
+
+				return un_hilo->hilo_informacion->tid == hilo->hilo_informacion->tid;
+			}*/
+
+			list_remove(cola_ready->elements,0);
 
 			if(hilo == NULL){
 
 			}else{
-			sem_wait(&semaforo_diccionario_procesos_x_semaforo);
-			sem_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,pid);
-			sem_post(&semaforo_diccionario_procesos_x_semaforo);
+				sem_wait(&semaforo_diccionario_procesos_x_semaforo);
+				pthread_mutex_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,pid);
+				sem_post(&semaforo_diccionario_procesos_x_semaforo);
 
-			sem_wait(&semaforo_exec_x_proceso);
-			queue_push(cola_exec,hilo);
+				sem_wait(semaforo_exec_x_proceso);
+				queue_push(cola_exec,hilo);
 
-			hilo->estado_del_hilo = EXECUTE;
+				hilo->estado_del_hilo = EXECUTE;
 
-			char* tiempo_fin= temporal_get_string_time();
-			char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-			int milisegundos_final= string_itoa(tiempo_fin_separado_por_dos_puntos[3]);
+				char* tiempo_fin= temporal_get_string_time();
+				char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
+				int milisegundos_final= string_itoa(tiempo_fin_separado_por_dos_puntos[3]);
 
-			hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
+				hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
 
-			sem_post(&semaforo_exec_x_proceso);
+				sem_post(semaforo_exec_x_proceso);
 
 
-			sem_wait(&semaforo_log_colas);
-			log_info(log_colas,"Se paso el proceso a Exec \n");
-			sem_post(&semaforo_log_colas);
+				sem_wait(&semaforo_log_colas);
+				log_info(log_colas,"Se paso el proceso a Exec \n");
+				sem_post(&semaforo_log_colas);
 			}
 		}
 	}
@@ -188,7 +196,7 @@ void exec(hilo_t* hilo){
 
 void ejecutar_funcion(hilo_t* hilo){
 
-//TODO
+	//TODO
 
 
 }

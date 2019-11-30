@@ -39,10 +39,10 @@ void* serializar_suse_close(int tid){
 
 void* serializar_suse_join(int tid){
 
-	int peso_total_paquete = sizeof(int)*3;
+	int peso_total_paquete = sizeof(int)*2;
 	int codigo_de_operacion = SUSE_JOIN;
 	int offset = 0;
-	void* paquete = malloc(peso_total_paquete);
+	void* paquete = malloc(peso_total_paquete+sizeof(int));
 
 	memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
 	offset += sizeof(int);
@@ -81,8 +81,9 @@ void* serializar_suse_scheduler_next(){
 	int offset = 0;
 	void* paquete = malloc(peso_total_paquete);
 
-	memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
 	offset += sizeof(int);
+	memcpy(paquete,&offset,sizeof(int));
+
 	memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
 
 	return paquete;

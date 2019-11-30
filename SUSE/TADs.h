@@ -34,7 +34,7 @@ typedef struct{
 
 	t_list* hilos_del_programa;//lista de hilos_t*
 	sem_t* procesos_en_ready;
-
+	t_list* lista_de_bloqueados;
 }proceso_t;
 
 typedef struct{
@@ -42,6 +42,13 @@ typedef struct{
 	int tid;
 }semaforo_descifrado_t;
 
+typedef struct{
+
+	int valor_max;
+	int valor_inicial;
+	int valor_actual;
+
+}valores_semaforo_t;
 
 
 typedef struct{

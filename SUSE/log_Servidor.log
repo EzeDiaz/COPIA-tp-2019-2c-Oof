@@ -1,8 +1,10 @@
-[INFO] 19:48:14:850 Servidor/(6206:6206): Levantamos el servidor
+[INFO] 01:58:08:8 Servidor/(12188:12188): Levantamos el servidor
 
-[INFO] 19:48:14:850 Servidor/(6206:6206): Servidor listo para recibir un cliente
+[INFO] 01:58:08:8 Servidor/(12188:12188): Servidor listo para recibir un cliente
 
-[INFO] 19:48:39:909 Servidor/(6206:6206): Recibimos un cliente
+[INFO] 01:58:23:799 Servidor/(12188:12188): Recibimos un cliente
 
-[INFO] 19:48:39:922 Servidor/(6206:6256): Recibimos conexion 
+[INFO] 01:58:23:810 Servidor/(12188:12239): Recibimos conexion 
+
+[INFO] 02:03:35:389 Servidor/(12188:12239): Se desconecto el cliente
 
