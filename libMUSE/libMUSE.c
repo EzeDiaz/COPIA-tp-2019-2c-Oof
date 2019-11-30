@@ -106,7 +106,11 @@ void muse_close(){
 
 uint32_t muse_alloc(uint32_t tam){
 	void* paquete_alloc = crear_paquete_alloc(102,tam);
-	send(socket_MUSE, paquete_alloc,sizeof(paquete_alloc),0);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_alloc, 4);
+
+	send(socket_MUSE, paquete_alloc,tamanio_paquete+4,0);
 	free(paquete_alloc);
 
 	void* var_recepcion;
@@ -123,7 +127,11 @@ uint32_t muse_alloc(uint32_t tam){
 void muse_free(uint32_t dir) {
 	//Siendo void quiere decir que nada puede malir sal? --> No hacer recv (?)
 	void* paquete_free = crear_paquete_free(103,dir);
-	send(socket_MUSE, paquete_free,sizeof(paquete_free),0);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_free, 4);
+
+	send(socket_MUSE, paquete_free,tamanio_paquete,0);
 
 	void* var_recepcion;
 	int tamanio_recepcion = sizeof(uint32_t);

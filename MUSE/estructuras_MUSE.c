@@ -625,12 +625,10 @@ void SUBSTRACT_MEMORY_LEFT(int size){
 //usemos 1 como usado y 0 como libre en el bool (LIBRE 1 - USADO 0)
 void WRITE_HEAPMETADATA_IN_MEMORY(void* pointer, uint32_t size, bool status){
 	if(memory_left>=5){
-		sem_wait(&mp_semaphore);
 		int aux = size-5;
 		memcpy(pointer,&aux,sizeof(uint32_t));
 		memcpy(pointer+sizeof(uint32_t),&status,sizeof(bool));
 		SUBSTRACT_MEMORY_LEFT(5);
-		sem_post(&mp_semaphore);
 		log_info(logger,"Se escribio la metadata en memoria");
 	}else{
 		//aca hay que ver que hacemos si no hay espacio en memoria
@@ -682,7 +680,7 @@ int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment){
 		}
 		page_number++;
 	}
-	return NULL;
+	return -1;
 }
 
 int GET_PAGE_NUMBER_FROM_ADDRESS(uint32_t address, segment* a_segment){
@@ -816,7 +814,7 @@ int FREE_USED_FRAME(uint32_t address, addressSpace* address_space) {
 	int addr = TRANSLATE_DL_TO_DF(address);
 	if(a_segment != NULL && a_segment->isHeap){
 		int frame = GET_FRAME_FROM_ADDRESS(address, a_segment);
-		if(frame != NULL){
+		if(frame >= 0){
 			void* ptr_to_frame = GET_FRAME_POINTER(frame);
 			void* ptr_to_metadata = ptr_to_frame + addr;
 			heapMetadata* frame_metadata = READ_HEAPMETADATA_IN_MEMORY(ptr_to_metadata); //donde hago el free
