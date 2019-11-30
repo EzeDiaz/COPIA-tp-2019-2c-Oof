@@ -73,11 +73,12 @@ void desbloquear_hilo(t_list* lista_bloqueados, int PID){
 	char*pid=string_itoa(PID);
 	proceso_t* un_proceso=obtener_proceso(PID);
 	hilo_t* un_hilo= list_remove(lista_bloqueados,0);
-	t_queue* cola_ready = obtener_cola_ready_de(PID);
+	t_queue* cola_ready = obtener_cola_ready_de(pid);
 	queue_push(cola_ready,un_hilo);
 	un_hilo->estado_del_hilo=READY;
 	sem_post(un_proceso->procesos_en_ready);
 
+	free(pid);
 }
 
 
