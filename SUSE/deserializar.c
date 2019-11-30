@@ -144,7 +144,6 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 
 	void* paquete;
 	int size;
-	paquete = malloc(12);
 	switch(tipo_de_dato){
 	case BOOLEAN:
 		size=(sizeof(bool));
@@ -175,5 +174,6 @@ void armar_paquete(void* dato, int tipo_de_dato, int cliente){
 
 	int cosa=send(cliente,paquete,size+sizeof(int),0);
 
+	free(paquete);
 
 }
