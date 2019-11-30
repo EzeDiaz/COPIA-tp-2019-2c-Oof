@@ -847,8 +847,12 @@ void* GET_N_BYTES_DATA_FROM_MUSE(addressSpace* address_space, uint32_t src, size
 			}
 
 			void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
+			/*
 			void* ptr_to_data = ptr_to_frame + src; // va a donde empieza la data a leer
 			page_move_counter = ptr_to_data + bytes_a_copiar;
+			*/
+			void* ptr_to_data = ptr_to_frame + src; // va a donde empieza la data a leer
+			page_move_counter = src + bytes_a_copiar;
 
 			if(page_move_counter < page_size){ // si al sumar esos bytes sigo en mi pagina
 				memcpy(data+offset, ptr_to_data, bytes_a_copiar);

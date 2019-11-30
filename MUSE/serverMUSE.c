@@ -600,21 +600,29 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		uint32_t dest;
 		void* source;
 
-		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
-		offset= offset+sizeof(int);
-		memcpy(&dest, (buffer_recibido + offset), longitudDelSiguiente);
-		offset= offset+longitudDelSiguiente;
 
 		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
+		printf("PRIMERA LONGITUD: %d\n", longitudDelSiguiente);
+		offset= offset+sizeof(int);
+		memcpy(&dest, (buffer_recibido + offset), longitudDelSiguiente);
+		printf("EL DEST: %d\n", dest);
+		offset= offset+sizeof(uint32_t);
+
+		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
+		printf("LONGITUD DEL SRC: %d\n", longitudDelSiguiente);
 		offset= offset+sizeof(int);
 		source = (void*)malloc(longitudDelSiguiente);
 		memcpy(source, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
+		/*
 		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		memcpy(&n, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
+		*/
+
+		n = longitudDelSiguiente;
 
 		sem_wait(&logger_semaphore);
 		log_info(logger,"El cliente %d escribio %d bytes)", cliente, n);
