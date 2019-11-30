@@ -1,10 +1,8 @@
-[INFO] 12:09:31:196 Servidor/(2955:2955): Levantamos el servidor
+[INFO] 12:26:13:923 Servidor/(4002:4002): Levantamos el servidor
 
-[INFO] 12:09:31:198 Servidor/(2955:2955): Servidor listo para recibir un cliente
+[INFO] 12:26:13:924 Servidor/(4002:4002): Servidor listo para recibir un cliente
 
-[INFO] 12:09:47:409 Servidor/(2955:2955): Recibimos un cliente
+[INFO] 12:26:53:237 Servidor/(4002:4002): Recibimos un cliente
 
-[INFO] 12:09:47:426 Servidor/(2955:3009): Recibimos conexion 
-
-[INFO] 12:10:26:524 Servidor/(2955:3009): Se desconecto el cliente
+[INFO] 12:26:53:252 Servidor/(4002:4072): Recibimos conexion 
 

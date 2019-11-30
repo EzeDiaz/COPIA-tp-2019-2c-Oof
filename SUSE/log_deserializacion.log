@@ -1,24 +1,186 @@
-[INFO] 12:09:47:426 Deserializacion/(2955:3009): Estamos por deserializar el codigo de operacion
+[INFO] 12:26:53:252 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
 
-[INFO] 12:09:47:426 Deserializacion/(2955:3009): Obtuvimos el codigo de operacion 
+[INFO] 12:26:53:252 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
 
-[INFO] 12:09:47:426 Deserializacion/(2955:3009): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 12:26:53:252 Deserializacion/(4002:4072): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 12:09:56:373 Deserializacion/(2955:3009): Estamos por deserializar el codigo de operacion
+[INFO] 12:27:05:497 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
 
-[INFO] 12:09:56:373 Deserializacion/(2955:3009): Obtuvimos el codigo de operacion 
+[INFO] 12:27:05:497 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
 
-[INFO] 12:09:56:373 Deserializacion/(2955:3009): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 12:27:05:497 Deserializacion/(4002:4072): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 12:09:57:644 Deserializacion/(2955:3009): Estamos por deserializar el codigo de operacion
+[INFO] 12:27:16:532 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
 
-[INFO] 12:09:57:644 Deserializacion/(2955:3009): Obtuvimos el codigo de operacion 
+[INFO] 12:27:16:532 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
 
-[INFO] 12:09:57:644 Deserializacion/(2955:3009): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 12:27:16:532 Deserializacion/(4002:4072): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 12:10:06:540 Deserializacion/(2955:3009): Estamos por deserializar el codigo de operacion
+[INFO] 12:27:23:52 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
 
-[INFO] 12:10:06:540 Deserializacion/(2955:3009): Obtuvimos el codigo de operacion 
+[INFO] 12:27:23:52 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
 
-[INFO] 12:10:06:540 Deserializacion/(2955:3009): Es el codigo de 'suse_close', comenzando la deserializacion de parametros
+[INFO] 12:27:23:52 Deserializacion/(4002:4072): Es el codigo de 'suse_join', comenzando la deserializacion de parametros
+
+[INFO] 12:27:32:404 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:27:32:404 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:27:32:404 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:27:34:841 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:27:34:841 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:27:34:841 Deserializacion/(4002:4072): Es el codigo de 'suse_wait', comenzando la deserializacion de parametros
+
+[INFO] 12:27:48:230 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:27:48:230 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:27:48:230 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:27:55:884 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:27:55:884 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:27:55:884 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:27:58:441 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:27:58:441 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:27:58:441 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:28:04:73 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:28:04:73 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:28:04:73 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:28:14:28 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:28:14:28 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:28:14:28 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:28:28:667 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:28:28:667 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:28:28:667 Deserializacion/(4002:4072): Es el codigo de 'suse_wait', comenzando la deserializacion de parametros
+
+[INFO] 12:28:45:284 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:28:45:284 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:28:45:284 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:28:53:14 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:28:53:14 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:28:53:14 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:29:04:108 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:04:108 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:04:108 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:29:10:403 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:10:403 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:10:403 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:29:22:189 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:22:189 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:22:189 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:29:28:630 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:28:630 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:28:630 Deserializacion/(4002:4072): Es el codigo de 'suse_wait', comenzando la deserializacion de parametros
+
+[INFO] 12:29:36:444 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:36:444 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:36:444 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:29:42:138 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:42:139 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:42:139 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:29:56:132 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:29:56:132 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:29:56:132 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:30:02:802 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:02:802 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:02:802 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:30:13:504 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:13:504 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:13:504 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:30:20:511 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:20:511 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:20:511 Deserializacion/(4002:4072): Es el codigo de 'suse_wait', comenzando la deserializacion de parametros
+
+[INFO] 12:30:30:112 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:30:112 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:30:112 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:30:35:826 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:35:826 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:35:826 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:30:43:440 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:43:440 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:43:440 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:30:50:256 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:30:50:256 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:30:50:256 Deserializacion/(4002:4072): Es el codigo de 'suse_signal', comenzando la deserializacion de parametros
+
+[INFO] 12:31:03:328 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:31:03:328 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:31:03:328 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
+
+[INFO] 12:31:04:460 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:31:04:460 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:31:04:460 Deserializacion/(4002:4072): Es el codigo de 'suse_wait', comenzando la deserializacion de parametros
+
+[INFO] 12:31:11:532 Deserializacion/(4002:4072): Estamos por deserializar el codigo de operacion
+
+[INFO] 12:31:11:532 Deserializacion/(4002:4072): Obtuvimos el codigo de operacion 
+
+[INFO] 12:31:11:532 Deserializacion/(4002:4072): Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros
 

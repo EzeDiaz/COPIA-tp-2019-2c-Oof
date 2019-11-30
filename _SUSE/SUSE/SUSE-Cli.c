@@ -52,9 +52,12 @@ void suse_signal(int tid,char* semaforo){
 	void* paquete = serializar_suse_signal(tid,semaforo);
 	enviar_paquete(paquete);
 }
-void suse_schedule_next(){
+int suse_schedule_next(){
 	void* paquete = serializar_suse_scheduler_next();
-	enviar_paquete(paquete);
+	void* resultado=enviar_paquete(paquete);
+	int retorno;
+	memcpy(&retorno, resultado,sizeof(int));
+	return retorno;
 }
 void suse_wait(int tid, char* semaforo){
 	void* paquete = serializar_suse_wait(tid,semaforo);
