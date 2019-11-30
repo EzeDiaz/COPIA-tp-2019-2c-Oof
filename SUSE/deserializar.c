@@ -22,9 +22,9 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	switch(codigo_de_operacion){
 
 	case HILOLAY_INIT:
-			log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
-			armar_paquete((void*)_hilolay_init(cliente_socket),INT,cliente_socket);
-			break;
+		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
+		armar_paquete((void*)_hilolay_init(cliente_socket),INT,cliente_socket);
+		break;
 
 
 	case SUSE_CREATE:
@@ -37,37 +37,37 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
 		hilo_t* hilo_siguiente=suse_schedule_next(cliente_socket);
 		if(hilo_siguiente!=NULL){
-		armar_paquete((void*)hilo_siguiente->hilo_informacion->tid,INT,cliente_socket);
+			armar_paquete((void*)hilo_siguiente->hilo_informacion->tid,INT,cliente_socket);
 		}
 		else{armar_paquete((void*) (-1),INT,cliente_socket);}
 		break;
 
 	case SUSE_WAIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_wait', comenzando la deserializacion de parametros\n");
-		char* nombre_semaforo_wait=descifrar_suse_wait(buffer);
-		bool paquete=suse_wait(nombre_semaforo_wait ,cliente_socket);
-		armar_paquete((void*)paquete,BOOLEAN ,cliente_socket);
-		free(nombre_semaforo_wait);
+		semaforo_descifrado_t* semaforo_wait=descifrar_suse_wait(buffer);
+		int paquete=suse_wait(semaforo_wait->nombre_del_semaforo, semaforo_wait->tid,cliente_socket);
+		armar_paquete((void*)paquete,INT ,cliente_socket);
+		free(semaforo_wait);
 		break;
 
 	case SUSE_SIGNAL:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
-		char* nombre_semaforo_signal=descifrar_suse_signal(buffer);
-		armar_paquete((void*)suse_signal(nombre_semaforo_signal,cliente_socket),BOOLEAN,cliente_socket);
-		free(nombre_semaforo_signal);
+		semaforo_descifrado_t* semaforo_signal=descifrar_suse_signal(buffer);
+		armar_paquete((void*)suse_signal(semaforo_signal->nombre_del_semaforo,cliente_socket),INT,cliente_socket);
+		free(semaforo_signal);
 		break;
 
 	case SUSE_JOIN:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_join', comenzando la deserializacion de parametros\n");
 		TID=descifrar_suse_join(buffer);
-		armar_paquete((void*)suse_join(TID),INT,cliente_socket);
+		armar_paquete((void*)suse_join(TID,cliente_socket),INT,cliente_socket);
 
 		break;
 
 	case SUSE_CLOSE:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_close', comenzando la deserializacion de parametros\n");
 		TID = descifrar_suse_close(buffer);
-		armar_paquete(suse_close(TID),BOOLEAN,cliente_socket);
+		armar_paquete(suse_close(TID,cliente_socket),BOOLEAN,cliente_socket);
 
 		break;
 
@@ -100,27 +100,30 @@ int descifrar_suse_create(void*param){
 
 
 
-char* descifrar_suse_wait(void*param){
+semaforo_descifrado_t* descifrar_suse_wait(void*param){
+	semaforo_descifrado_t* semaforo=(semaforo_descifrado_t*)malloc(sizeof(semaforo_descifrado_t));
 	int offset=(int)sizeof(int);
 	int longitud_nombre=0;
-	char* nombre;
 	memcpy(&longitud_nombre, param+offset,sizeof(int));
-	nombre= (char*) malloc(longitud_nombre);
+	semaforo->nombre_del_semaforo= (char*) malloc(longitud_nombre);
 	offset+= sizeof(int);
-	memcpy(nombre, param+offset, longitud_nombre);
-	return nombre;
+	memcpy(semaforo->nombre_del_semaforo, param+offset, longitud_nombre);
+	offset+=longitud_nombre;
+	memcpy(&semaforo->tid, param+offset, sizeof(int));
+	return semaforo;
 }
 
 char* descifrar_suse_signal(void* param){
+	semaforo_descifrado_t* semaforo=(semaforo_descifrado_t*)malloc(sizeof(semaforo_descifrado_t));
 	int offset=(int)sizeof(int);
 	int longitud_nombre=0;
-	char* nombre;
 	memcpy(&longitud_nombre, param+offset,sizeof(int));
-	nombre= (char*) malloc(longitud_nombre);
+	semaforo->nombre_del_semaforo= (char*) malloc(longitud_nombre);
 	offset+= sizeof(int);
-	memcpy(nombre, param+offset, longitud_nombre);
-	return nombre;
-
+	memcpy(semaforo->nombre_del_semaforo, param+offset, longitud_nombre);
+	offset+=longitud_nombre;
+	memcpy(&semaforo->tid, param+offset, sizeof(int));
+	return semaforo;
 }
 
 int descifrar_suse_join(void* param){

@@ -22,7 +22,7 @@ void destruir_logs_sistema();
 void incializar_logs_sistema();
 void leer_config_y_setear();
 
-hilo_t* buscar_hilo_por_TID(int);
+hilo_t* buscar_hilo_por_TID(int,int);
 
 
 

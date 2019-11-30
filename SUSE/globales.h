@@ -52,7 +52,7 @@ t_dictionary* diccionario_bloqueados_por_semafaro;
 //COLAS
 t_queue* cola_new;
 t_queue* cola_exit;
-
+t_list* bloqueados;
 //VARIABLES
 float ALPHA_SJF;
 int PUERTO_ESCUCHA;

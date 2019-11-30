@@ -227,11 +227,16 @@ void exec_to_exit(hilo_t* hilo){
 	string_append(&clave,pid);
 	string_append(&clave,hilo_info);
 
-	t_list* bloqueados_por_join=dictionary_get(diccionario_bloqueados_por_semafaro,clave);
-
+	proceso_t* el_proceso=dictionary_get(diccionario_de_procesos,pid);
+	t_list* bloqueados_por_join=el_proceso->lista_de_joineados;
 	if(bloqueados_por_join->elements_count>0){
 		t_queue* cola_ready=obtener_cola_ready_de(hilo->PID);
-		void pusheador(hilo_t* un_hilo){
+		void pusheador(int TID){
+			bool mismoTID(hilo_t* hilo){
+				return hilo->hilo_informacion->tid==TID;
+
+			}
+			hilo_t* un_hilo=list_remove_by_condition(bloqueados,mismoTID);
 
 			queue_push(cola_ready,un_hilo);
 

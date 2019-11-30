@@ -34,7 +34,7 @@ typedef struct{
 
 	t_list* hilos_del_programa;//lista de hilos_t*
 	sem_t* procesos_en_ready;
-	t_list* lista_de_bloqueados;
+	t_list* lista_de_joineados;
 }proceso_t;
 
 typedef struct{

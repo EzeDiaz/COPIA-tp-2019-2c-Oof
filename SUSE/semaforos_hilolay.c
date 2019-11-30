@@ -19,7 +19,7 @@ void bloquear_hilo(t_list* lista_bloqueados, hilo_t* hilo){
 
 }
 
-bool wait(char*nombre_semaforo,int PID){
+int wait(char*nombre_semaforo,int TID,int PID){
 	bool flag=dictionary_has_key(diccionario_de_valor_por_semaforo,nombre_semaforo);
 
 	if(flag){
@@ -32,15 +32,17 @@ bool wait(char*nombre_semaforo,int PID){
 			dictionary_put(diccionario_de_valor_por_semaforo,nombre_semaforo,value);
 			sem_post(&semaforo_diccionario_por_semaforo);
 		}else{
-			hilo_t* hilo=queue_pop(obtener_cola_exec_de(PID));
+			hilo_t* hilo=buscar_hilo_por_TID(TID,PID);
 			sem_wait(&semaforo_estado_blocked);
 			t_list* lista_bloqueados = dictionary_get(diccionario_bloqueados_por_semafaro,nombre_semaforo);
-			bloquear_hilo(lista_bloqueados,hilo);
+			list_add(lista_bloqueados,hilo->hilo_informacion->tid);
+
+			bloquear_hilo(bloqueados,hilo);
 			sem_post(&semaforo_estado_blocked);
 
 		}
 	}
-	return flag;
+	return (int)flag;
 }
 
 
@@ -59,16 +61,20 @@ int signal(char*nombre_semaforo, int PID){
 			sem_wait(&semaforo_estado_blocked);
 			t_list* lista_bloqueados =dictionary_get(diccionario_bloqueados_por_semafaro,nombre_semaforo);
 			sem_post(&semaforo_estado_blocked);
+			int tid=desbloquear_hilo(bloqueados, PID);
+			bool remover_tid(int numero){
 
-			desbloquear_hilo(lista_bloqueados, PID);
+				return numero==tid;
+			}
+			list_remove_by_condition(lista_bloqueados,remover_tid);
 		}
-		return (bool)value;
+		return value->valor_actual;
 	}else{
 		return -1;
 	}
 }
 
-void desbloquear_hilo(t_list* lista_bloqueados, int PID){
+int desbloquear_hilo(t_list* lista_bloqueados, int PID){
 
 	char*pid=string_itoa(PID);
 	proceso_t* un_proceso=obtener_proceso(PID);
@@ -79,6 +85,7 @@ void desbloquear_hilo(t_list* lista_bloqueados, int PID){
 	sem_post(un_proceso->procesos_en_ready);
 
 	free(pid);
+	return un_hilo->hilo_informacion->tid;
 }
 
 

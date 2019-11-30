@@ -46,7 +46,7 @@ int descifrar_suse_create(void*);
 //void* suse_create(hilolay_t*, hilolay_attr_t*, (void*), void* );
 
 
-char* descifrar_suse_wait(void*);
+semaforo_descifrado_t* descifrar_suse_wait(void*);
 
 char* descifrar_suse_signal(void*);
 

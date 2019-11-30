@@ -34,11 +34,11 @@
 
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
 void suse_init();
-void* suse_close(int);
-int suse_join(int);
-void* suse_signal(char* semaforo, int PID);
+void* suse_close(int,int);
+int suse_join(int,int);
+int suse_signal(char* , int );
 hilo_t* suse_schedule_next(int);
-bool suse_wait(char*, int );
+int suse_wait(char*, int ,int );
 int suse_create(int, int);
 proceso_t* obtener_proceso(int);
 proceso_t* inicializar_proceso(int);

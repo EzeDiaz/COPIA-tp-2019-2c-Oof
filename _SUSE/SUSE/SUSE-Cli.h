@@ -12,9 +12,9 @@
 
 void suse_close(int);
 void suse_join(int);
-void suse_signal(char*);
+void suse_signal(int,char*);
 void suse_schedule_next();
-void suse_wait(char*);
+void suse_wait(int,char*);
 void suse_create(int);
 void _hilolay_init();
 

@@ -35,9 +35,9 @@ enum {
 
 void* serializar_suse_close(int);
 void* serializar_suse_join(int);
-void* serializar_suse_signal(char*);
+void* serializar_suse_signal(int,char*);
 void* serializar_suse_scheduler_next();
-void* serializar_suse_wait(char*);
+void* serializar_suse_wait(int,char*);
 void* serializar_suse_create(int);
 void* serializar_hilolay_init();
 

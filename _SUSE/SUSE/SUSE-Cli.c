@@ -48,16 +48,16 @@ void suse_join(int tid){
 	void* paquete = serializar_suse_join(tid);
 	enviar_paquete(paquete);
 }
-void suse_signal(char* semaforo){
-	void* paquete = serializar_suse_signal(semaforo);
+void suse_signal(int tid,char* semaforo){
+	void* paquete = serializar_suse_signal(tid,semaforo);
 	enviar_paquete(paquete);
 }
 void suse_schedule_next(){
 	void* paquete = serializar_suse_scheduler_next();
 	enviar_paquete(paquete);
 }
-void suse_wait(char* semaforo){
-	void* paquete = serializar_suse_wait(semaforo);
+void suse_wait(int tid, char* semaforo){
+	void* paquete = serializar_suse_wait(tid,semaforo);
 	enviar_paquete(paquete);
 }
 void suse_create(int tid){

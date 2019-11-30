@@ -62,6 +62,7 @@ void suse_init(){
 
 	cola_new = queue_create();
 	cola_exit = queue_create();
+	bloqueados=list_create();
 
 	/*INICIALIZO SEMAFOROS*/
 
@@ -102,8 +103,11 @@ void suse_init(){
 	un_valor->valor_max=atoi(SEM_MAX[i]);
 	un_valor->valor_actual=un_valor->valor_inicial;
 	dictionary_put(diccionario_de_valor_por_semaforo,SEM_IDS[i],un_valor);
+	dictionary_put(diccionario_bloqueados_por_semafaro,SEM_IDS[i],list_create());
 	i++;
 	}
+
+
 
 
 	/*INICIALIZO HILOS*/
@@ -287,9 +291,8 @@ hilo_t* suse_schedule_next(int PID){
 
 
 
-int suse_join(int TID_que_quiero_ejecutar){
-	hilo_t* hilo_a_ejecutar=buscar_hilo_por_TID(TID_que_quiero_ejecutar);
-	int PID=hilo_a_ejecutar->PID;
+int suse_join(int TID_que_quiero_ejecutar,int PID){
+	hilo_t* hilo_a_ejecutar=buscar_hilo_por_TID(TID_que_quiero_ejecutar,PID);
 
 
 	char* tid=string_itoa(TID_que_quiero_ejecutar);
@@ -308,31 +311,30 @@ int suse_join(int TID_que_quiero_ejecutar){
 
 	}
 
-	bloquear_hilo(un_proceso->lista_de_bloqueados,hilo_a_bloquear);
+	list_add(un_proceso->lista_de_joineados,hilo_a_bloquear->hilo_informacion->tid);
+	bloquear_hilo(bloqueados,hilo_a_bloquear);
 	queue_push(cola_exec,hilo_a_ejecutar);
 
 	return 1;
 }
 
 
-bool suse_wait(char* semaforo, int PID){
+int suse_wait(char* semaforo, int TID,int PID){
 
-	return wait(semaforo,PID);
+	return wait(semaforo,TID,PID);
 }
 
 
-void* suse_signal(char* semaforo, int PID){
+int suse_signal(char* semaforo, int TID){
 	//Genero una operacion signal sobre el semaforo dado
-	signal(semaforo,PID);
-	//no sabemos que retorna, revisar issue #22
-	return NULL;
+	return signal(semaforo,TID);
 }
 
-void* suse_close(int TID){
+void* suse_close(int TID,int PID){
 	// Con el TID que me pasan yo tengo que identificar al hilo en cuestion
 	// para poder mandarlo a EXIT
 	hilo_t* un_hilo;
-	un_hilo=buscar_hilo_por_TID(TID); //Esto esta matado
+	un_hilo=buscar_hilo_por_TID(TID,PID); //Esto esta matado
 	exit_thread(un_hilo);
 	return NULL;
 }
@@ -346,7 +348,7 @@ int _hilolay_init(int PID){
 	proceso_t* un_proceso;
 	un_proceso =malloc(sizeof(proceso_t));
 	un_proceso->hilos_del_programa=list_create();
-	un_proceso->lista_de_bloqueados=list_create();
+	un_proceso->lista_de_joineados=list_create();
 
 	dictionary_put(diccionario_de_procesos, pid ,un_proceso);
 	t_list* vector_queues=list_create();
