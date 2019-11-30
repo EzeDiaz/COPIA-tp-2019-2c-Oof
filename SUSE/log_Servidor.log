@@ -1,10 +1,10 @@
-[INFO] 06:06:21:951 Servidor/(22204:22204): Levantamos el servidor
+[INFO] 06:17:51:377 Servidor/(22597:22597): Levantamos el servidor
 
-[INFO] 06:06:21:951 Servidor/(22204:22204): Servidor listo para recibir un cliente
+[INFO] 06:17:51:378 Servidor/(22597:22597): Servidor listo para recibir un cliente
 
-[INFO] 06:06:49:993 Servidor/(22204:22204): Recibimos un cliente
+[INFO] 06:18:07:356 Servidor/(22597:22597): Recibimos un cliente
 
-[INFO] 06:06:49:997 Servidor/(22204:22254): Recibimos conexion 
+[INFO] 06:18:07:365 Servidor/(22597:22653): Recibimos conexion 
 
-[INFO] 06:09:52:694 Servidor/(22204:22254): Se desconecto el cliente
+[INFO] 06:18:16:258 Servidor/(22597:22653): Se desconecto el cliente
 

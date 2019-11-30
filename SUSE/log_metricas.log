@@ -1,8 +1,8 @@
-[INFO] 06:08:18:418 log_metricas/(22204:22254): grado de programacion actual: 14 
+[INFO] 06:18:16:256 log_metricas/(22597:22653): grado de programacion actual: 14 
 
-[INFO] 06:08:18:418 log_metricas/(22204:22254): el semaforo afinado
-[INFO] 06:08:18:418 log_metricas/(22204:22254):  tiene un valor de 134607104 
+[INFO] 06:18:16:256 log_metricas/(22597:22653): el semaforo afinado
+[INFO] 06:18:16:256 log_metricas/(22597:22653):  tiene un valor de 0 
 
-[INFO] 06:08:18:418 log_metricas/(22204:22254): el semaforo solo_hiper_mega_piola
-[INFO] 06:08:18:418 log_metricas/(22204:22254):  tiene un valor de 134607256 
+[INFO] 06:18:16:256 log_metricas/(22597:22653): el semaforo solo_hiper_mega_piola
+[INFO] 06:18:16:256 log_metricas/(22597:22653):  tiene un valor de 1 
 

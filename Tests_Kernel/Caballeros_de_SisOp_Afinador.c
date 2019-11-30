@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
 	//hilolay_join(&afinador);
 	//hilolay_wait(afinado);
-	hilolay_signal(afinado);
+	//hilolay_signal(afinado);
 
 	//TODO no tenemos hilos en ready y rompe
 	hilolay_sem_close(solo_hiper_mega_piola);

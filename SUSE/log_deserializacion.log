@@ -1,24 +1,24 @@
-[INFO] 06:06:49:997 Deserializacion/(22204:22254): Estamos por deserializar el codigo de operacion
+[INFO] 06:18:07:365 Deserializacion/(22597:22653): Estamos por deserializar el codigo de operacion
 
-[INFO] 06:06:49:997 Deserializacion/(22204:22254): Obtuvimos el codigo de operacion 
+[INFO] 06:18:07:365 Deserializacion/(22597:22653): Obtuvimos el codigo de operacion 
 
-[INFO] 06:06:49:997 Deserializacion/(22204:22254): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 06:18:07:365 Deserializacion/(22597:22653): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 06:06:50:20 Deserializacion/(22204:22254): Estamos por deserializar el codigo de operacion
+[INFO] 06:18:07:376 Deserializacion/(22597:22653): Estamos por deserializar el codigo de operacion
 
-[INFO] 06:06:50:20 Deserializacion/(22204:22254): Obtuvimos el codigo de operacion 
+[INFO] 06:18:07:376 Deserializacion/(22597:22653): Obtuvimos el codigo de operacion 
 
-[INFO] 06:06:50:20 Deserializacion/(22204:22254): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 06:18:07:376 Deserializacion/(22597:22653): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 06:06:50:20 Deserializacion/(22204:22254): Estamos por deserializar el codigo de operacion
+[INFO] 06:18:07:376 Deserializacion/(22597:22653): Estamos por deserializar el codigo de operacion
 
-[INFO] 06:06:50:20 Deserializacion/(22204:22254): Obtuvimos el codigo de operacion 
+[INFO] 06:18:07:376 Deserializacion/(22597:22653): Obtuvimos el codigo de operacion 
 
-[INFO] 06:06:50:20 Deserializacion/(22204:22254): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
+[INFO] 06:18:07:376 Deserializacion/(22597:22653): Es el codigo de 'suse_create', comenzando la deserializacion de parametros
 
-[INFO] 06:06:54:270 Deserializacion/(22204:22254): Estamos por deserializar el codigo de operacion
+[INFO] 06:18:12:537 Deserializacion/(22597:22653): Estamos por deserializar el codigo de operacion
 
-[INFO] 06:06:54:270 Deserializacion/(22204:22254): Obtuvimos el codigo de operacion 
+[INFO] 06:18:12:537 Deserializacion/(22597:22653): Obtuvimos el codigo de operacion 
 
-[INFO] 06:06:54:270 Deserializacion/(22204:22254): Es el codigo de 'suse_close', comenzando la deserializacion de parametros
+[INFO] 06:18:12:537 Deserializacion/(22597:22653): Es el codigo de 'suse_close', comenzando la deserializacion de parametros
 

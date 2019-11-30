@@ -1,10 +1,10 @@
-[INFO] 06:08:18:418 log_metricas_programa/(22204:22254): El programa con PID 11 tiene los siguientes hilos en estos estados: 
+[INFO] 06:18:16:256 log_metricas_programa/(22597:22653): El programa con PID 11 tiene los siguientes hilos en estos estados: 
 
-[INFO] 06:08:18:418 log_metricas_programa/(22204:22254): NEW---> 0 hilos
+[INFO] 06:18:16:256 log_metricas_programa/(22597:22653): NEW---> 0 hilos
 
-[INFO] 06:08:18:418 log_metricas_programa/(22204:22254): READY---> 0 hilos
+[INFO] 06:18:16:256 log_metricas_programa/(22597:22653): READY---> 0 hilos
 
-[INFO] 06:08:18:418 log_metricas_programa/(22204:22254): EXECUTE---> 1 hilos
+[INFO] 06:18:16:256 log_metricas_programa/(22597:22653): EXECUTE---> 1 hilos
 
-[INFO] 06:08:18:418 log_metricas_programa/(22204:22254): BLOCKED---> 0 hilos
+[INFO] 06:18:16:256 log_metricas_programa/(22597:22653): BLOCKED---> 0 hilos
 
