@@ -895,9 +895,13 @@ int WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t
 	int page_number = GET_PAGE_NUMBER_FROM_ADDRESS(dst, a_segment);
 	int offset = 0;
 	int bytes = bytes_a_copiar;
+	int metadata_page_num;
+	int initial_offset;
+	int metadata_offset;
+	int pages_in_the_middle;
 
 	if(a_segment != NULL){
-		dst = TRANSLATE_DL_TO_DF(dst);
+		//initial_offset = TRANSLATE_DL_TO_DF(dst);
 		pageFrame* current_page = list_get(page_frame_table, page_number);
 
 		while(page_frame_table->elements_count > page_number && bytes > 0){
@@ -905,10 +909,19 @@ int WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t
 				BRING_FROM_SWAP(a_segment, current_page);
 			}
 
-			heapMetadata* metadata = GET_METADATA_BEHIND_ADDRESS(dst, page_frame_table);
-			if(metadata->size > bytes_a_copiar + dst){ //Si tengo espacio suficiente para copiar, copio
+			heapMetadata* metadata = GET_METADATA_BEHIND_ADDRESS(dst, page_frame_table, &metadata_page_num, &metadata_offset);
+
+			if((((dst - a_segment->base)/page_size) - metadata_page_num) > 0) {
+				pages_in_the_middle = ((dst - a_segment->base)/page_size) - metadata_page_num;
+			} else {
+				pages_in_the_middle = 0;
+			}
+
+			initial_offset = (pages_in_the_middle * page_size) + TRANSLATE_DL_TO_DF(dst) - (metadata_offset + 5);
+
+			if(metadata->size > bytes_a_copiar + initial_offset){ //Si tengo espacio suficiente para copiar, copio
 				void* ptr_to_frame = GET_FRAME_POINTER(current_page->frame_number);
-				void* ptr_to_data = ptr_to_frame + dst; // va a donde empieza la data a escribir
+				void* ptr_to_data = ptr_to_frame + TRANSLATE_DL_TO_DF(dst); // va a donde empieza la data a escribir
 
 				page_move_counter = ptr_to_data + bytes_a_copiar;
 
@@ -930,7 +943,9 @@ int WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t
 						offset = offset + bytes_en_frame_anterior;
 					} //ultima pagina, no se puede seguir
 				}
+				free(metadata);
 			} else {
+				free(metadata);
 				return -1; // else no tengo espacio suficiente
 			}
 		}
@@ -940,7 +955,7 @@ int WRITE_N_BYTES_DATA_TO_MUSE(uint32_t dst, addressSpace* address_space, size_t
 	}
 }
 
-heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_table){
+heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_table, int metadata_page_num, int metadata_offset){
 	heapMetadata* current_metadata;
 	int page_number = 0;
 	pageFrame* current_page = list_get(page_frame_table, 0);
@@ -977,10 +992,17 @@ heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_t
 					}
 				}
 			}
-
 		}
 	}
 
+	if(page_number < page_frame_table->elements_count) {
+		metadata_page_num = page_number;
+	} else {
+		metadata_page_num = page_number - 1;
+	}
+	//Si me pase, le resto uno y me lo llevo. Si no, me lo llevo como esta
+
+	metadata_offset = (ptr_to_LA_metadata - mp_pointer) % page_size;
 	return READ_HEAPMETADATA_IN_MEMORY(ptr_to_LA_metadata);
 }
 
