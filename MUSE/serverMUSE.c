@@ -617,7 +617,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		offset= offset+sizeof(int);
 		memcpy(&n, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
-		*/
+		 */
 
 		n = longitudDelSiguiente;
 
@@ -908,7 +908,13 @@ void realizarRequest(void *buffer_recibido, int cliente){
 
 				sem_wait(&mp_semaphore);
 				//Libero los frames que tenga tomados en memoria
-				//TODO - ver CLIENT_LEFT_THE_SYSTEM
+				//Inspirado en CLIENT_LEFT_THE_SYSTEM
+				void liberar_frames_de_memoria(pageFrame* a_page) {
+					if(a_page->presenceBit) {
+						FREE_MEMORY_FRAME_BITMAP(a_page->frame_number);
+					}
+				}
+				list_iterate(a_segm->pageFrameTable, liberar_frames_de_memoria);
 				sem_post(&mp_semaphore);
 
 				//Borro el segmento
