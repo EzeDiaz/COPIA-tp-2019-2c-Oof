@@ -209,7 +209,11 @@ int muse_cpy(uint32_t dst, void* src, int n){
 /////////////////////////////////////////////////////////////////////////////
 uint32_t muse_map(char *path, size_t length, int flags){
 	void* paquete_map = crear_paquete_map(106, path, length, flags);
-	send(socket_MUSE, paquete_map,sizeof(paquete_map),0);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_map, 4);
+
+	send(socket_MUSE, paquete_map,tamanio_paquete+4,0);
 	free(paquete_map);
 
 	void* var_recepcion;
@@ -225,7 +229,11 @@ uint32_t muse_map(char *path, size_t length, int flags){
 
 int muse_sync(uint32_t addr, size_t len){
 	void* paquete_sync = crear_paquete_sync(107, addr, len);
-	send(socket_MUSE, paquete_sync,sizeof(paquete_sync),0);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_sync, 4);
+
+	send(socket_MUSE, paquete_sync, tamanio_paquete+4,0);
 	free(paquete_sync);
 
 	void* var_recepcion;
@@ -245,7 +253,11 @@ int muse_sync(uint32_t addr, size_t len){
 
 int muse_unmap(uint32_t dir){
 	void* paquete_unmap = crear_paquete_unmap(108, dir);
-	send(socket_MUSE, paquete_unmap,sizeof(paquete_unmap),0);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_unmap, 4);
+
+	send(socket_MUSE, paquete_unmap, tamanio_paquete+4,0);
 	free(paquete_unmap);
 
 	void* var_recepcion;

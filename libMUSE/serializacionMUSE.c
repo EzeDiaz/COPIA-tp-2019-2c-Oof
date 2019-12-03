@@ -240,10 +240,13 @@ void* crear_paquete_map(int codigo_de_operacion, char* path, size_t length, int 
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
 
-	void* paquete=(void*)malloc(peso_total);
+	void* paquete=(void*)malloc(peso_total+4);
 
 	int offset=0;
 	peso_del_siguiente=0;
+
+	memcpy(paquete+offset, &peso_total, sizeof(int));
+	offset+=sizeof(int);
 
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;
@@ -284,10 +287,13 @@ void* crear_paquete_sync(int codigo_de_operacion, uint32_t addr, size_t len) {
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
 
-	void* paquete=(void*)malloc(peso_total);
+	void* paquete=(void*)malloc(peso_total+4);
 
 	int offset=0;
 	peso_del_siguiente=0;
+
+	memcpy(paquete+offset, &peso_total, sizeof(int));
+	offset+=sizeof(int);
 
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;
@@ -319,10 +325,13 @@ void* crear_paquete_unmap(int codigo_de_operacion, uint32_t dir) {
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
 
-	void* paquete=(void*)malloc(peso_total);
+	void* paquete=(void*)malloc(peso_total+4);
 
 	int offset=0;
 	peso_del_siguiente=0;
+
+	memcpy(paquete+offset, &peso_total, sizeof(int));
+	offset+=sizeof(int);
 
 	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
 	offset+=peso_codigo_de_operacion;
