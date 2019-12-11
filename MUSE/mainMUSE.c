@@ -54,10 +54,7 @@ int main(){
 
 	//Inicializo las cuestiones del clock
 	clock_pointer = 0;
-	//No se que tan necesario es esto
-	for(int i=0;i<memory_size/page_size;i++){
-		clock_table[i]=  (pageFrame*) malloc(sizeof(pageFrame));
-	}
+	clock_table = dictionary_create();
 
 	/*
 		WRITE_HEAPMETADATA_IN_MEMORY(mp_pointer,memory_left,0);
@@ -74,5 +71,8 @@ int main(){
 	iniciarServidor();
 
 	DESTROY_SEMAPHORES();
+
+	//Free del swap file
+
 	return 0;
 }

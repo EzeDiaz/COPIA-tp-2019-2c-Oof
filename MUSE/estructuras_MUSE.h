@@ -83,7 +83,7 @@ uint32_t FIRST_FIT(t_list* segment_table, uint32_t base, uint32_t size);
 segment* GET_SEGMENT_FROM_BASE(uint32_t base, addressSpace* address_space);
 int GET_OFFSET_FROM_POINTER(void* pointer);
 int GET_FRAME_NUMBER_FROM_POINTER(void* pointer);
-void* GET_LAST_METADATA(segment* a_segment);
+void* GET_LAST_METADATA(segment* a_segment, int *page, uint32_t *metadata_size, int *bytes_next_frame, int *bytes_current_frame);
 bool SEGMENT_CAN_BE_EXTENDED(segment* a_segment, addressSpace* an_address_space, uint32_t intended_size);
 void* SEGMENT_IS_BIG_ENOUGH(segment* a_segment, uint32_t intended_size);
 t_list* GET_HEAP_SEGMENTS(addressSpace* address_space);
@@ -109,8 +109,9 @@ segment* GET_SEGMENT__ADDRESS(uint32_t, addressSpace*);
 int GET_FRAME_FROM_ADDRESS(uint32_t address, segment* a_segment);
 void MERGE_CONSECUTIVES_FREE_BLOCKS(segment* a_segment);
 int FREE_USED_FRAME(uint32_t address, addressSpace* address_space);
-heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, t_list* page_frame_table, int metadata_page_num, int metadata_offset);
+heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, segment* a_segment, int *metadata_page_num, int *metadata_offset);
 void BRING_FROM_SWAP(segment* a_segment, pageFrame* current_page);
+int TOTAL_MEMORY_SIZE();
 
 //Potentially deprecated
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name);

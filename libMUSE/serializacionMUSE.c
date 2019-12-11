@@ -40,6 +40,30 @@ void* crear_paquete_init(int codigo_de_operacion, char* IP_id) {
 	return paquete;
 }
 
+void* crear_paquete_close(int codigo_de_operacion) {
+	//Todos los pesos de los elementos
+	int peso_total=0;
+	int peso_codigo_de_operacion=sizeof(int);
+	int peso_del_siguiente;
+
+	//Suma del peso total: sizeof(tamanio del elem)+sizeof(elem) --> Sumado por cada elem.
+	//El peso del codigo_de_operacion no tiene sentido ponerlo, ya se que es un int.
+	peso_total+=peso_codigo_de_operacion;
+
+	void* paquete=(void*)malloc(peso_total+4);
+
+	int offset=0;
+	peso_del_siguiente=0;
+
+	memcpy(paquete+offset, &peso_total, sizeof(int));
+	offset+=sizeof(int);
+
+	memcpy(paquete+offset, &codigo_de_operacion, peso_codigo_de_operacion);
+	offset+=peso_codigo_de_operacion;
+
+	return paquete;
+}
+
 void* crear_paquete_alloc(int codigo_de_operacion, uint32_t bytes_a_reservar) {
 	//Todos los pesos de los elementos
 	int peso_total=0;
@@ -184,7 +208,7 @@ void* crear_paquete_cpy(int codigo_de_operacion, uint32_t dst, void* src, size_t
 	peso_del_siguiente=sizeof(n);
 	peso_total+=sizeof(peso_del_siguiente);
 	peso_total+=peso_del_siguiente;
-	*/
+	 */
 
 	void* paquete=(void*)malloc(peso_total+4);
 
@@ -213,7 +237,7 @@ void* crear_paquete_cpy(int codigo_de_operacion, uint32_t dst, void* src, size_t
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
 	memcpy(paquete+offset, &n, peso_del_siguiente);
-	*/
+	 */
 
 	return paquete;
 }
@@ -255,11 +279,13 @@ void* crear_paquete_map(int codigo_de_operacion, char* path, size_t length, int 
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
 	memcpy(paquete+offset, path, peso_del_siguiente);
+	offset+=peso_del_siguiente;
 
 	peso_del_siguiente=sizeof(length);
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
 	memcpy(paquete+offset, &length, peso_del_siguiente);
+	offset+=peso_del_siguiente;
 
 	peso_del_siguiente=sizeof(flags);
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
@@ -302,6 +328,7 @@ void* crear_paquete_sync(int codigo_de_operacion, uint32_t addr, size_t len) {
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));
 	offset+=sizeof(peso_del_siguiente);
 	memcpy(paquete+offset, &addr, peso_del_siguiente);
+	offset+=peso_del_siguiente;
 
 	peso_del_siguiente=sizeof(len);
 	memcpy(paquete+offset, &peso_del_siguiente, sizeof(peso_del_siguiente));

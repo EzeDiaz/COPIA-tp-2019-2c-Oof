@@ -1,10 +1,35 @@
-[INFO] 09:25:47:382 main_server/(4101:4101): Logger creado
-[INFO] 09:25:47:415 main_server/(4101:4101): Archivo config levantado
-[INFO] 09:25:47:416 main_server/(4101:4101): El config tiene los campos necesarios para operar
-[INFO] 09:25:47:416 main_server/(4101:4101): Puerto de escucha: 5003
-[INFO] 09:25:47:416 main_server/(4101:4101): Tamanio de memoria (Bytes) 4096
-[INFO] 09:25:47:416 main_server/(4101:4101): Tamanio de pagina  (Bytes) 32
-[INFO] 09:25:47:416 main_server/(4101:4101): Tamanio de swap  (Bytes) 1024
-[INFO] 09:25:47:416 main_server/(4101:4101): Memoria creada
-[INFO] 09:25:47:416 main_server/(4101:4101): Levantamos el servidor con la ip 192.168.0.206
-[INFO] 09:25:47:416 main_server/(4101:4101): Servidor listo para recibir un cliente
+[INFO] 13:10:52:365 main_server/(19947:19947): Logger creado
+[INFO] 13:10:52:366 main_server/(19947:19947): Archivo config levantado
+[INFO] 13:10:52:366 main_server/(19947:19947): El config tiene los campos necesarios para operar
+[INFO] 13:10:52:366 main_server/(19947:19947): Puerto de escucha: 5003
+[INFO] 13:10:52:366 main_server/(19947:19947): Tamanio de memoria (Bytes) 4096
+[INFO] 13:10:52:366 main_server/(19947:19947): Tamanio de pagina  (Bytes) 32
+[INFO] 13:10:52:366 main_server/(19947:19947): Tamanio de swap  (Bytes) 1024
+[INFO] 13:10:52:366 main_server/(19947:19947): Memoria creada
+[INFO] 13:10:52:366 main_server/(19947:19947): Levantamos el servidor con la ip 0
+[INFO] 13:10:52:366 main_server/(19947:19947): Servidor listo para recibir un cliente
+[INFO] 13:11:03:930 main_server/(19947:19947): Recibimos un cliente
+[INFO] 13:11:03:941 main_server/(19947:20043): Recibimos conexion
+[INFO] 13:11:03:941 main_server/(19947:20043): Recv al recibirBuffer dio 4
+[INFO] 13:11:03:941 main_server/(19947:20043): Se inicializo el cliente 6 (muse_init)
+[INFO] 13:11:03:943 main_server/(19947:20043): Terminamos el request del cliente 6
+[INFO] 13:11:03:943 main_server/(19947:20043): Recv al recibirBuffer dio 4
+[INFO] 13:11:03:943 main_server/(19947:20043): El cliente 6 pidio memoria, laburamos... (muse_alloc)
+[INFO] 13:11:03:943 main_server/(19947:20043): Debe crearse un nuevo segmento (cliente 6)
+[INFO] 13:11:03:943 main_server/(19947:20043): No habia segmentos. Creo el primero (cliente 6)
+[INFO] 13:11:03:943 main_server/(19947:20043): Se reservaron 1 frames (cliente 6)
+[INFO] 13:11:03:947 main_server/(19947:20043): Se otorgo la direccion virtual 5 (cliente 6)
+[INFO] 13:11:03:948 main_server/(19947:20043): Porcentaje de asignacion de memoria [socket 6]: 100%
+[INFO] 13:11:03:948 main_server/(19947:20043): Memoria disponible en ultimo segmento asignado [socket 6]: 12 bytes
+[INFO] 13:11:03:948 main_server/(19947:20043): Memoria total pedida por cliente 0-70: 10 bytes
+[INFO] 13:11:03:948 main_server/(19947:20043): Memoria total liberada por cliente 0-70: 0 bytes
+[INFO] 13:11:03:948 main_server/(19947:20043): Memory leaks del cliente 0-70: 10 bytes
+[INFO] 13:11:03:948 main_server/(19947:20043): Memoria disponible: 4096 bytes
+[INFO] 13:11:03:948 main_server/(19947:20043): Terminamos el request del cliente 6
+[INFO] 13:11:03:948 main_server/(19947:20043): Recv al recibirBuffer dio 4
+[INFO] 13:11:03:948 main_server/(19947:20043): El cliente 6 pidio memoria, laburamos... (muse_alloc)
+[INFO] 13:11:03:948 main_server/(19947:20043): Se intento usar espacio de algun segmento (cliente 6)
+[INFO] 13:11:03:948 main_server/(19947:20043): El segmento puede extenderse
+[INFO] 13:11:03:948 main_server/(19947:20043): Solicito los frames que hagan falta
+[INFO] 13:11:05:836 main_server/(19947:20043): Le doy frames a la nueva pagina
+[INFO] 13:11:07:751 main_server/(19947:20043): Agregue la pagina al clock

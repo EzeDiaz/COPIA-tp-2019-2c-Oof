@@ -36,8 +36,6 @@
 #include <fcntl.h>
 #include <pthread.h>
 
-
-
 void atenderCliente(int cliente){
 
 	void* buffer;
@@ -123,13 +121,28 @@ void* recibirBuffer(int* alocador, int cliente){
 		buffer = malloc(*alocador);
 		recv(cliente, buffer,*alocador, MSG_WAITALL);
 		return buffer;
-	} else if(recv_result == 0){
+	} else if(recv_result == 0){ //Tanto en seg fault como otro error igual devuelve 0
 		*alocador=0;
+		client* cliente_found = FIND_CLIENT_BY_SOCKET(cliente);
+		if(cliente_found != NULL) {
+			sem_wait(&mp_semaphore);
+			sem_wait(&mapped_files_semaphore);
+			sem_wait(&logger_semaphore);
+			LOG_METRICS(cliente);
+			sem_post(&logger_semaphore);
+			sem_post(&mp_semaphore);
+			sem_post(&mapped_files_semaphore);
+			sem_wait(&logger_semaphore);
+			log_info(logger,"El cliente %d dejo el sistema pero no hizo muse_close, lo saco de prepo", cliente);
+			sem_post(&logger_semaphore);
+			CLIENT_LEFT_THE_SYSTEM(cliente);
+		}
 		return buffer;
 	}
 
 	//Si da menor a 0 es porque el cliente se desconecto mal (seg_fault o algo asi).
 	//Entonces, lo saco de prepo del sistema. Deberia chequear si, en una de esas, no salio antes?
+	//Will it ever come here?
 	if(recv_result < 0) {
 		CLIENT_LEFT_THE_SYSTEM(cliente);
 		sem_wait(&mp_semaphore);
@@ -191,6 +204,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		sem_post(&logger_semaphore);
 
 		free(buffer);
+		free(IP_ID);
 		break;
 
 		//close
@@ -229,7 +243,6 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		sem_wait(&logger_semaphore);
 		log_info(logger,"El cliente %d pidio memoria, laburamos... (muse_alloc)", cliente);
 		sem_post(&logger_semaphore);
-
 		sem_wait(&client->client_sempahore);
 		if(memory_left >= bytes_a_reservar) {
 			if(THERE_ARE_EXISTING_HEAP_SEGMENTS(client_address_space)) {
@@ -239,17 +252,6 @@ void realizarRequest(void *buffer_recibido, int cliente){
 						sem_wait(&mp_semaphore);
 						pointer = SEGMENT_IS_BIG_ENOUGH(un_segmento, bytes_a_reservar + 5); //Porque quiero guardar la ultima metadata
 						if(pointer != NULL) {
-							//El segmento tiene lugar
-							uint32_t bytes_que_habia;
-							uint32_t bytes_sobrantes;
-							memcpy(&bytes_que_habia, pointer - 5, sizeof(uint32_t));
-							//Sobreescribo la metadata
-							memcpy(pointer - 5, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(pointer - 1, &falseStatus, sizeof(bool));
-							//Escribo la nueva metadata
-							bytes_sobrantes = bytes_que_habia - bytes_a_reservar - 5;
-							memcpy(pointer + bytes_a_reservar, &bytes_sobrantes, sizeof(uint32_t));
-							memcpy(pointer + bytes_a_reservar + sizeof(uint32_t), &trueStatus, sizeof(bool));
 							se_pudo_reservar_flag = 1;
 							segment_base = un_segmento->base;
 						}
@@ -261,11 +263,39 @@ void realizarRequest(void *buffer_recibido, int cliente){
 					if(!se_pudo_reservar_flag) {
 						sem_wait(&mp_semaphore);
 						if(SEGMENT_CAN_BE_EXTENDED(un_segmento, client_address_space, bytes_a_reservar + 5)) {
+							sem_wait(&logger_semaphore);
+							log_info(logger,"El segmento puede extenderse");
+							sem_post(&logger_semaphore);
 							//Puedo agrandar el segmento
-							void* last_metadata = GET_LAST_METADATA(un_segmento);
-							pointer = last_metadata + 5;
+							int page = 0;
+							int bytes_current_frame = 0;
+							int bytes_next_frame = 0;
 							uint32_t internal_fragmentation;
-							memcpy(&internal_fragmentation, last_metadata, sizeof(uint32_t));
+							void* last_metadata = GET_LAST_METADATA(un_segmento, &page, &internal_fragmentation, &bytes_next_frame, &bytes_current_frame);
+							pointer = last_metadata; // Ya recibo el pointer apuntando a donde escribir (salteando metadata)
+
+							//Esto va a funcionar como mi flag para saber si mi metadata esta spliteada
+							if(bytes_current_frame > 0 && bytes_next_frame > 0){
+								//Sobreescribo metadata spliteada
+								pageFrame* last_page = list_get(un_segmento->pageFrameTable, page);
+								pageFrame* previous_to_last_page = list_get(un_segmento->pageFrameTable, page - 1);
+
+								void* ptr_last_page = GET_FRAME_POINTER(last_page->frame_number);
+								void* ptr_previous_to_last_page = GET_FRAME_POINTER(previous_to_last_page->frame_number);
+								ptr_previous_to_last_page += page_size - bytes_current_frame; //bytes current frame son los bytes de la pag anterior
+
+								void* buffer = malloc(5);
+								memcpy(buffer, &bytes_a_reservar, sizeof(int));
+								memcpy(buffer+bytes_a_reservar, &falseStatus, sizeof(bool));
+
+								memcpy(ptr_previous_to_last_page, buffer, bytes_current_frame);
+								memcpy(ptr_last_page, buffer+bytes_current_frame, bytes_next_frame);
+							} else {
+								//Sobreescribo metadata normal
+								memcpy(last_metadata - 5, &bytes_a_reservar, sizeof(uint32_t));
+								memcpy((last_metadata - 5) + sizeof(uint32_t), &falseStatus, sizeof(bool));
+							}
+
 							int frames_to_require;
 							if((bytes_a_reservar + 5 - internal_fragmentation) % page_size > 0) {
 								frames_to_require = ((bytes_a_reservar + 5 - internal_fragmentation) / page_size) + 1;
@@ -273,17 +303,18 @@ void realizarRequest(void *buffer_recibido, int cliente){
 								frames_to_require = (bytes_a_reservar + 5 - internal_fragmentation) / page_size;
 							}
 
+							/*
 							uint32_t bytes_que_habia = 0;
 							uint32_t bytes_sobrantes = 0;
 							uint32_t bytes_que_quedan = 0;
 							memcpy(&bytes_que_habia, last_metadata, sizeof(uint32_t));
-							//Sobreescribo la metadata
-							memcpy(last_metadata, &bytes_a_reservar, sizeof(uint32_t));
-							memcpy(last_metadata + sizeof(uint32_t), &falseStatus, sizeof(bool));
-
-							bytes_que_quedan = bytes_a_reservar - internal_fragmentation;
-
+							bytes_que_quedan = bytes_a_reservar + 5 - internal_fragmentation;
+							 */
 							pageFrame* last_page;
+
+							sem_wait(&logger_semaphore);
+							log_info(logger,"Solicito los frames que hagan falta");
+							sem_post(&logger_semaphore);
 
 							for(int i=0; i < frames_to_require; i++) {
 								int frame_number = CLOCK();
@@ -292,17 +323,56 @@ void realizarRequest(void *buffer_recibido, int cliente){
 								new_page->presenceBit = 1;
 								new_page->frame_number = frame_number;
 								list_add(un_segmento->pageFrameTable, new_page);
-								if(bytes_que_quedan - page_size > 0)
+								/*
+								int dif = (bytes_que_quedan - page_size);
+								if(dif > 0) {
 									bytes_que_quedan = bytes_que_quedan - page_size;
+								}
+								 */
+
+								sem_wait(&logger_semaphore);
+								log_info(logger,"Le doy frames a la nueva pagina");
+								sem_post(&logger_semaphore);
 								last_page = new_page;
-								clock_table[frame_number] = new_page;
+								dictionary_put(clock_table, string_itoa(frame_number), new_page);
+								sem_wait(&logger_semaphore);
+								log_info(logger,"Agregue la pagina al clock");
+								sem_post(&logger_semaphore);
 							}
 
-							//Escribo la nueva metadata
-							bytes_sobrantes = page_size - bytes_que_quedan - 5;
-							void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
-							memcpy(last_page_pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-							memcpy(last_page_pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
+							uint32_t frag_int = page_size - 5 - (bytes_a_reservar - internal_fragmentation - (frames_to_require - 1) * page_size);
+
+							if(frag_int > page_size - 5){
+								//Escribo metadata spliteada
+								pageFrame* final_page;
+								pageFrame* previous_to_final_page;
+								int final_page_metadata_bytes = bytes_a_reservar + 10 - page_size;
+								int previous_to_final_page_metadata_bytes = 5 - final_page_metadata_bytes;
+								uint32_t free_size = page_size - final_page_metadata_bytes;
+
+								void* buffer = malloc(5);
+								memcpy(buffer, &free_size, sizeof(uint32_t));
+								memcpy(buffer+sizeof(uint32_t), &trueStatus, sizeof(bool));
+
+								final_page = list_get(un_segmento->pageFrameTable,un_segmento->pageFrameTable->elements_count - 1);
+								previous_to_final_page = list_get(un_segmento->pageFrameTable,un_segmento->pageFrameTable->elements_count - 2);
+
+								void* ptr_to_final_page = GET_FRAME_POINTER(final_page->frame_number);
+								void* ptr_to_previous_to_final_page = GET_FRAME_POINTER(previous_to_final_page->frame_number);
+								ptr_to_previous_to_final_page += page_size - previous_to_final_page_metadata_bytes;
+
+								memcpy(ptr_to_previous_to_final_page, buffer, previous_to_final_page_metadata_bytes);
+								memcpy(ptr_to_final_page, buffer+previous_to_final_page_metadata_bytes, final_page_metadata_bytes);
+
+								free(buffer);
+							} else{
+								//Escribo metadata normal
+								memcpy(last_metadata - 5, &frag_int, sizeof(uint32_t));
+								memcpy(last_metadata - 5 + sizeof(uint32_t), &trueStatus, sizeof(bool));
+							}
+							sem_wait(&logger_semaphore);
+							log_info(logger,"Se escribe la nueva metadata");
+							sem_post(&logger_semaphore);
 
 							se_pudo_reservar_flag = 1;
 							segment_base = un_segmento->base;
@@ -376,14 +446,45 @@ void realizarRequest(void *buffer_recibido, int cliente){
 						if(bytes_que_quedan - page_size > 0)
 							bytes_que_quedan = bytes_que_quedan - page_size;
 						last_page = new_page;
-						clock_table[frame_number] = new_page;
+						dictionary_put(clock_table, string_itoa(frame_number), new_page);
 					}
-
+					//TODO: Fixear porque si el bytes a reservar es mas grande no entras
 					//Escribo la nueva metadata
-					bytes_sobrantes = page_size - bytes_que_quedan - 5;
-					void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
-					memcpy(last_page_pointer + bytes_que_quedan, &bytes_sobrantes, sizeof(uint32_t));
-					memcpy(last_page_pointer + bytes_que_quedan + sizeof(uint32_t), &trueStatus, sizeof(bool));
+					//if(bytes_a_reservar + 5 < page_size && bytes_a_reservar + 10 > page_size){ //bytes_a_reservar contempla la primer metadata???
+					if(bytes_sobrantes > page_size - 5){
+						sem_wait(&logger_semaphore);
+						log_info(logger,"QUILOMBOOOOO METADATA SPLITEADA ndeah");
+						sem_post(&logger_semaphore);
+
+						pageFrame* final_page;
+						pageFrame* previous_to_final_page;
+						int final_page_metadata_bytes = bytes_a_reservar + 10 - page_size;
+						int previous_to_final_page_metadata_bytes = 5 - final_page_metadata_bytes;
+						uint32_t free_size = page_size - final_page_metadata_bytes;
+
+						void* buffer = malloc(5);
+						memcpy(buffer, &free_size, sizeof(uint32_t));
+						memcpy(buffer+sizeof(uint32_t), &trueStatus, sizeof(bool));
+
+						final_page = list_get(new_segment->pageFrameTable,new_segment->pageFrameTable->elements_count - 1);
+						previous_to_final_page = list_get(new_segment->pageFrameTable,new_segment->pageFrameTable->elements_count - 2);
+
+						void* ptr_to_final_page = GET_FRAME_POINTER(final_page->frame_number);
+						void* ptr_to_previous_to_final_page = GET_FRAME_POINTER(previous_to_final_page->frame_number);
+						ptr_to_previous_to_final_page += page_size - previous_to_final_page_metadata_bytes;
+
+						memcpy(ptr_to_previous_to_final_page, buffer, previous_to_final_page_metadata_bytes);
+						memcpy(ptr_to_final_page, buffer+previous_to_final_page_metadata_bytes, final_page_metadata_bytes);
+
+						free(buffer);
+
+					} else{
+						bytes_sobrantes = page_size - bytes_que_quedan - 5 - 5;
+						void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
+						memcpy(last_page_pointer + bytes_que_quedan + 5, &bytes_sobrantes, sizeof(uint32_t));
+						memcpy(last_page_pointer + bytes_que_quedan + 5 + sizeof(uint32_t), &trueStatus, sizeof(bool));
+
+					}
 
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 					new_segment->base = FIRST_FIT(client_address_space->segment_table, 0, new_segment->size);
@@ -432,19 +533,49 @@ void realizarRequest(void *buffer_recibido, int cliente){
 						if(bytes_que_quedan - page_size > 0)
 							bytes_que_quedan = bytes_que_quedan - page_size;
 						last_page = new_page;
-						clock_table[frame_number] = new_page;
+						dictionary_put(clock_table, string_itoa(frame_number), new_page);
 					}
 
 					//Escribo la nueva metadata
-					bytes_sobrantes = page_size - bytes_que_quedan - 5 - 5;
-					void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
-					memcpy(last_page_pointer + bytes_que_quedan + 5, &bytes_sobrantes, sizeof(uint32_t));
-					memcpy(last_page_pointer + bytes_que_quedan + 5 + sizeof(uint32_t), &trueStatus, sizeof(bool));
+					if(bytes_a_reservar + 5 < page_size && bytes_a_reservar + 10 > page_size){ //bytes_a_reservar contempla la primer metadata???
+						sem_wait(&logger_semaphore);
+						log_info(logger,"QUILOMBOOOOO METADATA SPLITEADA ndeah");
+						sem_post(&logger_semaphore);
 
+						pageFrame* final_page;
+						pageFrame* previous_to_final_page;
+						int final_page_metadata_bytes = bytes_a_reservar + 10 - page_size;
+						int previous_to_final_page_metadata_bytes = 5 - final_page_metadata_bytes;
+						uint32_t free_size = page_size - final_page_metadata_bytes;
+
+						void* buffer = malloc(5);
+						memcpy(buffer, &free_size, sizeof(uint32_t));
+						memcpy(buffer+sizeof(uint32_t), &trueStatus, sizeof(bool));
+
+						final_page = list_get(new_segment->pageFrameTable,new_segment->pageFrameTable->elements_count - 1);
+						previous_to_final_page = list_get(new_segment->pageFrameTable,new_segment->pageFrameTable->elements_count - 2);
+
+						void* ptr_to_final_page = GET_FRAME_POINTER(final_page->frame_number);
+						void* ptr_to_previous_to_final_page = GET_FRAME_POINTER(previous_to_final_page->frame_number);
+						ptr_to_previous_to_final_page += page_size - previous_to_final_page_metadata_bytes;
+
+						memcpy(ptr_to_previous_to_final_page, buffer, previous_to_final_page_metadata_bytes);
+						memcpy(ptr_to_final_page, buffer+previous_to_final_page_metadata_bytes, final_page_metadata_bytes);
+
+						free(buffer);
+
+					} else{
+						bytes_sobrantes = page_size - bytes_que_quedan - 5 - 5;
+						void* last_page_pointer = GET_FRAME_POINTER(last_page->frame_number);
+						memcpy(last_page_pointer + bytes_que_quedan + 5, &bytes_sobrantes, sizeof(uint32_t));
+						memcpy(last_page_pointer + bytes_que_quedan + 5 + sizeof(uint32_t), &trueStatus, sizeof(bool));
+
+					}
 					new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 
 					list_add(client_address_space->segment_table, new_segment);
 					segment_base = new_segment->base;
+
 				}
 				sem_post(&mp_semaphore);
 				client->last_requested_segment_base = segment_base;
@@ -583,10 +714,11 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		buffer=(void*)malloc(n);
 		memcpy(buffer, data, n);
 
-		send(cliente, buffer, sizeof(buffer),0);
+		send(cliente, buffer, n, 0);
 
 		free(buffer);
 		//free(dst);
+		free(data); //Ojo con este
 
 		sem_wait(&logger_semaphore);
 		log_info(logger,"Get realizado");
@@ -600,7 +732,6 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		uint32_t dest;
 		void* source;
 
-
 		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		memcpy(&dest, (buffer_recibido + offset), longitudDelSiguiente);
@@ -612,17 +743,18 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		memcpy(source, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
 
-		/*
+		n = longitudDelSiguiente;
+
+		/* POR COMO ARMO EL PAQUETE, ACA YA ESTOY METIENDO MANO EN LUGARES RAROS
 		memcpy(&longitudDelSiguiente, (buffer_recibido + offset), sizeof(int));
 		offset= offset+sizeof(int);
 		memcpy(&n, (buffer_recibido + offset), longitudDelSiguiente);
 		offset= offset+longitudDelSiguiente;
-		 */
 
 		n = longitudDelSiguiente;
-
+		 */
 		sem_wait(&logger_semaphore);
-		log_info(logger,"El cliente %d escribio %d bytes)", cliente, n);
+		log_info(logger,"El cliente %d escribio %d bytes", cliente, n);
 		sem_post(&logger_semaphore);
 
 		//MUSE YO TE INVOCO
@@ -637,12 +769,10 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		sem_post(&mp_semaphore);
 		sem_post(&mapped_files_semaphore);
 
-
 		buffer=(void*)malloc(sizeof(int));
-		memcpy(buffer, retorno, sizeof(int));
+		memcpy(buffer, &retorno, sizeof(int));
 
 		send(cliente, buffer, sizeof(buffer),0);
-
 
 		free(buffer);
 		free(source);
@@ -690,21 +820,32 @@ void realizarRequest(void *buffer_recibido, int cliente){
 			mappedFile* mapped_file = GET_MAPPED_FILE(path);
 			mapped_file->references++;
 		} else {
+			//Paso el length a un tamaño de pagina
+			size_t length_true;
+			if(length % page_size) {
+				length_true = ((length / page_size) + 1)*page_size;
+			} else {
+				length_true = length;
+			}
+
 			mappedFile* new_map = (mappedFile*)malloc(sizeof(mappedFile)); //Struct a agregar a la lista
 			client = FIND_CLIENT_BY_SOCKET(cliente); //Para sacar el id
-			char* mapped_file = malloc(length); //Lo que tendra el return de mmap
-			new_map->path=(char*)malloc(sizeof(path));
-			memcpy(new_map->path, path, sizeof(path));
-			new_map->owner=(char*)malloc(sizeof(client->clientProcessId));
-			memcpy(new_map->owner, client->clientProcessId, sizeof(client->clientProcessId));
+			char* mapped_file = (char*) malloc(length_true); //Lo que tendra el return de mmap
+			new_map->path=(char*)malloc(strlen(path)+1);
+			memcpy(new_map->path, path, strlen(path)+1);
+			new_map->owner=(char*)malloc(strlen(client->clientProcessId)+1);
+			memcpy(new_map->owner, client->clientProcessId, strlen(client->clientProcessId)+1);
 			new_map->flag=flag;
-			new_map->length=length;
+			new_map->length=length_true;
 			new_map->references = 1;
 
 			//Mapeo posta posta el archivo. Deberia chequear si existe?
 			int file_desc = open(path, O_RDWR, S_IRWXU | S_IWOTH | S_IROTH); //Los ultimos dos flags son para 'others'
+			//Como no se si el archivo es mas chico o mas grande de lo que me pidio
+			//lo trunco y chau. Si era mas chico bien, y si no bueno, perdi datos
+			ftruncate(file_desc, length_true);
 			new_map->file_desc = file_desc;
-			mapped_file = mmap(NULL, length, PROT_READ | PROT_WRITE, flag, file_desc, 0);
+			mapped_file = mmap(NULL, length_true, PROT_READ | PROT_WRITE, flag, file_desc, 0);
 			new_map->pointer = mapped_file;
 
 			list_add(mapped_files, new_map); //Agrego el mapeo a la lista global
@@ -714,7 +855,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		//Siguientes pasos:
 		//1. Rellenar el espacio que sobre del archivo con \0 (Esto no lo hace de por si mmap?) --> "https://stackoverflow.com/questions/47604431/why-we-can-mmap-to-a-file-but-exceed-the-file-size"
 		//2. Crear el segmento... (FIRST_FIT)
-		segment* new_segment = (segment*)malloc(sizeof(segment*));
+		segment* new_segment = (segment*)malloc(sizeof(segment));
 		new_segment->isHeap = false;
 		new_segment->pageFrameTable = list_create();
 		//a. Tabla de paginas con todas en presence = 0
@@ -727,22 +868,26 @@ void realizarRequest(void *buffer_recibido, int cliente){
 
 		for(int i=0; i < frames_to_require; i++) {
 			sem_wait(&mp_semaphore);
-			int frame_number = CLOCK(); //Ver issue #28
+			//int frame_number = CLOCK(); //Ver issue #28
 			sem_post(&mp_semaphore);
 			pageFrame* new_page = (pageFrame*)malloc(sizeof(pageFrame));
 			new_page->modifiedBit = 0; //Casi seguro que es 0
 			new_page->useBit = 0;
 			new_page->presenceBit = 0;
+			new_page->frame_number = i * page_size; //Lo seteo porque si no queda cualquier verdura y me rompe el BRING_FROM_SWAP
 			list_add(new_segment->pageFrameTable, new_page);
-			clock_table[frame_number] = new_page;
+			//dictionary_put(clock_table, string_itoa(frame_number), new_page);
+			//Juli dijo que asignaramos frames de entrada, pero nos ha entrao la duda...
 		}
 
-		new_segment->path = (char*)malloc(sizeof(path));
-		memcpy(new_segment->path, path, sizeof(path));
+		addressSpace* cli_add_sp = GET_ADDRESS_SPACE(cliente);
+
+		new_segment->path = (char*)malloc(strlen(path)+1);
+		memcpy(new_segment->path, path, strlen(path)+1);
 		new_segment->size = new_segment->pageFrameTable->elements_count * page_size;
 		new_segment->base = FIRST_FIT(cli_address_space->segment_table, 0, new_segment->size);
-		list_add(client_address_space->segment_table, new_segment);
-		sem_wait(&client->client_sempahore);
+		list_add(cli_add_sp->segment_table, new_segment);
+		sem_post(&client->client_sempahore);
 
 		//////////////////
 		buffer=(void*)malloc(sizeof(uint32_t));
@@ -751,6 +896,7 @@ void realizarRequest(void *buffer_recibido, int cliente){
 		send(cliente, buffer, sizeof(buffer),0);
 
 		free(buffer);
+		free(path);
 		break;
 
 		//sync
@@ -810,16 +956,23 @@ void realizarRequest(void *buffer_recibido, int cliente){
 					if(bytes_traveled % page_size > 0) //Si arranco corrido en la pagina
 						pages_to_write++;
 					int offset = bytes_traveled;
+					//Escribo de a paginas, no de a bytes
 					while(writen_pages < pages_to_write) {
 						pageFrame* current_page = list_get(segment_requested->pageFrameTable, page_number);
 						if(current_page->presenceBit && current_page->modifiedBit) {
-							int current_frame = GET_FRAME_FROM_ADDRESS(bytes_traveled, segment_requested);
+							int current_frame = current_page->frame_number;
+							int mapped_file_offset = writen_pages * page_size;
 							void* pointer = GET_FRAME_POINTER(current_frame);
+							memcpy(mapped_file->pointer + mapped_file_offset, pointer, page_size);
+							//TODO: deberia tambien liberar la pagina o se libera sola despues?
+							FREE_MEMORY_FRAME_BITMAP(current_page->frame_number);
+							/* DEPRECATED: lo dejo porque compilaba pero el comportamiento no era muy adecuado
 							for(int i = (offset % page_size); i < page_size ; i++) {
 								mapped_file->pointer[bytes_traveled] = (char*)(pointer + i);
 								//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
 								bytes_traveled++;
 							}
+							 */
 						}
 						offset = 0;
 						writen_pages++;
@@ -880,19 +1033,17 @@ void realizarRequest(void *buffer_recibido, int cliente){
 				mappedFile* mapped_file = GET_MAPPED_FILE(a_segm->path);
 
 				//Hago igual que en sync, actualizo el archivo (ctrl+c - ctrl+v)
-				int bytes_traveled = 0;
 				for(int i = 0; a_segm->pageFrameTable->elements_count > i; i++) {
-					pageFrame* current_page = list_get(segment_requested->pageFrameTable, i);
+					pageFrame* current_page = list_get(a_segm->pageFrameTable, i);
 					if(current_page->presenceBit && current_page->modifiedBit) {
 						int current_frame = current_page->frame_number;
+						int mapped_file_offset = i * page_size;
 						void* pointer = GET_FRAME_POINTER(current_frame);
-						for(int j = 0; j < page_size ; j++) {
-							mapped_file->pointer[bytes_traveled] = (char*)(pointer + j);
-							//Este casteo magico esta bien o hay que hacer memcpy al archivo mappeado?
-							bytes_traveled++;
-						}
+						memcpy(mapped_file->pointer + mapped_file_offset, pointer, page_size);
+						//TODO: deberia tambien liberar la pagina o se libera sola despues?
+						FREE_MEMORY_FRAME_BITMAP(current_page->frame_number);
 					}
-					current_page->useBit = 1;
+					current_page->useBit = 1; //Por que le pongo uso en 1? //TODO: Revisar bit
 					current_page->modifiedBit = 0;
 				}
 

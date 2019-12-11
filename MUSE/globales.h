@@ -21,7 +21,7 @@ t_list* mapped_files;
 char* swap_file; //Archivo utilizado para swapear de memoria a disco y viceversa. Abrir con mmap. Para acceder a un "frame": swap_file[i]
 t_bitarray* bitmap_memory; //Estructura de control para los frames
 int clock_pointer; //Desde que frame arranca la proxima iteracion del clock
-pageFrame* clock_table[]; //Array donde se guardan las paginas - Si llegamos a tener que hacer una lista pensar en list_add_in_index. Te dejara agregar en el index 10 sin nada atras?
+t_dictionary* clock_table; //Array donde se guardan las paginas - Si llegamos a tener que hacer una lista pensar en list_add_in_index. Te dejara agregar en el index 10 sin nada atras?
 t_bitarray* bitmap_swap; //Estructura de control para el area de swap
 
 pthread_mutex_t mp_semaphore;

@@ -61,7 +61,7 @@ int muse_init(int id, char* ip, int puerto){
 
 	//Conectarse a MUSE
 	if (connect(socket_MUSE, (struct sockaddr *)&server_address, sizeof server_address) == -1) {
-		printf("La conexion con MUSE no pudo establecerse");
+		printf("La conexion con MUSE no pudo establecerse\n");
 		return -1; //Manejar este codigo de error para poder saber que fallo
 	}
 
@@ -98,6 +98,13 @@ int muse_init(int id, char* ip, int puerto){
 }
 
 void muse_close(){
+	void* paquete_close = crear_paquete_close(101);
+
+	int tamanio_paquete;
+	memcpy(&tamanio_paquete, paquete_close, 4);
+	send(socket_MUSE, paquete_close,tamanio_paquete+4,0);
+	free(paquete_close);
+
 	close(socket_MUSE);
 	//Le aviso a MUSE que me di de baja?
 	//Tendremos que cerrar mas cosas?

@@ -43,7 +43,7 @@ char* get_local_IP() {
 			}
 		}
 	}
-
+	free(ifaddr);
 	return "0"; //En otro caso devuelve 0 (no deberia pasar)
 }
 
