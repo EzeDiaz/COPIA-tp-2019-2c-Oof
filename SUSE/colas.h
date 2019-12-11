@@ -1,10 +1,3 @@
-/*
- * colas.h
- *
- *  Created on: 1 oct. 2019
- *      Author: utnso
- */
-
 #ifndef COLAS_H_
 #define COLAS_H_
 
@@ -20,7 +13,7 @@
 void * estadoReady(int );
 void readyToExec(int);
 void newToReady();
-void * estadoNew();
+void estadoNew();
 void exit_thread(hilo_t*);
 
 

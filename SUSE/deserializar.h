@@ -1,20 +1,15 @@
-/*
- * deserializar.h
- *
- *  Created on: 2 nov. 2019
- *      Author: utnso
- */
-
 #ifndef DESERIALIZAR_H_
 #define DESERIALIZAR_H_
-#include <commons/log.h>
-#include <stdbool.h>
-#include <string.h>
+
 #include "SUSE.h"
 #include "colas.h"
+#include "globales.h"
 #include <sys/socket.h>
 #include <sys/types.h>
-#include "globales.h"
+#include <stdbool.h>
+#include <string.h>
+#include <commons/log.h>
+
 
 
 enum {

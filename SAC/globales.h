@@ -67,15 +67,16 @@ sem_t*mutex_tabla_de_nodos;
 int PUERTO_ESCUCHA;
 char* IP;
 char* PUNTO_DE_MONTAJE;
-GFile* tabla_de_nodos[1024];
+GFile* tabla_de_nodos[GFILEBYTABLE];
 int BLOCK_SIZE;
 int CANT_MAX_BLOQUES;
 char* NOMBRE_DEL_DISCO;
 t_bitarray* bitarray;
-void* primer_bloque;
+//void* primer_bloque;
 long long cantidad_de_bloques_reservados;
 long long tamanio_disco;
 t_config* config;
 t_log* logger_de_deserializacion;
+GHeader* header_SAC_fs;
 
 #endif /* GLOBALES_H_ */

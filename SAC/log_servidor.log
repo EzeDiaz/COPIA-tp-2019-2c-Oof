@@ -1,16 +1,10 @@
-[INFO] 04:50:20:56 SAC_Servidor/(9414:9414): Leimos el config: config.config
+[INFO] 22:28:16:579 SAC_Servidor/(4814:4814): Leimos el config: config.config
 
-[INFO] 04:50:20:476 SAC_Servidor/(9414:9414): Levantamos el servidor
+[INFO] 22:28:17:787 SAC_Servidor/(4814:4814): Levantamos el servidor
 
-[INFO] 04:50:20:476 SAC_Servidor/(9414:9414): Servidor listo para recibir un cliente
+[INFO] 22:28:17:787 SAC_Servidor/(4814:4814): Servidor listo para recibir un cliente
 
-[INFO] 04:50:33:579 SAC_Servidor/(9414:9414): Recibimos un cliente
+[INFO] 22:28:43:80 SAC_Servidor/(4814:4814): Recibimos un cliente
 
-[INFO] 04:50:33:586 SAC_Servidor/(9414:9433): Recibimos una conexion
-
-[INFO] 04:50:33:633 SAC_Servidor/(9414:9433): Terminamos el request
-
-[INFO] 04:50:44:708 SAC_Servidor/(9414:9433): Terminamos el request
-
-[INFO] 04:51:08:134 SAC_Servidor/(9414:9433): Terminamos el request
+[INFO] 22:28:43:97 SAC_Servidor/(4814:4934): Recibimos una conexion
 

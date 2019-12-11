@@ -1,6 +1,5 @@
 #include "colas.h"
 
-
 /*
  * Vamos a manejar los distintos estados con colas.
 
@@ -8,17 +7,6 @@
    este TID el que se va a pasar entre las colas y nos va a permitir rescatar al thread.
 
  */
-
-// SE CREA EL HILO
-
-
-/*void th_create()
-{
-	hilo_t* hilo = suse_create(/*FUNCION*/ //); //t_hilo un struct hilo ¿con funcion y TID?
-/*
-	queue_push(cola_new,hilo);
-}*/
-
 
 /// ******************************************************************************************************** ///
 /// ************************************ PASAR THREADS DE NEW A READY ************************************** ///
@@ -29,50 +17,80 @@
 void newToReady(){
 
 	sem_wait(&grado_de_multiprogramacion_contador);
+
+	sem_wait(&mutex_cola_new);
 	hilo_t*  hilo = queue_pop(cola_new);
+	sem_post(&mutex_cola_new);
+
 	char* pid=string_itoa(hilo->PID);
 	t_queue*cola_ready = obtener_cola_ready_de(pid);
-
-	queue_push(cola_ready,hilo);
-
-	hilo->estado_del_hilo = READY;
-
+	t_queue* cola_exec = obtener_cola_exec_de(pid);
 	sem_wait(&semaforo_diccionario_de_procesos);
 	proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
 	sem_post(&semaforo_diccionario_de_procesos);
+
+	long milisegundos_ready= time(NULL);
+	sem_wait(&mutex_cronometro);
+	hilo->tiempos->tiempo_llegada_a_READY = milisegundos_ready;
+	sem_post(&mutex_cronometro);
+
+	sem_wait(&un_proceso->mutex_cola_ready);
+	queue_push(cola_ready,hilo);
+	sem_post(&un_proceso->mutex_cola_ready);
+
+	hilo->estado_del_hilo = READY;
+
 	sem_post(&un_proceso->procesos_en_ready);
 
 	sem_wait(&semaforo_log_colas);
 	log_info(log_colas,"Se paso el hilo a la cola Ready \n");
 	sem_post(&semaforo_log_colas);
 
+	/// ******************************************************************************************************** ///
+	/// ************************************ ESTOY PROBANDO ALGO********* ************************************** ///
+	/// ******************************************************************************************************** ///
+	/*if(queue_is_empty(cola_exec) && !queue_is_empty(cola_ready)){
+
+		sem_wait(&mutex_suse_schedule_next);
+		suse_schedule_next(hilo->PID); //Quizas estaria bueno igualar esto a "tid"
+		sem_post(&mutex_suse_schedule_next);
+	}
+	 */
 	free(pid);
 
 }
 
-void * estadoNew()
+void estadoNew()
 {
 	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
 	// y se frenara la planificacion
 
-	while(!finDePlanificacion)
+	while(suse_esta_atendiendo)
 	{
-		if(!finDePlanificacion&& suse_esta_atendiendo && (cola_new->elements->elements_count>0))
-		{
-			sem_wait(&procesos_en_new);
+		sem_wait(&sem_encolar_en_new);
+		sem_wait(&procesos_en_new);
 
-			newToReady();
-			//Tiene que chequear el grado de multiprogramacion y si hay lugar lo pasa a Ready
+		//ESTOS SEMAFOROS NO SE SI VAN
+		sem_wait(&mutex_new_to_ready);
+		newToReady();
+		sem_post(&mutex_new_to_ready);
+		//Tiene que chequear el grado de multiprogramacion y si hay lugar lo pasa a Ready
 
-		}
+		//return NULL;
 	}
-
-	return NULL;
 }
 
 void encolar_en_new(hilo_t* hilo){
 
+	long milisegundos_new= time(NULL);
+	sem_wait(&mutex_cronometro);
+	hilo->tiempos->tiempo_llegada_a_NEW = milisegundos_new;
+	sem_post(&mutex_cronometro);
+
+	sem_wait(&mutex_cola_new);
 	queue_push(cola_new,hilo);
+	sem_post(&sem_encolar_en_new);
+	sem_post(&mutex_cola_new);
 }
 
 /// ******************************************************************************************************** ///
@@ -90,58 +108,23 @@ void readyToExec(int PID)
 
 	while(1){
 
-		if(esta_vacia(cola_exec)&& !esta_vacia(cola_ready)){
-			char* tiempo_inicio= temporal_get_string_time();
-			char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-			long milisegundos_inicial= atol(tiempo_inicio_separado_por_dos_puntos[3]);
+		//poner semaforo, mucha espera activa
+		if(queue_is_empty(cola_exec) && !queue_is_empty(cola_ready)){
 
-			hilo_t* hilo=suse_schedule_next(PID);
+			int tid=suse_schedule_next(PID);
 			/*
 			bool tienen_mismo_tid(hilo_t*un_hilo){
 
 				return un_hilo->hilo_informacion->tid == hilo->hilo_informacion->tid;
 			}*/
 
-			list_remove(cola_ready->elements,0);
 
-			if(hilo == NULL){
-
-			}else{
-				sem_wait(&semaforo_diccionario_procesos_x_semaforo);
-				pthread_mutex_t* semaforo_exec_x_proceso = dictionary_get(diccionario_de_procesos_x_semaforo,pid);
-				sem_post(&semaforo_diccionario_procesos_x_semaforo);
-
-				sem_wait(semaforo_exec_x_proceso);
-				queue_push(cola_exec,hilo);
-
-				hilo->estado_del_hilo = EXECUTE;
-
-				char* tiempo_fin= temporal_get_string_time();
-				char** tiempo_fin_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-				int milisegundos_final= atoi(tiempo_fin_separado_por_dos_puntos[3]);
-
-				hilo->metricas->tiempo_de_espera += milisegundos_final-milisegundos_inicial;
-
-				sem_post(semaforo_exec_x_proceso);
-
-
-				sem_wait(&semaforo_log_colas);
-				log_info(log_colas,"Se paso el proceso a Exec \n");
-				sem_post(&semaforo_log_colas);
-			}
 		}
 	}
 
 	free(pid);
 }
 
-
-bool esta_vacia(t_queue* cola_exec){
-	bool cacona = queue_is_empty(cola_exec);
-	cacona=cola_exec->elements->elements_count==0;
-	return cacona;
-
-}
 void * estadoReady(int PID)
 {
 	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
@@ -155,7 +138,7 @@ void * estadoReady(int PID)
 			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
 			sem_post(&semaforo_diccionario_de_procesos);
 
-			sem_wait(un_proceso->procesos_en_ready);
+			//sem_wait(&un_proceso->procesos_en_ready);
 
 
 			readyToExec(PID);
@@ -175,23 +158,11 @@ void * estadoReady(int PID)
 
 void exec(hilo_t* hilo){
 
-	char* tiempo_inicio= temporal_get_string_time();
-	char** tiempo_inicio_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-	int milisegundos_inicial= atoi(tiempo_inicio_separado_por_dos_puntos[3]);
-
-	ejecutar_funcion(hilo);
-
-	char* tiempo_final= temporal_get_string_time();
-	char** tiempo_final_separado_por_dos_puntos = string_split(tiempo_inicio,":");
-	int milisegundos_final= atoi(tiempo_final_separado_por_dos_puntos[3]);
-
-	hilo->metricas->tiempo_de_uso_del_cpu += (milisegundos_final-milisegundos_inicial);
-
-
-
-
-
-
+	long milisegundos_exec= time(NULL);
+	sem_wait(&mutex_cronometro);
+	hilo->tiempos->tiempo_llegada_a_EXEC = milisegundos_exec;
+	hilo->tiempos->sumatoria_tiempos_en_READY += milisegundos_exec- hilo->tiempos->tiempo_llegada_a_READY;
+	sem_post(&mutex_cronometro);
 
 }
 
@@ -224,26 +195,40 @@ void exec_to_exit(hilo_t* hilo){
 	char* pid = string_itoa(hilo->PID);
 	char* hilo_info = string_itoa(hilo->hilo_informacion->tid);
 
+	int milisegundos_exit= time(NULL);
+	sem_wait(&mutex_cronometro);
+	hilo->tiempos->sumatoria_tiempos_en_EXEC += milisegundos_exit - hilo->tiempos->tiempo_llegada_a_EXEC;
+	hilo->tiempos->tiempo_en_ejecucion_real = milisegundos_exit - hilo->tiempos->tiempo_llegada_a_EXEC;
+	sem_post(&mutex_cronometro);
+
 	proceso_t* el_proceso=dictionary_get(diccionario_de_procesos,pid);
-	t_list* bloqueados_por_join=el_proceso->lista_de_joineados;
-	if(bloqueados_por_join->elements_count>0){
-		t_queue* cola_ready=obtener_cola_ready_de(pid);
-		void pusheador(int TID){
-			bool mismoTID(hilo_t* hilo){
-				return hilo->hilo_informacion->tid==TID;
+
+	t_queue* cola_ready=obtener_cola_ready_de(pid);
+	t_list* lista_de_joineados_x_hilo=dictionary_get(el_proceso->diccionario_joineados_por_tid,hilo_info);
+
+	if(lista_de_joineados_x_hilo!=NULL && !list_is_empty(lista_de_joineados_x_hilo)){
+
+		for (int i=0; i<lista_de_joineados_x_hilo->elements_count;i++){
+			int tid_para_ready= list_get(lista_de_joineados_x_hilo,i);
+			bool mismo_tid(hilo_t* un_hilo){
+
+				return un_hilo->hilo_informacion->tid==tid_para_ready;
 
 			}
-			hilo_t* un_hilo=list_remove_by_condition(bloqueados,mismoTID);
+			hilo_t* hilo_joineado=list_remove_by_condition(bloqueados,mismo_tid);
+			queue_push(cola_ready,hilo_joineado);
+			sem_post(&el_proceso->procesos_en_ready);
 
-			queue_push(cola_ready,un_hilo);
+
+
 
 		}
-
-		list_iterate(bloqueados_por_join,pusheador);
 	}
 
+	sem_wait(&mutex_cola_exit);
 	queue_push(cola_exit,hilo);
 	hilo->estado_del_hilo=EXIT;
+	sem_post(&mutex_cola_exit);
 
 	free(pid);
 	free(hilo_info);

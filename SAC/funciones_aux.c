@@ -9,6 +9,46 @@
 
 #include "funciones_aux.h"
 
+
+void obtener_nombre_de_archivo(char fname[],char* path){
+
+	int longitud= strlen(path);
+	if(strlen(path)==1 && strncmp(path,"/",strlen(path))){
+
+		strncpy(fname,"/",1);
+	}else{
+		char** vector= string_split(path, "\/");
+		int i =0;
+		while(vector[i]!=NULL){
+			i++;
+		}
+		strncpy(fname,vector[i-1],strlen(vector[i-1]));
+		free(vector);
+	}
+
+
+
+}
+
+GFile* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
+
+	sem_wait(&mutex_tabla_de_nodos);
+	int i=0;
+	GFile* nodo_a_retornar=NULL;
+	for(int i=0;i<GFILEBYTABLE;i++){
+		GFile*nodo=tabla_de_nodos[i];
+		if(!strcmp(nodo->fname,nombre_de_nodo)){
+			nodo_a_retornar= nodo;
+		}
+
+	}
+	sem_post(&mutex_tabla_de_nodos);
+
+
+	return nodo_a_retornar;
+}
+
+
 void* serializar_flag(int flag_resultado){
 	void* paquete=malloc(sizeof(int));
 	memcpy(paquete,&flag_resultado,sizeof(int));
@@ -16,9 +56,11 @@ void* serializar_flag(int flag_resultado){
 
 }
 
+
+// COSAS DUDOSAS
 void* encontrar_posicion_en_disco(int numero_de_bloque){
 
-	return (primer_bloque+ numero_de_bloque* BLOCK_SIZE);
+	return (numero_de_bloque* BLOCK_SIZE);
 
 }
 
@@ -27,15 +69,17 @@ void agregar_datos_de_escritura_a_tabla_de_nodo(uint32_t direccion,t_list* bloqu
 	int i=0;
 
 
-	while(i<1024){
-	if(tabla_de_nodos[i]->blk_indirect==direccion){
 
-		void agregar_datos(int bloque){
-		agregar_bloque_dato_a_bloque_puntero(tabla_de_nodos[i]->blk_indirect,bloque);
+	while(i<1024){
+		GFile* nodo=list_get(tabla_de_nodos,i);
+		if(nodo->blk_indirect==direccion){
+
+			void agregar_datos(int bloque){
+				agregar_bloque_dato_a_bloque_puntero(nodo->blk_indirect,bloque);
+			}
+			list_iterate(bloque_a_escribir,agregar_datos);
 		}
-		list_iterate(bloque_a_escribir,agregar_datos);
-	}
-	i++;
+		i++;
 	}
 }
 
@@ -60,7 +104,7 @@ bool esta_full_el_bloque_puntero(ptrGBloque una_direccion){
 	int i=0;
 	void*direccion_dentro;
 	while(i<1024 && (int)direccion_dentro!=0){
-	memcpy(direccion_dentro,(void*)una_direccion+i*sizeof(una_direccion),sizeof(una_direccion));
+		memcpy(direccion_dentro,(void*)una_direccion+i*sizeof(una_direccion),sizeof(una_direccion));
 	}
 	if(direccion_dentro==0){
 
@@ -74,8 +118,8 @@ void* obtener_direccion_de_escritura(ptrGBloque direcciones){
 	void* punto_de_lectura= direcciones;
 	int offset=0;
 	while(((int)direccion)!=0){
-	memcpy(direccion,punto_de_lectura+offset,sizeof(direcciones));
-	offset+=sizeof(direcciones);
+		memcpy(direccion,punto_de_lectura+offset,sizeof(direcciones));
+		offset+=sizeof(direcciones);
 	}
 	return (direccion-sizeof(direcciones));
 }
@@ -91,21 +135,14 @@ int buscar_bloque_libre(int tipo_de_busqueda){
 
 	int nro_de_nodo=-1;
 	int cantidad_de_bloques;
-	int i=0;
-	if(tipo_de_busqueda==BUSQUEDA_ARCHIVO){
-		cantidad_de_bloques=bitarray_get_max_bit(bitarray);
-		i=cantidad_de_bloques_reservados;
-	}else{
-		cantidad_de_bloques=cantidad_de_bloques_reservados;
-		i=1+(tamanio_disco/BLOCK_SIZE/8)/BLOCK_SIZE;
+	cantidad_de_bloques=bitarray_get_max_bit(bitarray);
+	for (int i=0;i<cantidad_de_bloques;i++){
 
-	}
-	while ((i<cantidad_de_bloques && nro_de_nodo<0)){
-		if(! bitarray_test_bit(bitarray,i))
-			nro_de_nodo=i;
 
-		i++;
+		if(bitarray_test_bit(bitarray,i)){
+			nro_de_nodo= i;
 
+		}
 
 	}
 
@@ -115,21 +152,34 @@ int buscar_bloque_libre(int tipo_de_busqueda){
 
 GFile* buscar_nodo_libre(){
 
-	for(int i=0;i<1024;i++){
-		if(tabla_de_nodos[i]==NULL){
+	for(int i=0; i<1024;i++){
 
-			GFile* nodo_libre;
-			nodo_libre=(GFile*)malloc(sizeof(GFile));
-			tabla_de_nodos[i]=nodo_libre;
-			return nodo_libre;
+		GFile*nodo =tabla_de_nodos[i];
+		if(nodo->state==BORRADO){
+			return nodo;
 		}
-		if(tabla_de_nodos[i]->state==BORRADO){
-			return tabla_de_nodos[i];
-		}
-
 
 	}
-	return NULL;
+
+}
+
+t_list* buscar_todo_los_nodos_hijos(GFile* nodo_padre){
+
+	t_list* retorno= list_create();
+
+	for(int i=0; i< GFILEBYTABLE;i++){
+
+		GFile* posible_hijo=tabla_de_nodos[i];
+		if(posible_hijo->parent_dir_block==nodo_padre->blk_indirect){
+			//esta rancio el tema de mandarle ahi el bloque de indirectos quizas deberia
+			//meterle el numeor que ocupa en la tabla de nodos o algo asi
+			list_add(retorno,posible_hijo);
+
+		}
+
+	}
+
+	return retorno;
 }
 
 void crear_vector_de_punteros(ptrGBloque array_de_bloques[], int n){
@@ -144,49 +194,44 @@ void crear_vector_de_punteros(ptrGBloque array_de_bloques[], int n){
 ptrGBloque* obtener_puntero_padre(char* path){
 
 
-	char** vector= string_split(path, "/");
-
-	int i =0;
-	while(vector[i]!=NULL){
-		i++;
-	}
-
-	char* nombre_nodo_padre=vector[i-1];
-	if(nombre_nodo_padre != NULL){
-		GFile* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
+	if(!strcmp("/",path)){
+		GFile* nodo_padre =encontrar_en_tabla_de_nodos(path);
 		return nodo_padre->blk_indirect;
 	}else{
-		return -1;
-	}
+		char** vector= string_split(path, "/");
 
+		int i =0;
+		while(vector[i]!=NULL){
+			i++;
+		}
+
+		char* nombre_nodo_padre=vector[i-1];
+		if(nombre_nodo_padre != NULL){
+			GFile* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
+			return nodo_padre->blk_indirect;
+		}else{
+			return -1;
+		}
+	}
 
 
 }
 
 
-void obtener_nombre_de_archivo(char fname[],char* path){
 
-	char** vector= string_split(path, "\/");
-	int i =0;
-	while(vector[i]!=NULL){
-		i++;
-	}
-		fname=vector[i-1];
-
-
-
-}
 
 
 void leer_cada_archivo_y_borrar(char* path){
 	char fname[71];
 	obtener_nombre_de_archivo(fname, path);
+
 	GFile* nodo_dir=encontrar_en_tabla_de_nodos(fname);
+
 	for(int i=0;i<1024;i++){
-		tabla_de_nodos[i];
-		if(tabla_de_nodos[i]->parent_dir_block==nodo_dir->blk_indirect){
-			borrar_del_bitmap(tabla_de_nodos[i]->blk_indirect);
-			tabla_de_nodos[i]->state=BORRADO;
+		GFile*nodo=list_get(tabla_de_nodos,i);
+		if(nodo->parent_dir_block==nodo_dir->blk_indirect){
+			borrar_del_bitmap(nodo->blk_indirect);
+			nodo->state=BORRADO;
 		}
 	}
 
@@ -236,38 +281,16 @@ void borrar_del_bitmap(uint32_t blk_indirect[]){
 			memcpy(&direccion_a_borrar,bloque_punt_indirecto+offset,sizeof(uint32_t));
 			offset+=sizeof(uint32_t);
 			if(direccion_a_borrar){
-				int numero_de_bloque=((int)primer_bloque - direccion_a_borrar)/BLOCK_SIZE;
+				int numero_de_bloque=(direccion_a_borrar)/BLOCK_SIZE;
 				bitarray_clean_bit(bitarray,numero_de_bloque);
 				//TODO ESTO PUEDE MALIR SAL
 			}
 		}
 		if(blk_indirect[i])
-			bitarray_clean_bit(bitarray,primer_bloque-blk_indirect[i]/BLOCK_SIZE);
+			bitarray_clean_bit(bitarray,blk_indirect[i]/BLOCK_SIZE);
 	}
 }
 
-
-GFile* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
-
-	GFile* buscar_nodo_por_nombre(char* nombre){
-
-		int i=0;
-		while(tabla_de_nodos[i]!=NULL && i<1024){
-
-			if(!strcmp(tabla_de_nodos[i]->fname,nombre)){
-				return tabla_de_nodos[i];
-			}
-			i++;
-
-		}
-
-		return NULL;
-	}
-	sem_wait(&mutex_tabla_de_nodos);
-	GFile* el_nodo_a_retornar = buscar_nodo_por_nombre(nombre_de_nodo);
-	sem_post(&mutex_tabla_de_nodos);
-	return el_nodo_a_retornar;
-}
 
 void* preparar_nodo_para_grabar(GFile* nodo_libre){
 

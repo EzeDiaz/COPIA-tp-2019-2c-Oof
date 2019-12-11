@@ -1,7 +1,4 @@
-
 #include "deserializar.h"
-#include <stdbool.h>
-
 
 int determinar_protocolo(void* buffer){
 	int codigo_de_operacion;
@@ -23,6 +20,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case HILOLAY_INIT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_create', comenzando la deserializacion de parametros\n");
+
 		armar_paquete((void*)_hilolay_init(cliente_socket),INT,cliente_socket);
 		break;
 
@@ -35,11 +33,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 	case SUSE_SCHEDULER_NEXT:
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_scheduler_next', comenzando la deserializacion de parametros\n");
-		hilo_t* hilo_siguiente=suse_schedule_next(cliente_socket);
-		if(hilo_siguiente!=NULL){
-			armar_paquete((void*)hilo_siguiente->hilo_informacion->tid,INT,cliente_socket);
-		}
-		else{armar_paquete((void*) (-1),INT,cliente_socket);}
+		int hilo_siguiente=suse_schedule_next(cliente_socket);
+		armar_paquete((void*)hilo_siguiente,INT,cliente_socket);
 		break;
 
 	case SUSE_WAIT:

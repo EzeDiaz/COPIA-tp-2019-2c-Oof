@@ -18,11 +18,20 @@ typedef struct{
 
 typedef struct{
 
-	int fd;
-	void *buf;
-	size_t count;
-
+	const char * string1;
+	const char *string2;
+	size_t size;
+	off_t offset;
 }archivo_descifrado_escritura;
+
+typedef struct{
+
+	const char *path;
+	char *buf;
+	size_t size;
+	off_t desplazamiento;
+
+}params_lectura;
 
 typedef struct{
 	char* path;
@@ -43,24 +52,57 @@ typedef struct{
 
 }mknod_params;
 
+
+typedef struct{
+
+	char*name;
+	mode_t mode;
+	int flags;
+
+}open_file_params;
+
+typedef struct{
+	int flags;
+	char* path;
+
+}access_params;
+
+typedef struct{
+
+	off_t offset;
+	char* path;
+
+}truncate_params;
+
+typedef struct{
+
+	char* path;
+	struct statvfs* stats;
+
+}statfs_params;
+
 //enums
 enum codigo_de_operacion{
 
-	CREAR_ARCHIVO=0,
-	ESCRIBIR_ARCHIVO=1,
-	ABRIR_ARCHIVO=2,
-	LEER_ARCHIVO=3,
-	BORRAR_ARCHIVO=4,
-	CREAR_DIRECTORIO=5,
-	LISTAR_DIRECTORIO_Y_ARCHIVOS=6,
-	ELIMINAR_DIRECTORIO=7,
-	ABRIR_DIRECTORIO=8,
-	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=9,
-	GET_ATTRIBUTES=10,
-	MKNOD=11,
-	RENAME=12
+	CREAR_ARCHIVO=100,
+	ESCRIBIR_ARCHIVO=101,
+	ABRIR_ARCHIVO=102,
+	LEER_ARCHIVO=103,
+	BORRAR_ARCHIVO=104,
+	CREAR_DIRECTORIO=105,
+	LISTAR_DIRECTORIO_Y_ARCHIVOS=106,
+	ELIMINAR_DIRECTORIO=107,
+	ABRIR_DIRECTORIO=108,
+	LISTAR_METADATA_DIRECTORIO_Y_ARCHIVOS=109,
+	GET_ATTRIBUTES=110,
+	MKNOD=111,
+	RENAME=112,
+	ACCESS=113,
+	TRUNCATE=114,
+	STATFS = 115
 
 };
+
 
 
 //Prototipos
@@ -70,12 +112,19 @@ void* listar_metadata_directorio_y_archivos(void*);
 void* decifrar_archivo_a_crear(void*);
 archivo_descifrado_escritura* decifrar_archivo_a_escribir(void*);
 void* decifrar_archivo_a_leer(void*);
-void* decifrar_archivo_a_borrar(void*);
+char* decifrar_archivo_a_borrar(void*);
 creacion* decifrar_creacion(void*);
 directorio_a_listar_t* decifrar_directorio_a_listar(void*);
 char* decifrar_directorio_a_borrar(void*);
 mknod_params* decifrar_mknod(void*);
 rename_params*decifrar_rename(void*);
 char* decifrar_get_atributes(void*);
+open_file_params*decifrar_openfile(void*);
+char* decifrar_opendir(void*);
+access_params* decifrar_access(void* );
+void* serializar(int);
+truncate_params* decifrar_truncate(void* );
+statfs_params* decifrar_statfs(void*);
+
 
 #endif /* DESERIALIZAR_H_ */

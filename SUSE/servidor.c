@@ -25,7 +25,6 @@ int iniciar_servidor(){
 
 	//leer_config_y_setear();
 
-	suse_esta_atendiendo = true;
 
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;

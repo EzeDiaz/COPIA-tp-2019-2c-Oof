@@ -9,8 +9,9 @@
 #include <stdlib.h>
 #include <hilolay/hilolay.h>
 #include "hilolay_alumnos.c"
-
-#define CANT_ITERACIONES 10
+#include <unistd.h>
+/*
+#define CANT_ITERACIONES 10000
 
 void *tocar_solo()
 {
@@ -45,7 +46,7 @@ void *preparar_solo()
 	hilolay_yield();
 	printf("\nPALCO: Haciendo fila para entrar...\n");
 	hilolay_yield();
-	for(i=0;i<CANT_ITERACIONES;i++)
+	for(i=0;i<CANT_ITERACIONES/100;i++)
 	{
 		int accion = rand() % 4;
 		if(accion)
@@ -58,6 +59,7 @@ void *preparar_solo()
 			printf("PALCO: Singing Along\n");
 			hilolay_yield();
 		}
+		usleep(100000);
 	}
 	return 0;
 }
@@ -65,17 +67,21 @@ void *preparar_solo()
 int main(void)
 {
 	struct hilolay_t palco;
-	struct hilolay_t campo;
+	struct hilolay_t campo[3];
 
 	hilolay_init();
 	init_internal(&hiloops);
 
 	hilolay_create(&palco, NULL, &preparar_solo, NULL);
-	hilolay_create(&campo, NULL, &tocar_solo, NULL);
+	hilolay_create(&campo[0], NULL, &tocar_solo, NULL);
+	hilolay_create(&campo[1], NULL, &tocar_solo, NULL);
+	hilolay_create(&campo[2], NULL, &tocar_solo, NULL);
 
-	hilolay_join(&campo);
+	hilolay_join(&campo[0]);
+	hilolay_join(&campo[1]);
+	hilolay_join(&campo[2]);
 	hilolay_join(&palco);
 
 
-return hilolay_return(0);
-}
+	return hilolay_return(0);
+}*/

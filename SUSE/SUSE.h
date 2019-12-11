@@ -1,21 +1,5 @@
-/*
- * SUSE.h
- *
- *  Created on: 6 nov. 2019
- *      Author: utnso
- */
-
 #ifndef SUSE_H_
 #define SUSE_H_
-
-//prototipos
-
-/*
- * SUSE.c
- *
- *  Created on: 18 sep. 2019
- *      Author: utnso
- */
 
 #include "funciones_aux.h"
 #include "metricas.h"
@@ -25,19 +9,27 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <hilolay/hilolay.h>
+#include <hilolay/alumnos.h>
 #include <semaphore.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <commons/collections/dictionary.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>
+#include <commons/config.h>
+#include <readline/readline.h>
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include "metricas.h"
 
 #define ATTR_C11_THREAD ((void*)(uintptr_t)-1)
+
 void suse_init();
 void* suse_close(int,int);
 int suse_join(int,int);
 int suse_signal(char* , int );
-hilo_t* suse_schedule_next(int);
+int suse_schedule_next(int);
 int suse_wait(char*, int ,int );
 int suse_create(int, int);
 proceso_t* obtener_proceso(int);

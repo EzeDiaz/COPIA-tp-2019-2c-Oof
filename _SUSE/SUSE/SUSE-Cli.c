@@ -9,20 +9,16 @@
 #include <errno.h>
 
 
-void* enviar_paquete(void*);
-void* recibir_resultado(int* );
+
 
 
 void* enviar_paquete(void*paquete){
-
 	int peso;
 	memcpy(&peso,paquete,sizeof(int));
 	send(socket_suse_server,paquete,peso + sizeof(int), 0);
 	int alocador;
 	return recibir_resultado(&alocador);
-
 }
-
 
 void* recibir_resultado(int* alocador){
 
@@ -40,39 +36,54 @@ void* recibir_resultado(int* alocador){
 	}
 }
 
-void suse_close(int tid){
+int suse_close(int tid){
 	void* paquete = serializar_suse_close(tid);
-	enviar_paquete(paquete);
+	void*paquete2=enviar_paquete(paquete);
+	free(paquete2);
+	return 0;
 }
-void suse_join(int tid){
+int suse_join(int tid){
 	void* paquete = serializar_suse_join(tid);
-	enviar_paquete(paquete);
+	void*paquete2=enviar_paquete(paquete);
+	free(paquete2);
+	return 0;
 }
-void suse_signal(int tid,char* semaforo){
+int suse_signal(int tid,char* semaforo){
 	void* paquete = serializar_suse_signal(tid,semaforo);
-	enviar_paquete(paquete);
+	void*paquete2=enviar_paquete(paquete);
+	free(paquete2);
+	return 0;
 }
 int suse_schedule_next(){
 	void* paquete = serializar_suse_scheduler_next();
+	int alocador;
 	void* resultado=enviar_paquete(paquete);
 	int retorno;
 	memcpy(&retorno, resultado,sizeof(int));
 	return retorno;
 }
-void suse_wait(int tid, char* semaforo){
+int suse_wait(int tid, char* semaforo){
 	void* paquete = serializar_suse_wait(tid,semaforo);
-	enviar_paquete(paquete);
+	void*paquete2=enviar_paquete(paquete);
+	free(paquete2);
+	return 0;
 }
-void suse_create(int tid){
+int suse_create(int tid){
 	void* paquete = serializar_suse_create(tid);
-	enviar_paquete(paquete);
+	void*paquete2=enviar_paquete(paquete);
+	free(paquete2);
+
+	return 0;
 }
 
 
 void _hilolay_init(){
 
 	void* paquete = serializar_hilolay_init();
-	enviar_paquete(paquete);
+	void*paquete2=enviar_paquete(paquete);
+	free(paquete2);
+
+
 }
 
 
@@ -131,20 +142,6 @@ void conectar_con_servidor(int argc, char* argv) {
 }
 
 
-void hilolay_init(void){
-
-	char* nombre_de_config = readline("Ingresar nombre de config: \n >");
-	config = config_create(nombre_de_config);
-
-	int parm1;
-	char** param2;
-	conectar_con_servidor(parm1, param2[1]);
-
-	_hilolay_init();
-
-
-
-}
 
 
 

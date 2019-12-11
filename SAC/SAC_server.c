@@ -116,20 +116,15 @@ void start_up(){
 		printf("No podemos levantar el FileSystem\n");
 		exit(1);
 	}
-	char* ruta = string_new();
-	string_append(&ruta,NOMBRE_DEL_DISCO);
-	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
-
-	int cantidad_bloques= CANT_MAX_BLOQUES;
-	primer_bloque = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
-
 	comando=string_new();
 	string_append(&comando,"./sac-format disco.bin");
 
 	system(comando);
 	free(comando);
 
-	crear_bitmap(config);
+
+
+	crear_bitmap();
 	setear_fs();
 
 
@@ -147,11 +142,6 @@ void start_up(){
 
 void setear_fs(){
 
-	tamanio_disco=BLOCK_SIZE*CANT_MAX_BLOQUES;
-	int n_bloques=(tamanio_disco/BLOCK_SIZE/8)/BLOCK_SIZE;
-	cantidad_de_bloques_reservados= 1025 +n_bloques;
-
-
 	GFile* primer_nodo=buscar_nodo_libre();
 	primer_nodo->parent_dir_block=NULL;
 	primer_nodo->state=DIRECTORIO;
@@ -161,14 +151,9 @@ void setear_fs(){
 	crear_vector_de_punteros(primer_nodo->blk_indirect,1000);
 
 	strcpy(primer_nodo->fname, "/") ;
-	/*for(int i=0; i<71;i++){
-		primer_nodo->fname[i]=PUNTO_DE_MONTAJE[i];
-	}*/
-	escribir_en_disco(preparar_nodo_para_grabar(primer_nodo),buscar_bloque_libre(BUSQUEDA_NODO));
-}
+	}
 
-void crear_bitmap(t_config* config){
-
+void crear_bitmap( ){
 
 
 	//Tengo que traer a memoria el bitarray que ya hay en el FS
@@ -181,21 +166,73 @@ void crear_bitmap(t_config* config){
 	}
 
 	char* vectorBloques=(char*)malloc(cantidad_bloques);
-	vectorBloques=string_repeat('\0',cantidad_bloques);
+	vectorBloques=string_repeat("",cantidad_bloques);
 
-	memcpy(primer_bloque+BLOCK_SIZE,vectorBloques,cantidad_bloques);
-
-
-
-
-	char* direccion_bitmap=(char*)(primer_bloque+BLOCK_SIZE);
-	bitarray = bitarray_create_with_mode(direccion_bitmap,cantidad_bloques,LSB_FIRST);
+	char* ruta = string_new();
+	string_append(&ruta,NOMBRE_DEL_DISCO);
 
 
-	int bloques_usados=((cantidad_bloques)/BLOCK_SIZE)+2;
+	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
+
+
+//no se que poner aca en el header
+
+	header_SAC_fs=(GHeader*)malloc(sizeof(GHeader));
+	header_SAC_fs=mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
+	header_SAC_fs->sac[3]="SAC";
+	header_SAC_fs->version=1;
+	header_SAC_fs->padding[4081];//no se que hacer con esto todo
+
+
+
+
+
+
+	vectorBloques = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, BLOCK_SIZE);
+
+	bitarray = bitarray_create_with_mode(vectorBloques,cantidad_bloques,LSB_FIRST);
+
+	int bloques_usados=(cantidad_bloques);//no entiendo si esto esta bien
+	if(((GFILEBYTABLE+1) % 8) == 0) {
+		bloques_usados += (GFILEBYTABLE+1) / 8;
+		} else {
+		bloques_usados += ((GFILEBYTABLE+1) / 8) + 1;
+		}
+
+	header_SAC_fs->blk_bitmap=vectorBloques;//no se si es vectorBloques o si es bitarray
+	header_SAC_fs->size_bitmap=cantidad_bloques; // en bloques
+
+
 	for(int i=0;i<bloques_usados;i++){
-	bitarray_set_bit(bitarray,i);
+		bitarray_set_bit(bitarray,i);
 	}
+
+
+
+
+	tamanio_disco=(long long)(BLOCK_SIZE*CANT_MAX_BLOQUES);//si el tamaño es muy grande se me muere esto
+	int n_bloques=(tamanio_disco/BLOCK_SIZE/8)/BLOCK_SIZE;
+	cantidad_de_bloques_reservados= GFILEBYTABLE+1 +n_bloques;
+
+
+
+	for(int i=0;i<1024;i++){
+
+		tabla_de_nodos[i]=(GFile*)malloc(sizeof(GFile));
+		tabla_de_nodos[i]=mmap(NULL,sizeof(GFile), PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, BLOCK_SIZE*(i+cantidad_bloques+1));
+		tabla_de_nodos[i]->blk_indirect;
+		tabla_de_nodos[i]->c_date=0;//esto es valido?
+		tabla_de_nodos[i]->file_size=0;
+		tabla_de_nodos[i]->m_date=0;
+		tabla_de_nodos[i]->parent_dir_block=0;
+		tabla_de_nodos[i]->state=BORRADO;
+		tabla_de_nodos[i]->fname;
+
+
+
+	}
+
+
 }
 void eliminar_semaforos(){ //TODO
 	sem_destroy(&mutex_log_servidor);

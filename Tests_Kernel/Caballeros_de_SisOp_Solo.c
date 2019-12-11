@@ -8,10 +8,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <hilolay/hilolay.h>
-#include "hilolay_alumnos.c"
 
-#define CANT_NOTAS 420
 /*
+#define CANT_NOTAS 420
+
 struct hilolay_sem_t *solo_hiper_mega_piola;
 struct hilolay_sem_t *afinado;
 

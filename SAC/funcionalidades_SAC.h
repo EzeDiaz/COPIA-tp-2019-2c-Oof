@@ -15,15 +15,15 @@
 #include "globales.h"
 
 //Funcionalidades con archivos
-bool crear_archivo();
-bool escribir_archivo(uint32_t direccion,const void *cosas_a_escribir, size_t cantidad_a_escribir);
+int crear_archivo(char* path,mode_t mode);
+int escribir_archivo(char* ,char* , size_t ,off_t);
 void* leer_archivo(uint32_t , void *, size_t );
 bool borrar_archivo(char*);
 bool agregar_metadata_de_archivo();
 
 
 //Funcionalidades con directorios
-bool crear_directorio();
+int crear_directorio(char* , mode_t );
 void* listar_directorio_y_archivos(char*, char*);
 t_list* listar_metadata();
 bool eliminar_directorio();

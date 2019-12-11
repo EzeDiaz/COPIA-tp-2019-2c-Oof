@@ -1,10 +1,3 @@
-/*
- * funciones_aux.h
- *
- *  Created on: 6 oct. 2019
- *      Author: utnso
- */
-
 #ifndef FUNCIONES_AUX_H_
 #define FUNCIONES_AUX_H_
 
@@ -12,6 +5,7 @@
 #include "metricas.h"
 #include <commons/log.h>
 #include <commons/collections/queue.h>
+#include <commons/collections/dictionary.h>
 
 //Prototipos
 t_queue* obtener_cola_ready_de(char* );

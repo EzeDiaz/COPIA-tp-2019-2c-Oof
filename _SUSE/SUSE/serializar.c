@@ -8,16 +8,16 @@
 #include "serializar.h"
 
 void* serializar_hilolay_init(){
-	int peso_total_paquete = sizeof(int)*2;
-		int codigo_de_operacion = HILOLAY_INIT;
-		int offset = 0;
-		void* paquete = malloc(peso_total_paquete);
+	int peso_total_paquete = sizeof(int);
+	int codigo_de_operacion = HILOLAY_INIT;
+	int offset = 0;
+	void* paquete = malloc(peso_total_paquete+sizeof(int));
 
-		memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
-		offset += sizeof(int);
-		memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
-		offset += sizeof(int);
-		return paquete;
+	memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
+	offset += sizeof(int);
+	memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
+	offset += sizeof(int);
+	return paquete;
 
 }
 
@@ -57,24 +57,24 @@ void* serializar_suse_join(int tid){
 void* serializar_suse_signal(int tid,char* semaforo){
 
 	int longitud = string_length(semaforo) + 1;
-		int peso_total_paquete = longitud + sizeof(int)*4;
-		int codigo_de_operacion = SUSE_SIGNAL;
-		int offset = 0;
+	int peso_total_paquete = longitud + sizeof(int)*4;
+	int codigo_de_operacion = SUSE_SIGNAL;
+	int offset = 0;
 
-		void* paquete = malloc(peso_total_paquete);
+	void* paquete = malloc(peso_total_paquete);
 
-		memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
-		offset += sizeof(int);
-		memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
-		offset += sizeof(int);
-		memcpy(paquete + offset,&longitud,sizeof(int));
-		offset += sizeof(int);
-		memcpy(paquete + offset,semaforo,longitud);
-		offset += longitud;
-		memcpy(paquete + offset,&tid,sizeof(int));
+	memcpy(paquete + offset,&peso_total_paquete,sizeof(int));
+	offset += sizeof(int);
+	memcpy(paquete + offset,&codigo_de_operacion,sizeof(int));
+	offset += sizeof(int);
+	memcpy(paquete + offset,&longitud,sizeof(int));
+	offset += sizeof(int);
+	memcpy(paquete + offset,semaforo,longitud);
+	offset += longitud;
+	memcpy(paquete + offset,&tid,sizeof(int));
 
 
-		return paquete;
+	return paquete;
 
 }
 
@@ -115,6 +115,7 @@ void* serializar_suse_wait(int tid,char*semaforo){
 
 	return paquete;
 }
+
 
 void* serializar_suse_create(int tid){
 	int peso_total_paquete = sizeof(int)*3;

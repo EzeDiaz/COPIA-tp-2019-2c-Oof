@@ -61,40 +61,40 @@ static struct fuse_operations fs_oper = {
 		.getattr     = serializar_fs_getattr,
 		.mknod       = serializar_fs_mknod,
 		.rename      = serializar_fs_rename,
+		.access      = serializar_fs_access,
+		.truncate    = serializar_fs_truncate,
+		.statfs      = serializar_fs_statfs,
 
-		/*	.readlink    = fs_readlink,
-		.unlink      = fs_unlink,
-		.symlink     = fs_symlink,
-		.link        = fs_link,
-		.chmod       = fs_chmod,
-		.chown       = fs_chown,
-		.truncate    = fs_truncate,
-		.statfs      = fs_statfs,
-		.flush       = fs_flush,
-		.release     = fs_release,
-		.fsync       = fs_fsync,
-		.setxattr    = fs_setxattr,
-		.getxattr    = fs_getxattr,
-		.listxattr   = fs_listxattr,
-		.removexattr = fs_removexattr,
-		.releasedir  = fs_releasedir,
-		.fsyncdir    = fs_fsyncdir,
-		.init        = fs_init,
-		.destroy     = fs_destroy,
-		.access      = fs_access,
-		.ftruncate   = fs_ftruncate,
-		.fgetattr    = fs_fgetattr,
-		.lock        = fs_lock,
-		.utimens     = fs_utimens,
-		.bmap        = fs_bmap,
-		.ioctl       = fs_ioctl,
-		.poll        = fs_poll,*/
+
+		/*.readlink    = serializar_fs_readlink,
+		.ftruncate   = serializar_fs_ftruncate,
+		.unlink      = serializar_fs_unlink,
+		.symlink     = serializar_fs_symlink,
+		.link        = serializar_fs_link,
+		.chmod       = serializar_fs_chmod,
+		.chown       = serializar_fs_chown,
+		.flush       = serializar_fs_flush,
+		.release     = serializar_fs_release,
+		.fsync       = serializar_fs_fsync,
+		.setxattr    = serializar_fs_setxattr,
+		.getxattr    = serializar_fs_getxattr,
+		.listxattr   = serializar_fs_listxattr,
+		.removexattr = serializar_fs_removexattr,
+		.releasedir  = serializar_fs_releasedir,
+		.fsyncdir    = serializar_fs_fsyncdir,
+		.init        = serializar_fs_init,
+		.destroy     = serializar_fs_destroy,
+		.fgetattr    = serializar_fs_fgetattr,
+		.lock        = serializar_fs_lock,
+		.utimens     = serializar_fs_utimens,
+		.bmap        = serializar_fs_bmap,
+		.ioctl       = serializar_fs_ioctl,
+		.poll        = serializar_fs_poll,*/
 };
 
 
 
 int main(int argc, char **argv){
-	remove("/home/utnso/SAC");
 
 	leer_config();
 	printf("vamos a conectar con server \n");
@@ -135,16 +135,22 @@ int main(int argc, char **argv){
 	printf("vamos a iniciar fuse_main \n");
 
 	// system("fusermount -u /home/utnso/New_SAC");
-	 return fuse_main(args.argc, args.argv, &fs_oper,NULL) ;
+	return fuse_main(args.argc, args.argv, &fs_oper,NULL) ;
 
-	}
+}
 
 void leer_config(){
 
 	char* nombre_config= readline("Ingresar nombre de config: \n>");
 	config= config_create(nombre_config);
 
-	IP=config_get_string_value(config,"IP");
+
+	printf("%d",config);
+	printf("leo del config \n");
+	IP=malloc(10);
+	strcpy(IP,config_get_string_value(config,"IP"));
+
+	printf("%s \n",IP);
 	puerto=config_get_int_value(config,"PUERTO_ESCUCHA");
 
 }
@@ -158,10 +164,10 @@ void conectar_SAC_SERVER(int argc, char *argv) {
 	struct hostent *server_host;
 	struct sockaddr_in server_address;
 
-		printf("vamos a leer puerto \n");
+	printf("vamos a leer puerto \n");
 
-		server_port=puerto;
-		/* Get server host from server name. */
+	server_port=puerto;
+	/* Get server host from server name. */
 	server_host = gethostbyname(server_name);
 
 	/* Initialise IPv4 server address with server host. */

@@ -1,0 +1,1210 @@
+[INFO] 16:14:19:22 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:29 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:30 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:30 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:51 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 100.000000 %
+
+[INFO] 16:14:19:60 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:61 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:62 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 34244 ms
+
+[INFO] 16:14:19:63 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:69 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:70 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:73 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:74 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:74 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:76 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 100.000000 %
+
+[INFO] 16:14:19:80 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:80 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:81 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11242 ms
+
+[INFO] 16:14:19:82 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:86 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:88 log_metricas_hilo/(15245:15257): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:89 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:89 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11252 ms
+
+[INFO] 16:14:19:90 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:91 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 33.000000 %
+
+[INFO] 16:14:19:92 log_metricas_hilo/(15245:15257): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:93 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:93 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11221 ms
+
+[INFO] 16:14:19:94 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:95 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 25.000000 %
+
+[INFO] 16:14:19:95 log_metricas_hilo/(15245:15257): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:96 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:97 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:97 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:98 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:132 log_metricas_hilo/(15245:15262): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:138 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:140 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:141 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:142 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:142 log_metricas_hilo/(15245:15262): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:145 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:146 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:19:146 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:147 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:148 log_metricas_hilo/(15245:15262): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:149 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:149 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:150 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:150 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:151 log_metricas_hilo/(15245:15262): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:152 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:153 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11242 ms
+
+[INFO] 16:14:19:155 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:155 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:157 log_metricas_hilo/(15245:15262): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:159 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:160 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:19:160 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:161 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:162 log_metricas_hilo/(15245:15262): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:163 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:163 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11221 ms
+
+[INFO] 16:14:19:164 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:164 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:165 log_metricas_hilo/(15245:15262): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:168 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:168 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:169 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:172 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:199 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:200 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:200 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:14:19:201 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:201 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:202 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:203 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:203 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:19:204 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:206 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:207 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:208 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:208 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:209 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:209 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:212 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:213 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:213 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11242 ms
+
+[INFO] 16:14:19:214 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:214 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:215 log_metricas_hilo/(15245:15257): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:216 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:216 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:19:217 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:218 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:218 log_metricas_hilo/(15245:15257): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:219 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:220 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11221 ms
+
+[INFO] 16:14:19:220 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:221 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:222 log_metricas_hilo/(15245:15257): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:225 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:226 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:226 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:227 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:245 log_metricas_hilo/(15245:15262): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:247 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:250 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:14:19:250 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:253 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:254 log_metricas_hilo/(15245:15262): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:254 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:255 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:19:260 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:264 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:265 log_metricas_hilo/(15245:15262): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:266 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:267 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:268 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:269 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:270 log_metricas_hilo/(15245:15262): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:270 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:271 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11242 ms
+
+[INFO] 16:14:19:271 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:272 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:273 log_metricas_hilo/(15245:15262): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:278 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:279 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:19:279 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:280 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:281 log_metricas_hilo/(15245:15262): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:281 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:282 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:14:19:283 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:283 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:284 log_metricas_hilo/(15245:15262): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:285 log_metricas_hilo/(15245:15262): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:286 log_metricas_hilo/(15245:15262): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:286 log_metricas_hilo/(15245:15262): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:287 log_metricas_hilo/(15245:15262): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:316 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:317 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:317 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:14:19:318 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:318 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:319 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:320 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:320 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:19:321 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:321 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:322 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:323 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:324 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:324 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:325 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:326 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:326 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:327 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11242 ms
+
+[INFO] 16:14:19:329 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:330 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:331 log_metricas_hilo/(15245:15257): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:331 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:332 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:19:332 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:333 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:334 log_metricas_hilo/(15245:15257): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:335 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:336 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:14:19:336 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:337 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:338 log_metricas_hilo/(15245:15257): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:339 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:339 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:340 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:340 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:384 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:385 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:385 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:14:19:386 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:386 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:387 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:388 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:389 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:19:389 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:390 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:391 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:391 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:392 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:19:392 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:393 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:394 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:395 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:395 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:14:19:396 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:397 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:398 log_metricas_hilo/(15245:15257): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:398 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:401 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:19:401 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:402 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:403 log_metricas_hilo/(15245:15257): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:404 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:404 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:14:19:405 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:405 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:406 log_metricas_hilo/(15245:15257): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:407 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:407 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:408 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:409 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:443 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:444 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:445 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:14:19:445 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:446 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:447 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:447 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 35 ms
+
+[INFO] 16:14:19:448 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:19:448 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:449 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:19:451 log_metricas_hilo/(15245:15257): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:452 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:453 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:14:19:453 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:454 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:455 log_metricas_hilo/(15245:15257): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:456 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:456 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:14:19:457 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:19:457 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:458 log_metricas_hilo/(15245:15257): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:459 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:459 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:19:460 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:460 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:461 log_metricas_hilo/(15245:15257): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:462 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:463 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:14:19:463 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:464 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:19:465 log_metricas_hilo/(15245:15257): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:19:466 log_metricas_hilo/(15245:15257): TIEMPO DE EJECUCION--> 44 ms
+
+[INFO] 16:14:19:466 log_metricas_hilo/(15245:15257): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:19:467 log_metricas_hilo/(15245:15257): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:19:467 log_metricas_hilo/(15245:15257): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:14:34:209 log_metricas_hilo/(15245:15251): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:217 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 0 ms
+
+[INFO] 16:14:34:218 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:34:218 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:219 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 57.000000 %
+
+[INFO] 16:14:34:223 log_metricas_hilo/(15245:15251): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:224 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 0 ms
+
+[INFO] 16:14:34:225 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:34:225 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:226 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 57.000000 %
+
+[INFO] 16:14:34:234 log_metricas_hilo/(15245:15251): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:235 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 0 ms
+
+[INFO] 16:14:34:235 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:34:236 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:240 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 57.000000 %
+
+[INFO] 16:14:34:241 log_metricas_hilo/(15245:15251): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:242 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 0 ms
+
+[INFO] 16:14:34:243 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:34:251 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:252 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 57.000000 %
+
+[INFO] 16:14:34:253 log_metricas_hilo/(15245:15251): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:257 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 0 ms
+
+[INFO] 16:14:34:258 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:14:34:258 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:259 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 57.000000 %
+
+[INFO] 16:14:34:262 log_metricas_hilo/(15245:15251): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:269 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 50 ms
+
+[INFO] 16:14:34:270 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:14:34:271 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:271 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 58.000000 %
+
+[INFO] 16:14:34:272 log_metricas_hilo/(15245:15251): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:276 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 50 ms
+
+[INFO] 16:14:34:277 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:14:34:277 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:278 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:14:34:279 log_metricas_hilo/(15245:15251): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:286 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 59 ms
+
+[INFO] 16:14:34:287 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:14:34:288 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:288 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 25.000000 %
+
+[INFO] 16:14:34:289 log_metricas_hilo/(15245:15251): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:295 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 59 ms
+
+[INFO] 16:14:34:296 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:14:34:297 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:14:34:298 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 23.000000 %
+
+[INFO] 16:14:34:319 log_metricas_hilo/(15245:15251): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:320 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 59 ms
+
+[INFO] 16:14:34:320 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:14:34:321 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:34:323 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 22.000000 %
+
+[INFO] 16:14:34:324 log_metricas_hilo/(15245:15251): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:329 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 59 ms
+
+[INFO] 16:14:34:329 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:14:34:330 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:34:331 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:14:34:332 log_metricas_hilo/(15245:15251): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:14:34:339 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 59 ms
+
+[INFO] 16:14:34:339 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:14:34:340 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:14:34:341 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:16:397 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:401 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 42 ms
+
+[INFO] 16:15:16:402 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:16:402 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:403 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 100.000000 %
+
+[INFO] 16:15:16:404 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:404 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 42 ms
+
+[INFO] 16:15:16:405 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:16:405 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:406 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:15:16:407 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:408 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 42 ms
+
+[INFO] 16:15:16:408 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:16:409 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:409 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 33.000000 %
+
+[INFO] 16:15:16:410 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:411 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 42 ms
+
+[INFO] 16:15:16:412 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:16:412 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:413 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 25.000000 %
+
+[INFO] 16:15:16:414 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:414 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 42 ms
+
+[INFO] 16:15:16:415 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 208372 ms
+
+[INFO] 16:15:16:418 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:419 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:16:419 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:420 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 92 ms
+
+[INFO] 16:15:16:421 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:15:16:421 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:422 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 64.000000 %
+
+[INFO] 16:15:16:423 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:423 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 92 ms
+
+[INFO] 16:15:16:424 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:15:16:424 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:425 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:15:16:426 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:427 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 101 ms
+
+[INFO] 16:15:16:427 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:15:16:428 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:428 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 29.000000 %
+
+[INFO] 16:15:16:429 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:430 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 101 ms
+
+[INFO] 16:15:16:430 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:15:16:431 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:16:435 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 26.000000 %
+
+[INFO] 16:15:16:436 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:436 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 101 ms
+
+[INFO] 16:15:16:437 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:15:16:437 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:16:438 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 23.000000 %
+
+[INFO] 16:15:16:439 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:439 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 101 ms
+
+[INFO] 16:15:16:440 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:15:16:441 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:16:441 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:15:16:442 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:16:443 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 101 ms
+
+[INFO] 16:15:16:443 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:15:16:444 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:16:444 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:44:392 log_metricas_hilo/(15245:15251): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:410 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 70 ms
+
+[INFO] 16:15:44:410 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 42 ms
+
+[INFO] 16:15:44:411 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:412 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 29.000000 %
+
+[INFO] 16:15:44:412 log_metricas_hilo/(15245:15251): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:415 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 70 ms
+
+[INFO] 16:15:44:416 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:44:416 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:417 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 26.000000 %
+
+[INFO] 16:15:44:421 log_metricas_hilo/(15245:15251): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:422 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 70 ms
+
+[INFO] 16:15:44:424 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:44:426 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:432 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 23.000000 %
+
+[INFO] 16:15:44:433 log_metricas_hilo/(15245:15251): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:433 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 70 ms
+
+[INFO] 16:15:44:434 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 416035 ms
+
+[INFO] 16:15:44:436 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:439 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:15:44:440 log_metricas_hilo/(15245:15251): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:441 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 70 ms
+
+[INFO] 16:15:44:448 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 208372 ms
+
+[INFO] 16:15:44:449 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:449 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:44:450 log_metricas_hilo/(15245:15251): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:451 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 120 ms
+
+[INFO] 16:15:44:455 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:15:44:456 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:456 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 56.000000 %
+
+[INFO] 16:15:44:460 log_metricas_hilo/(15245:15251): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:461 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 120 ms
+
+[INFO] 16:15:44:465 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:15:44:466 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:467 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:15:44:468 log_metricas_hilo/(15245:15251): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:472 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 129 ms
+
+[INFO] 16:15:44:472 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:15:44:474 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:475 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 24.000000 %
+
+[INFO] 16:15:44:479 log_metricas_hilo/(15245:15251): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:484 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 129 ms
+
+[INFO] 16:15:44:485 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:15:44:485 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:44:486 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 22.000000 %
+
+[INFO] 16:15:44:490 log_metricas_hilo/(15245:15251): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:491 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 129 ms
+
+[INFO] 16:15:44:492 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:15:44:495 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:44:498 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:15:44:499 log_metricas_hilo/(15245:15251): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:500 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 129 ms
+
+[INFO] 16:15:44:502 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:15:44:508 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:44:509 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:44:512 log_metricas_hilo/(15245:15251): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:44:515 log_metricas_hilo/(15245:15251): TIEMPO DE EJECUCION--> 129 ms
+
+[INFO] 16:15:44:518 log_metricas_hilo/(15245:15251): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:15:44:520 log_metricas_hilo/(15245:15251): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:44:521 log_metricas_hilo/(15245:15251): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:55:16 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:16 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 81 ms
+
+[INFO] 16:15:55:17 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 42 ms
+
+[INFO] 16:15:55:17 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:18 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 22.000000 %
+
+[INFO] 16:15:55:19 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:20 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 81 ms
+
+[INFO] 16:15:55:20 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:55:21 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:21 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:15:55:22 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:23 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 81 ms
+
+[INFO] 16:15:55:23 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:15:55:24 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:25 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:15:55:25 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:26 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 81 ms
+
+[INFO] 16:15:55:27 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 608554 ms
+
+[INFO] 16:15:55:27 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:28 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:55:29 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:29 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 81 ms
+
+[INFO] 16:15:55:30 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 208372 ms
+
+[INFO] 16:15:55:32 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:33 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:55:34 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:34 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 131 ms
+
+[INFO] 16:15:55:35 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:15:55:35 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:36 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 52.000000 %
+
+[INFO] 16:15:55:37 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:37 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 131 ms
+
+[INFO] 16:15:55:38 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:15:55:39 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:39 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:15:55:40 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:41 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 140 ms
+
+[INFO] 16:15:55:41 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:15:55:42 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:42 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:15:55:43 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:44 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 140 ms
+
+[INFO] 16:15:55:45 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:15:55:45 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:15:55:46 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:55:50 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:50 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 140 ms
+
+[INFO] 16:15:55:51 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:15:55:51 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:55:52 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:55:53 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:54 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 140 ms
+
+[INFO] 16:15:55:54 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:15:55:55 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:55:56 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:15:55:56 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:15:55:57 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 140 ms
+
+[INFO] 16:15:55:58 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:15:55:58 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:15:55:59 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:563 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:563 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:564 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 204 ms
+
+[INFO] 16:16:05:564 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:565 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:16:05:566 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:567 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:567 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 8821 ms
+
+[INFO] 16:16:05:568 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:568 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:16:05:569 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:570 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:570 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:16:05:571 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:575 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:575 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:576 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:577 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 608554 ms
+
+[INFO] 16:16:05:577 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:578 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:579 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:579 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:580 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 208372 ms
+
+[INFO] 16:16:05:580 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:581 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:582 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:583 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 141 ms
+
+[INFO] 16:16:05:583 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:16:05:584 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:584 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 51.000000 %
+
+[INFO] 16:16:05:585 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:586 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 141 ms
+
+[INFO] 16:16:05:586 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:16:05:587 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:588 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:16:05:589 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:591 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:591 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:16:05:592 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:592 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 21.000000 %
+
+[INFO] 16:16:05:593 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:594 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:595 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:16:05:595 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:596 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:597 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:598 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:598 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:16:05:599 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:16:05:599 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:600 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:601 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:601 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:16:05:602 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:16:05:603 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:604 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:604 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:605 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:16:05:607 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:16:05:607 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:652 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:653 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:653 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 295 ms
+
+[INFO] 16:16:05:654 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:655 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:655 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:656 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:657 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 8821 ms
+
+[INFO] 16:16:05:659 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:659 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:660 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:661 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:662 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 0 ms
+
+[INFO] 16:16:05:662 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:663 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:664 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:664 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:665 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 608554 ms
+
+[INFO] 16:16:05:665 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:666 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:667 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:668 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 91 ms
+
+[INFO] 16:16:05:668 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 208372 ms
+
+[INFO] 16:16:05:669 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:669 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:670 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:671 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 141 ms
+
+[INFO] 16:16:05:671 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 35 ms
+
+[INFO] 16:16:05:672 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:673 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:16:05:673 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:675 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 141 ms
+
+[INFO] 16:16:05:676 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 34314 ms
+
+[INFO] 16:16:05:677 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:678 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 50.000000 %
+
+[INFO] 16:16:05:678 log_metricas_hilo/(15245:15271): Al hilo 0 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:679 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:680 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 132 ms
+
+[INFO] 16:16:05:680 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:681 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:682 log_metricas_hilo/(15245:15271): Al hilo 1 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:683 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:683 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11374 ms
+
+[INFO] 16:16:05:684 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 0 ms
+
+[INFO] 16:16:05:684 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:685 log_metricas_hilo/(15245:15271): Al hilo 2 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:686 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:686 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11384 ms
+
+[INFO] 16:16:05:687 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:16:05:687 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:689 log_metricas_hilo/(15245:15271): Al hilo 3 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:690 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:691 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11353 ms
+
+[INFO] 16:16:05:694 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:16:05:695 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+
+[INFO] 16:16:05:696 log_metricas_hilo/(15245:15271): Al hilo 4 le corresponden las siguientes metricas: 
+
+[INFO] 16:16:05:696 log_metricas_hilo/(15245:15271): TIEMPO DE EJECUCION--> 150 ms
+
+[INFO] 16:16:05:697 log_metricas_hilo/(15245:15271): TIEMPO DE ESPERA--> 11340 ms
+
+[INFO] 16:16:05:697 log_metricas_hilo/(15245:15271): TIEMPO DE USO DE CPU--> 1 ms
+
+[INFO] 16:16:05:698 log_metricas_hilo/(15245:15271): PORCENTAJE DE TIEMPO DE EJECUCION--> 20.000000 %
+

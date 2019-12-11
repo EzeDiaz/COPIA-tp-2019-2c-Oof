@@ -1,8 +1,22 @@
-[INFO] 13:58:09:152 Servidor/(7798:7798): Levantamos el servidor
+[INFO] 16:13:24:219 Servidor/(15245:15245): Levantamos el servidor
 
-[INFO] 13:58:09:271 Servidor/(7798:7798): Servidor listo para recibir un cliente
+[INFO] 16:13:24:235 Servidor/(15245:15245): Servidor listo para recibir un cliente
 
-[INFO] 13:58:50:315 Servidor/(7798:7798): Recibimos un cliente
+[INFO] 16:13:35:645 Servidor/(15245:15245): Recibimos un cliente
 
-[INFO] 13:58:50:328 Servidor/(7798:7842): Recibimos conexion 
+[INFO] 16:13:35:666 Servidor/(15245:15257): Recibimos conexion 
+
+[INFO] 16:13:43:985 Servidor/(15245:15245): Recibimos un cliente
+
+[INFO] 16:13:43:5 Servidor/(15245:15262): Recibimos conexion 
+
+[INFO] 16:14:19:294 Servidor/(15245:15262): Se desconecto el cliente
+
+[INFO] 16:14:19:472 Servidor/(15245:15257): Se desconecto el cliente
+
+[INFO] 16:14:34:78 Servidor/(15245:15245): Recibimos un cliente
+
+[INFO] 16:14:34:88 Servidor/(15245:15271): Recibimos conexion 
+
+[INFO] 16:16:05:700 Servidor/(15245:15271): Se desconecto el cliente
 

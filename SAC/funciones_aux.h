@@ -35,6 +35,7 @@ void* abrir_en_disco(int );
 bool esta_full_el_bloque_puntero(ptrGBloque);
 void* obtener_direccion_de_escritura(ptrGBloque );
 int realizar_mknod(char*,mode_t,dev_t );
+t_list* buscar_todo_los_nodos_hijos(GFile* );
 
 
 #endif /* FUNCIONES_AUX_H_ */

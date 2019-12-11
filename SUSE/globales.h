@@ -1,12 +1,6 @@
-/*
- * globales.h
- *
- *  Created on: 1 oct. 2019
- *      Author: utnso
- */
-
 #ifndef GLOBALES_H_
 #define GLOBALES_H_
+
 #include <commons/collections/queue.h>
 #include <commons/collections/list.h>
 #include <commons/collections/dictionary.h>
@@ -29,11 +23,35 @@ pthread_mutex_t mutex_log_servidor;
 pthread_mutex_t semaforo_lista_procesos_finalizados;
 pthread_mutex_t semaforo_estado_blocked;
 pthread_mutex_t semaforo_diccionario_por_semaforo;
+pthread_mutex_t mutex_lista_block;
+pthread_mutex_t mutex_diccionario;
+pthread_mutex_t mutex_lista;
+pthread_mutex_t mutex_cola_new;
+pthread_mutex_t mutex_calcular_sjf;
+pthread_mutex_t mutex_elementos_en_new;
+pthread_mutex_t mutex_log_metricas;
+pthread_mutex_t mutex_new_to_ready;
+pthread_mutex_t mutex_exec;
+pthread_mutex_t mutex_encolar_new;
+pthread_mutex_t mutex_suse_schedule_next;
+pthread_mutex_t mutex_listas_metricas;
+pthread_mutex_t mutex_obtener_tiempo_total;
+pthread_mutex_t mutex_lista_hilos_programa;
+pthread_mutex_t mutex_wait;
+pthread_mutex_t mutex_signal;
+pthread_mutex_t mutex_cola_exit;
+pthread_mutex_t mutex_cronometro;
+pthread_mutex_t mutex_lista_bloqueados;
+pthread_mutex_t mutex_bloquear_hilo;
 
 //Contador
 sem_t grado_de_multiprogramacion_contador;
 sem_t procesos_en_new;
 //sem_t* semaforo_lista_procesos_finalizados;
+
+//Binario
+sem_t sem_encolar_en_new;
+
 
 //LOGS
 t_log* log_colas;
