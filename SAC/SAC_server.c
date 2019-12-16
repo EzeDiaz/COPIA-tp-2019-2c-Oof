@@ -58,16 +58,18 @@ int main(){
 	int cliente;
 	printf("Listos para escuchar\n");
 
+	sem_wait(&mutex_log_servidor);
 	log_info(log_servidor,"Servidor listo para recibir un cliente\n");
-
+	sem_post(&mutex_log_servidor);
 	while(1){
 		listen(servidor, 100);
 		pthread_t* hilo;
 		struct sockaddr_in direccion_cliente;
 		unsigned tamanio_direccion = sizeof(struct sockaddr_in);
 		cliente = accept(servidor, (void*) &direccion_cliente, &tamanio_direccion);
-
+		sem_wait(&mutex_log_servidor);
 		log_info(log_servidor, "Recibimos un cliente\n");
+		sem_post(&mutex_log_servidor);
 		pthread_create(&hilo, NULL, (void*) atender_cliente, cliente);
 		pthread_detach(hilo);
 	}
@@ -87,7 +89,6 @@ void inicializar_semaforos(){
 
 	sem_init(&mutex_log_servidor, 0, 1);
 	sem_init(&mutex_tabla_de_nodos,0,1);
-	sem_init(&mutex_log_servidor,0,1);
 
 }
 
@@ -107,9 +108,13 @@ void start_up(){
 	string_append(&comando,"dd if=/dev/zero iflag=fullblock of=");
 	string_append(&comando,NOMBRE_DEL_DISCO);
 	string_append(&comando," bs=");
-	string_append(&comando,string_itoa(BLOCK_SIZE));
+	char* aux=string_itoa(BLOCK_SIZE);
+	string_append(&comando,aux);
+	free(aux);
 	string_append(&comando," count=");
-	string_append(&comando,string_itoa(CANT_MAX_BLOQUES));
+	aux=string_itoa(CANT_MAX_BLOQUES);
+	string_append(&comando,aux);
+	free(aux);
 	int retorno = system(comando);
 	free(comando);
 	if(retorno<0){
@@ -125,12 +130,28 @@ void start_up(){
 
 
 	crear_bitmap();
-	setear_fs();
+
 
 
 	comando=string_new();
 	string_append(&comando,"./sac-dump disco.bin");
 	system(comando);
+	setear_fs();
+
+	int bloques_usados=0;//no entiendo si esto esta bien
+	if(((GFILEBYTABLE+1) % 8) == 0) {
+		bloques_usados += (GFILEBYTABLE+1) / 8;
+	} else {
+		bloques_usados += ((GFILEBYTABLE+1) / 8) + 1;
+	}
+
+
+	for(int i=0;i<bloques_usados;i++){
+		bitarray_set_bit(bitarray,i);
+	}
+
+
+
 
 	free(comando);
 
@@ -151,7 +172,7 @@ void setear_fs(){
 	crear_vector_de_punteros(primer_nodo->blk_indirect,1000);
 
 	strcpy(primer_nodo->fname, "/") ;
-	}
+}
 
 void crear_bitmap( ){
 
@@ -165,17 +186,16 @@ void crear_bitmap( ){
 		cantidad_bloques = (cantidad_bloques / 8) + 1;
 	}
 
-	char* vectorBloques=(char*)malloc(cantidad_bloques);
-	vectorBloques=string_repeat("",cantidad_bloques);
 
 	char* ruta = string_new();
 	string_append(&ruta,NOMBRE_DEL_DISCO);
 
 
+
 	int file_descriptor_disco = open(ruta, O_RDWR, S_IRUSR | S_IWUSR);
 
 
-//no se que poner aca en el header
+	//no se que poner aca en el header
 
 	header_SAC_fs=(GHeader*)malloc(sizeof(GHeader));
 	header_SAC_fs=mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, 0);
@@ -187,27 +207,19 @@ void crear_bitmap( ){
 
 
 
+	char* vector_bloques=(char*)malloc(cantidad_bloques);
+	vector_bloques=string_repeat('\0',cantidad_bloques);
 
-	vectorBloques = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, BLOCK_SIZE);
+	char*bitmap = mmap(NULL, cantidad_bloques, PROT_READ | PROT_WRITE, MAP_SHARED,file_descriptor_disco, BLOCK_SIZE);
 
-	bitarray = bitarray_create_with_mode(vectorBloques,cantidad_bloques,LSB_FIRST);
+	memcpy(bitmap,vector_bloques,cantidad_bloques);
+	bitarray = bitarray_create_with_mode(bitmap,cantidad_bloques,LSB_FIRST);
 
-	int bloques_usados=(cantidad_bloques);//no entiendo si esto esta bien
-	if(((GFILEBYTABLE+1) % 8) == 0) {
-		bloques_usados += (GFILEBYTABLE+1) / 8;
-		} else {
-		bloques_usados += ((GFILEBYTABLE+1) / 8) + 1;
-		}
 
-	header_SAC_fs->blk_bitmap=vectorBloques;//no se si es vectorBloques o si es bitarray
+	//free(vector_bloques);
+
+	header_SAC_fs->blk_bitmap=2;//no se si es vectorBloques o si es bitarray
 	header_SAC_fs->size_bitmap=cantidad_bloques; // en bloques
-
-
-	for(int i=0;i<bloques_usados;i++){
-		bitarray_set_bit(bitarray,i);
-	}
-
-
 
 
 	tamanio_disco=(long long)(BLOCK_SIZE*CANT_MAX_BLOQUES);//si el tamaño es muy grande se me muere esto
@@ -232,7 +244,7 @@ void crear_bitmap( ){
 
 	}
 
-
+	free(ruta);
 }
 void eliminar_semaforos(){ //TODO
 	sem_destroy(&mutex_log_servidor);
@@ -271,15 +283,16 @@ void realizar_request(void *buffer, int cliente_socket){
 
 	identificar_paquete_y_ejecutar_comando(cliente_socket, buffer);
 	/*Deserializa y hace la opercion correspondiente*/
+	sem_wait(&mutex_log_servidor);
 	log_info(log_servidor,"Terminamos el request\n");
-
+	sem_post(&mutex_log_servidor);
 }
 
 void* recibir_buffer(int* alocador, int cliente_socket){
 
 	void* buffer;
-
-	if(recv(cliente_socket, alocador, 4, MSG_WAITALL)!=0){
+	int flag=recv(cliente_socket, alocador, 4, MSG_WAITALL);
+	if(flag!=0){
 		buffer = malloc(*alocador);
 		recv(cliente_socket, buffer, *alocador, MSG_WAITALL);
 		return buffer;

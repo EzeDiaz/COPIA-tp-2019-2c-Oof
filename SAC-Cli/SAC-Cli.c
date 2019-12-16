@@ -64,6 +64,8 @@ static struct fuse_operations fs_oper = {
 		.access      = serializar_fs_access,
 		.truncate    = serializar_fs_truncate,
 		.statfs      = serializar_fs_statfs,
+		.releasedir  = serializar_fs_releasedir,
+
 
 
 		/*.readlink    = serializar_fs_readlink,
@@ -80,7 +82,6 @@ static struct fuse_operations fs_oper = {
 		.getxattr    = serializar_fs_getxattr,
 		.listxattr   = serializar_fs_listxattr,
 		.removexattr = serializar_fs_removexattr,
-		.releasedir  = serializar_fs_releasedir,
 		.fsyncdir    = serializar_fs_fsyncdir,
 		.init        = serializar_fs_init,
 		.destroy     = serializar_fs_destroy,
@@ -97,23 +98,14 @@ static struct fuse_operations fs_oper = {
 int main(int argc, char **argv){
 
 	leer_config();
-	printf("vamos a conectar con server \n");
 
-	conectar_SAC_SERVER(argc,argv[1]);
-
-	printf("conecta3\n");
-
-
-	printf("vamos a iniciar fuse_args_init \n");
 
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
-	printf("memseteamos runtime options \n");
 
 	// Limpio la estructura que va a contener los parametros
 	memset(&runtime_options, 0, sizeof(struct t_runtime_options));
 
-	printf("vamos a iniciar fuse_opt_parse \n");
 
 	// Esta funcion de FUSE lee los parametros recibidos y los intepreta
 	if (fuse_opt_parse(&args, &runtime_options, fuse_options, NULL) == -1){
@@ -132,7 +124,6 @@ int main(int argc, char **argv){
 	// Esta es la funcion principal de FUSE, es la que se encarga
 	// de realizar el montaje, comuniscarse con el kernel, delegar todo
 	// en varios threads
-	printf("vamos a iniciar fuse_main \n");
 
 	// system("fusermount -u /home/utnso/New_SAC");
 	return fuse_main(args.argc, args.argv, &fs_oper,NULL) ;
@@ -146,7 +137,7 @@ void leer_config(){
 
 
 	printf("%d",config);
-	printf("leo del config \n");
+	printf("\n leo del config \n");
 	IP=malloc(10);
 	strcpy(IP,config_get_string_value(config,"IP"));
 
@@ -155,29 +146,35 @@ void leer_config(){
 
 }
 
-void conectar_SAC_SERVER(int argc, char *argv) {
+int conectar_SAC_SERVER(int argc, char *argv) {
 
-	printf("vamos a leer ip \n");
 
 	char* server_name=IP;
 	int server_port, socket_fd;
 	struct hostent *server_host;
 	struct sockaddr_in server_address;
 
-	printf("vamos a leer puerto \n");
+	/* Get server name from command line arguments or stdin. */
 
-	server_port=puerto;
+
+	/* Get server port from command line arguments or stdin. */
+	//server_port = argc > 2 ? atoi(argv[2]) : 0;
+	//if (!server_port) {
+		server_port=puerto;
+	//}
+
 	/* Get server host from server name. */
 	server_host = gethostbyname(server_name);
-
+	printf("consegui el server_host\n");
 	/* Initialise IPv4 server address with server host. */
 	memset(&server_address, 0, sizeof server_address);
 	server_address.sin_family = AF_INET;
 	server_address.sin_port = htons(server_port);
 	memcpy(&server_address.sin_addr.s_addr, server_host->h_addr, server_host->h_length);
-
 	/* Create TCP socket. */
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+
 	if (socket_fd == -1) {
 		perror("Error en la creacion del socket");
 		exit(1);
@@ -190,7 +187,7 @@ void conectar_SAC_SERVER(int argc, char *argv) {
 		exit(1);
 	}
 
-	socket_sac_server=socket_fd;
+	return socket_fd;
 
 }
 

@@ -30,7 +30,7 @@ void obtener_nombre_de_archivo(char fname[],char* path){
 
 }
 
-GFile* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
+GFile* encontrar_en_tabla_de_nodos(char nombre_de_nodo[]){
 
 	sem_wait(&mutex_tabla_de_nodos);
 	int i=0;
@@ -49,9 +49,11 @@ GFile* encontrar_en_tabla_de_nodos(char* nombre_de_nodo){
 }
 
 
-void* serializar_flag(int flag_resultado){
-	void* paquete=malloc(sizeof(int));
-	memcpy(paquete,&flag_resultado,sizeof(int));
+void* serializar_flag(void* flag_resultado){
+	int peso=sizeof(int)+sizeof(flag_resultado);
+	void* paquete=malloc(peso);
+	memcpy(paquete,&peso,sizeof(int));
+	memcpy(paquete+sizeof(int),&flag_resultado,sizeof(flag_resultado));
 	return paquete;
 
 }
@@ -131,7 +133,7 @@ bool verificar_path_este_permitido(char*path){
 }
 
 
-int buscar_bloque_libre(int tipo_de_busqueda){
+int buscar_bloque_libre(){
 
 	int nro_de_nodo=-1;
 	int cantidad_de_bloques;
@@ -170,7 +172,7 @@ t_list* buscar_todo_los_nodos_hijos(GFile* nodo_padre){
 	for(int i=0; i< GFILEBYTABLE;i++){
 
 		GFile* posible_hijo=tabla_de_nodos[i];
-		if(posible_hijo->parent_dir_block==nodo_padre->blk_indirect){
+		if(posible_hijo->parent_dir_block==calcula_dir_padre(nodo_padre)){
 			//esta rancio el tema de mandarle ahi el bloque de indirectos quizas deberia
 			//meterle el numeor que ocupa en la tabla de nodos o algo asi
 			list_add(retorno,posible_hijo);
@@ -180,6 +182,20 @@ t_list* buscar_todo_los_nodos_hijos(GFile* nodo_padre){
 	}
 
 	return retorno;
+}
+
+int calcula_dir_padre(GFile* nodo_padre){
+
+	int distancia= (char*) nodo_padre-(char*)tabla_de_nodos;
+
+	if(distancia%8==0){
+
+		return distancia;
+
+	}else{
+		return -1;
+	}
+
 }
 
 void crear_vector_de_punteros(ptrGBloque array_de_bloques[], int n){
@@ -196,7 +212,7 @@ ptrGBloque* obtener_puntero_padre(char* path){
 
 	if(!strcmp("/",path)){
 		GFile* nodo_padre =encontrar_en_tabla_de_nodos(path);
-		return nodo_padre->blk_indirect;
+		return calcula_dir_padre(nodo_padre);
 	}else{
 		char** vector= string_split(path, "/");
 
@@ -208,7 +224,7 @@ ptrGBloque* obtener_puntero_padre(char* path){
 		char* nombre_nodo_padre=vector[i-1];
 		if(nombre_nodo_padre != NULL){
 			GFile* nodo_padre =encontrar_en_tabla_de_nodos(nombre_nodo_padre);
-			return nodo_padre->blk_indirect;
+			return calcula_dir_padre(nodo_padre);
 		}else{
 			return -1;
 		}

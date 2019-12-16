@@ -25,17 +25,24 @@ enum estado{
 
 typedef struct{
 
+	int TID;
+	int PID;
+
+}hilo_bloqueado_t;
+
+typedef struct{
+
 	t_list* hilos_del_programa;//lista de hilos_t*
 	sem_t procesos_en_ready;
+	pthread_mutex_t mutex_operaciones;
 	pthread_mutex_t proceso_en_exec;
-	pthread_mutex_t mutex_cola_exec_scn;
-	pthread_mutex_t mutex_cola_exec_sj;
-	pthread_mutex_t mutex_cola_exec_sc;
 	pthread_mutex_t mutex_cola_ready;
 	pthread_mutex_t semaforo_scheduler_next;
 	pthread_mutex_t	semaforo_join;
 	pthread_mutex_t semaforo_close;
+	pthread_mutex_t mutex_lista_hilos;
 	pthread_mutex_t mutex_cola_exec;
+	pthread_mutex_t consumir_hilo_exec;
 	t_dictionary* diccionario_joineados_por_tid;
 }proceso_t;
 
@@ -74,6 +81,12 @@ typedef struct{
 	int PID; // Del programa al que pertenece
 	hilolay_t* hilo_informacion; // Unico por thread
 	int estado_del_hilo;
+	bool es_conductor;
+	pthread_mutex_t mutex_estado_del_hilo;
+	pthread_mutex_t mutex_tiempo_exec;
+	pthread_mutex_t mutex_sumatoria_ready;
+	pthread_mutex_t mutex_sumatoria_exec;
+
 	tiempos_t* tiempos;
 	metricas_t* metricas;
 	float prioridad;

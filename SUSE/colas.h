@@ -26,5 +26,4 @@ void encolar_en_new(hilo_t*);
 bool finDePlanificacion;//inicia en false en el main
 
 //Lists
-t_list* hilos_finalizados;//inicializar en el main
 #endif /* COLAS_H_ */

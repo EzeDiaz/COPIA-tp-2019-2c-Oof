@@ -1,22 +1,58 @@
-[INFO] 16:13:24:219 Servidor/(15245:15245): Levantamos el servidor
+[INFO] 12:16:32:272 Servidor/(6904:6904): Levantamos el servidor
 
-[INFO] 16:13:24:235 Servidor/(15245:15245): Servidor listo para recibir un cliente
+[INFO] 12:16:32:272 Servidor/(6904:6904): Servidor listo para recibir un cliente
 
-[INFO] 16:13:35:645 Servidor/(15245:15245): Recibimos un cliente
+[INFO] 12:16:39:81 Servidor/(6904:6904): Recibimos un cliente
 
-[INFO] 16:13:35:666 Servidor/(15245:15257): Recibimos conexion 
+[INFO] 12:16:39:81 Servidor/(6904:6911): Recibimos conexion 
 
-[INFO] 16:13:43:985 Servidor/(15245:15245): Recibimos un cliente
+[INFO] 12:16:45:688 Servidor/(6904:6904): Recibimos un cliente
 
-[INFO] 16:13:43:5 Servidor/(15245:15262): Recibimos conexion 
+[INFO] 12:16:45:688 Servidor/(6904:6916): Recibimos conexion 
 
-[INFO] 16:14:19:294 Servidor/(15245:15262): Se desconecto el cliente
+[INFO] 12:17:15:150 Servidor/(6904:6904): Recibimos un cliente
 
-[INFO] 16:14:19:472 Servidor/(15245:15257): Se desconecto el cliente
+[INFO] 12:17:15:150 Servidor/(6904:6947): Recibimos conexion 
 
-[INFO] 16:14:34:78 Servidor/(15245:15245): Recibimos un cliente
+[INFO] 12:17:17:898 Servidor/(6904:6904): Recibimos un cliente
 
-[INFO] 16:14:34:88 Servidor/(15245:15271): Recibimos conexion 
+[INFO] 12:17:17:899 Servidor/(6904:6948): Recibimos conexion 
 
-[INFO] 16:16:05:700 Servidor/(15245:15271): Se desconecto el cliente
+[INFO] 12:17:20:242 Servidor/(6904:6904): Recibimos un cliente
+
+[INFO] 12:17:20:242 Servidor/(6904:6949): Recibimos conexion 
+
+[INFO] 12:17:22:201 Servidor/(6904:6904): Recibimos un cliente
+
+[INFO] 12:17:22:202 Servidor/(6904:6950): Recibimos conexion 
+
+[INFO] 12:17:24:409 Servidor/(6904:6904): Recibimos un cliente
+
+[INFO] 12:17:24:413 Servidor/(6904:6951): Recibimos conexion 
+
+[INFO] 12:17:26:260 Servidor/(6904:6904): Recibimos un cliente
+
+[INFO] 12:17:26:267 Servidor/(6904:6952): Recibimos conexion 
+
+[INFO] 12:17:35:656 Servidor/(6904:6947): Se desconecto el cliente
+
+[INFO] 12:17:38:465 Servidor/(6904:6948): Se desconecto el cliente
+
+[INFO] 12:17:40:668 Servidor/(6904:6949): Se desconecto el cliente
+
+[INFO] 12:17:42:914 Servidor/(6904:6950): Se desconecto el cliente
+
+[INFO] 12:17:43:388 Servidor/(6904:6904): Recibimos un cliente
+
+[INFO] 12:17:43:388 Servidor/(6904:6957): Recibimos conexion 
+
+[INFO] 12:17:45:21 Servidor/(6904:6951): Se desconecto el cliente
+
+[INFO] 12:17:46:538 Servidor/(6904:6952): Se desconecto el cliente
+
+[INFO] 12:18:04:93 Servidor/(6904:6957): Se desconecto el cliente
+
+[INFO] 12:18:04:127 Servidor/(6904:6911): Se desconecto el cliente
+
+[INFO] 12:18:04:139 Servidor/(6904:6916): Se desconecto el cliente
 

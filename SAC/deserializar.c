@@ -8,17 +8,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/statvfs.h>
 
 int determinar_protocolo(void* buffer){
 	int codigo_de_operacion;
 	int offset = 0;
 	memcpy(&(codigo_de_operacion), (buffer+offset), sizeof(int));
+
+
 	log_info(logger_de_deserializacion, "Obtuvimos el codigo de operacion \n");
 	return codigo_de_operacion;
 }
 
 void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
+
+	sem_wait(&mutex_log_servidor);
 	log_info(logger_de_deserializacion, "Estamos por deserializar el codigo de operacion\n");
+	sem_post(&mutex_log_servidor);
 	int codigo_de_operacion=determinar_protocolo(buffer);
 	void* resultado;
 	void* paquete_decifrado;
@@ -69,8 +75,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case LISTAR_DIRECTORIO_Y_ARCHIVOS:
 		log_info(logger_de_deserializacion, "Es el codigo de 'listado de directorio', comenzando la deserializacion de parametros\n");
 		directorio_a_listar_t* directorio_a_listar=decifrar_directorio_a_listar(buffer);
-		flag=listar_directorio_y_archivos(directorio_a_listar->path,directorio_a_listar->string_nombre_de_archivos);
-		resultado= serializar_flag(flag);
+		resultado=listar_directorio_y_archivos(directorio_a_listar->path,directorio_a_listar->string_nombre_de_archivos);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -123,8 +128,8 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 	case ABRIR_DIRECTORIO:
 		log_info(logger_de_deserializacion, "Es el codigo de 'abrir directorio', comenzando la deserializacion de parametros\n");
 		char* path_directorio=decifrar_opendir(buffer);
-		flag=abrir_directorio(path_directorio);
-		resultado= serializar_flag(flag);
+		int flag_directorio=abrir_directorio(path_directorio);
+		resultado= serializar_flag(flag_directorio);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 
 		break;
@@ -149,8 +154,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 
 		log_info(logger_de_deserializacion, "Es el codigo de 'statfs', comenzando la deserializacion de parametros\n");
 		statfs_params* statfs = decifrar_statfs(buffer);
-		flag=estadisticas_fs(statfs->path,statfs->stats);
-		resultado= serializar_flag(flag);
+		resultado=estadisticas_fs(statfs->path,statfs->stats);
 		serializar_y_enviar_resultado(resultado,cliente_socket);
 		break;
 
@@ -216,10 +220,29 @@ truncate_params* decifrar_truncate(void* buffer){
 statfs_params* decifrar_statfs(void* buffer){
 
 	statfs_params* params= (statfs_params*)malloc(sizeof(statfs_params));
-	int offset=0;
+	params->stats=(struct statvfs*)malloc(sizeof(struct statvfs));
+	int offset=sizeof(int);
 	int peso_path=0;
 
-	memcpy(&params->stats,buffer+offset,sizeof(int));
+	memcpy(&params->stats->__f_unused,buffer+offset,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(&params->stats->f_bavail,buffer+offset,sizeof(__fsblkcnt64_t));
+	offset+=sizeof(__fsblkcnt64_t);
+	memcpy(&params->stats->f_bfree,buffer+offset,sizeof(__fsblkcnt64_t));
+	offset+=sizeof(__fsblkcnt64_t);
+	memcpy(&params->stats->f_blocks,buffer+offset,sizeof(__fsblkcnt64_t));
+	offset+=sizeof(__fsblkcnt64_t);
+	memcpy(&params->stats->f_bsize,buffer+offset,sizeof(long int));
+	offset+=sizeof(long int);
+	memcpy(&params->stats->f_ffree,buffer+offset,sizeof(__fsfilcnt64_t));
+	offset+=sizeof(__fsfilcnt64_t);
+	memcpy(&params->stats->f_files,buffer+offset,sizeof(__fsfilcnt64_t));
+	offset+=sizeof(__fsfilcnt64_t);
+	memcpy(&params->stats->f_frsize,buffer+offset,sizeof(long int));
+	offset+=sizeof(long int);
+	memcpy(&params->stats->f_namemax,buffer+offset,sizeof(long int));
+	offset+=sizeof(long int);
+	memcpy(&params->stats->__f_unused,buffer+offset,sizeof(int));
 	offset+=sizeof(int);
 	memcpy(&peso_path,buffer+offset,sizeof(int));
 	offset+=sizeof(int);
@@ -286,7 +309,7 @@ archivo_descifrado_escritura* decifrar_archivo_a_escribir(void*paquete){
 	return archivo;
 
 }
-void* decifrar_archivo_a_leer(void*buffer){
+params_lectura* decifrar_archivo_a_leer(void*buffer){
 
 	int offset=sizeof(int);
 
@@ -313,6 +336,8 @@ void* decifrar_archivo_a_leer(void*buffer){
 	params->path=malloc(peso_buf);
 	memcpy(params->buf,buffer+offset,peso_buf);
 	offset+=peso_buf;
+
+	return params;
 
 
 }
@@ -342,7 +367,7 @@ creacion* decifrar_creacion(void*buffer){
 	return directorio;
 }
 directorio_a_listar_t* decifrar_directorio_a_listar(void*buffer){
-	directorio_a_listar_t* retorno;
+	directorio_a_listar_t* retorno=(directorio_a_listar_t* )malloc(sizeof(directorio_a_listar_t));
 	int offset=0;
 	int peso;
 	memcpy(&peso, buffer+offset,sizeof(int));
@@ -350,11 +375,6 @@ directorio_a_listar_t* decifrar_directorio_a_listar(void*buffer){
 	retorno->path=(char*) malloc(peso);
 	memcpy(retorno->path, buffer+offset,peso);
 	offset+=peso;
-	memcpy(&peso, buffer+offset,sizeof(int));
-	offset+=sizeof(int);
-	retorno->string_nombre_de_archivos=(char*) malloc(peso);
-	memcpy(retorno->string_nombre_de_archivos, buffer+offset,peso);
-
 	return retorno;
 }
 
@@ -444,9 +464,8 @@ char* decifrar_get_atributes(void* buffer){
 
 void serializar_y_enviar_resultado(void* resultado,int cliente_socket){
 	int peso_total;
-	int peso_paquete=peso_total+sizeof(int);
 	memcpy(&peso_total,resultado,sizeof(int));
-	send(cliente_socket, resultado, peso_paquete+sizeof(int), 0);
+	send(cliente_socket, resultado, peso_total+sizeof(int), 0);
 
 
 }

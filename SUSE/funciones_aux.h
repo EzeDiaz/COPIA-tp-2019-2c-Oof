@@ -8,10 +8,18 @@
 #include <commons/collections/dictionary.h>
 
 //Prototipos
+//para sacar colas
 t_queue* obtener_cola_ready_de(char* );
 t_queue* obtener_cola_exec_de(char*);
 t_queue* obtener_cola_de(char*, int);
-float calcular_sjf(hilo_t*);
+
+//para poner colas
+void poner_cola_ready_de(char* ,t_queue*) ;
+void poner_cola_exec_de(char*,t_queue* );
+void poner_cola_de(char*,int,t_queue*);
+
+//cosas variadas
+long calcular_sjf(hilo_t*);
 void destruir_logs_sistema();
 void incializar_logs_sistema();
 void leer_config_y_setear();

@@ -17,7 +17,7 @@
 
 
 void leer_config();
-void conectar_SAC_SERVER(int , char*);
+int conectar_SAC_SERVER(int , char*);
 int run_sac(int,char**);
 
 

@@ -47,62 +47,103 @@ t_list* listar_metadata(){
 void* obtener_atributos(char* path){
 
 	char fname[71];
-	if(!strcmp(path,"/")){fname[0]='/';}else{
+	inicializar_nombre(fname);
+	if(!strncmp(path,"/",strlen(path))){
+		fname[0]='/';
+	}else{
 		obtener_nombre_de_archivo(fname,path);
 	}
 	GFile* nodo=encontrar_en_tabla_de_nodos(fname);
-	int peso=sizeof(struct stat);
-	void* resultado=malloc(peso+sizeof(int));
 	int offset=0;
 	struct stat *unos_stats=(struct stat*)malloc(sizeof(struct stat));
+	stat(PUNTO_DE_MONTAJE,unos_stats);
+
+	void* resultado;
+
+	if(nodo!=NULL){
+		int peso=sizeof(unos_stats->st_atim.tv_nsec)+sizeof(unos_stats->st_atim.tv_sec)
+																				+sizeof(unos_stats->st_gid)+sizeof(unos_stats->st_mode)+
+																				sizeof(unos_stats->st_mtim.tv_sec)+sizeof(unos_stats->st_mtim.tv_nsec)
+																				+sizeof(unos_stats->st_nlink)+sizeof(unos_stats->st_size)
+																				+sizeof(unos_stats->st_uid)+sizeof(unos_stats->__pad1)
+																				+sizeof(unos_stats->__pad2)+sizeof(unos_stats->st_ino)
+																				+sizeof(unos_stats->st_blksize)+sizeof(unos_stats->st_blocks)
+																				+sizeof(unos_stats->st_rdev)+sizeof(unos_stats->st_dev);
+		resultado=malloc(peso+sizeof(int));
+		if(nodo->state==DIRECTORIO){
+
+			unos_stats->st_mode = S_IFDIR | 0755;
+			unos_stats->st_nlink = 2;
+		}else{
+
+			unos_stats->st_mode = S_IFREG | 0444;
+			unos_stats->st_nlink = 1;
+
+		}
+		unos_stats->st_atim.tv_nsec=time(NULL);
+		unos_stats->st_atim.tv_sec=time(NULL)/1000;
+		unos_stats->st_mtim.tv_sec=time(NULL)/1000;
+		unos_stats->st_mtim.tv_nsec=nodo->m_date;
+		unos_stats->st_gid=getgid();
+		unos_stats->st_uid=getuid();
+		unos_stats->st_size=nodo->file_size;
+		memcpy(resultado+offset,&peso,sizeof(int));
+		offset+=sizeof(int);
+
+		memcpy(resultado+offset,&unos_stats->st_atim.tv_nsec,sizeof(unos_stats->st_atim.tv_nsec));
+		offset+=sizeof(unos_stats->st_atim.tv_nsec);
+		memcpy(resultado+offset,&unos_stats->st_atim.tv_sec,sizeof(unos_stats->st_atim.tv_sec));
+		offset+=sizeof(unos_stats->st_atim.tv_sec);
+		memcpy(resultado+offset,&unos_stats->st_gid,sizeof(unos_stats->st_gid));
+		offset+=sizeof(unos_stats->st_gid);
+		memcpy(resultado+offset,&unos_stats->st_mode,sizeof(unos_stats->st_mode));
+		offset+=sizeof(unos_stats->st_mode);
+		memcpy(resultado+offset,&unos_stats->st_mtim.tv_nsec,sizeof(unos_stats->st_mtim));
+		offset+=sizeof(unos_stats->st_mtim.tv_nsec);
+		memcpy(resultado+offset,&unos_stats->st_mtim.tv_sec,sizeof(unos_stats->st_mtim));
+		offset+=sizeof(unos_stats->st_mtim.tv_sec);
+		memcpy(resultado+offset,&unos_stats->st_nlink,sizeof(unos_stats->st_nlink));
+		offset+=sizeof(unos_stats->st_nlink);
+		memcpy(resultado+offset,&unos_stats->st_size,sizeof(unos_stats->st_size));
+		offset+=sizeof(unos_stats->st_size);
+		memcpy(resultado+offset,&unos_stats->st_uid,sizeof(unos_stats->st_uid));
+		offset+=sizeof(unos_stats->st_uid);
+
+		memcpy(resultado+offset,&unos_stats->__pad1,sizeof(unos_stats->__pad1));
+		offset+=sizeof(unos_stats->__pad1);
+		memcpy(resultado+offset,&unos_stats->__pad2,sizeof(unos_stats->__pad2));
+		offset+=sizeof(unos_stats->__pad2);
+		memcpy(resultado+offset,&unos_stats->st_ino,sizeof(unos_stats->st_ino));
+		offset+=sizeof(unos_stats->st_ino);
+		memcpy(resultado+offset,&unos_stats->st_blksize,sizeof(unos_stats->st_blksize));
+		offset+=sizeof(unos_stats->st_blksize);
+		memcpy(resultado+offset,&unos_stats->st_blocks,sizeof(unos_stats->st_blocks));
+		offset+=sizeof(unos_stats->st_blocks);
+		memcpy(resultado+offset,&unos_stats->st_rdev,sizeof(unos_stats->st_rdev));
+		offset+=sizeof(unos_stats->st_rdev);
+		memcpy(resultado+offset,&unos_stats->st_dev,sizeof(unos_stats->st_dev));
 
 
-	unos_stats->st_atim.tv_nsec=time(NULL);
-	unos_stats->st_atim.tv_sec=time(NULL)/1000;
-	unos_stats->st_mtim.tv_sec=time(NULL)/1000;
-	unos_stats->st_mtim.tv_nsec=nodo->m_date;
-	unos_stats->st_gid=getgid();
-	unos_stats->st_uid=getuid();
-	unos_stats->st_mode=07;
-	unos_stats->st_nlink=1 +(int) !strcmp(path,"/");
-	unos_stats->st_size=nodo->file_size;
 
-
-	memcpy(resultado+offset,&peso,sizeof(int));
-	offset+=sizeof(int);
+		free(unos_stats);
 
 
 
-	memcpy(resultado+offset,&unos_stats->st_atim.tv_nsec,sizeof(unos_stats->st_atim));
-	offset+=sizeof(unos_stats->st_atim);
-	memcpy(resultado+offset,&unos_stats->st_atim.tv_sec,sizeof(unos_stats->st_atim));
-	offset+=sizeof(unos_stats->st_atim);
-	memcpy(resultado+offset,&unos_stats->st_gid,sizeof(unos_stats->st_gid));
-	offset+=sizeof(unos_stats->st_gid);
-	memcpy(resultado+offset,&unos_stats->st_mode,sizeof(unos_stats->st_mode));
-	offset+=sizeof(unos_stats->st_mode);
-	memcpy(resultado+offset,&unos_stats->st_mtim.tv_nsec,sizeof(unos_stats->st_mtim));
-	offset+=sizeof(unos_stats->st_mtim);
-	memcpy(resultado+offset,&unos_stats->st_mtim.tv_sec,sizeof(unos_stats->st_mtim));
-	offset+=sizeof(unos_stats->st_mtim);
-	memcpy(resultado+offset,&unos_stats->st_nlink,sizeof(unos_stats->st_nlink));
-	offset+=sizeof(unos_stats->st_nlink);
-	memcpy(resultado+offset,&unos_stats->st_size,sizeof(unos_stats->st_size));
-	offset+=sizeof(unos_stats->st_size);
-	memcpy(resultado+offset,&unos_stats->st_uid,sizeof(unos_stats->st_uid));
+	}else{
 
+		int res = -ENOENT;
+		int peso_error=sizeof(ENOENT);
+		resultado=malloc(sizeof(int)+sizeof(ENONET));
+		memcpy(resultado,&peso_error,sizeof(int));
+		memcpy(resultado+sizeof(int),&res,sizeof(ENONET));
 
+	}
 	return resultado;
+
 }
 
 int realizar_mknod(char* name,mode_t mode,dev_t dev){
 
-	/*int current_node=0;
-	 * GFile* node=list_get(tabla_de_nodos,current_node);
-	while(node->state!=0 && current_node>1024){
-		current_node++;
-		node=list_get(tabla_de_nodos,current_node);
-	}*/
 
 
 
@@ -209,6 +250,7 @@ int crear_directorio(char* path, mode_t mode){
 
 	int flag;
 	char fname[71];
+	inicializar_nombre(fname);
 	obtener_nombre_de_archivo(fname,path);
 	GFile* nodo=encontrar_en_tabla_de_nodos(fname);
 	if(nodo==NULL){
@@ -229,7 +271,7 @@ int crear_directorio(char* path, mode_t mode){
 			nodo->m_date=time(NULL);
 			nodo->c_date=time(NULL);
 			nodo->file_size=0;
-			nodo->state=DIRECTORIO;
+			nodo->state=OCUPADO;
 			nodo->parent_dir_block=obtener_puntero_padre(path);
 			crear_vector_de_punteros(nodo->blk_indirect,1000);
 			flag=0;
@@ -240,43 +282,128 @@ int crear_directorio(char* path, mode_t mode){
 	return flag;
 }
 
-void* listar_directorio_y_archivos(char*path, char*string_de_archivos){
+int calcular_peso_readdir(GFile* nodo){
+	int peso=0;
 
-	char nombre[71];
-	obtener_nombre_de_archivo(nombre,path);
-	GFile* nodo_padre=encontrar_en_tabla_de_nodos(nombre);
-	if(nodo_padre->state==DIRECTORIO){
-		t_list* nodos_hijos=buscar_todo_los_nodos_hijos(nodo_padre);
+	if((strncmp(nodo->fname,tabla_de_nodos[0]->fname,strlen(nodo->fname)))){
 
-		int peso_de_buffer=0;
+		peso+=strlen(".")+1;
+		peso+=sizeof(int);
+		peso+=strlen("..")+1;
+		peso+=sizeof(int);
+	}else{
+		peso+= (strlen("file54")+1);
+		peso+= sizeof(int);
+		peso+= (strlen("file349")+1);
+		peso+= sizeof(int);
 
-		for(int i=0;i<nodos_hijos->elements_count;i++){
-			GFile* nodo_hijo=list_get(nodos_hijos,i);
-			peso_de_buffer+=strlen(nodo_hijo->fname)+1;
-			peso_de_buffer+=sizeof(int);
 
-		}
-		void*buffer_de_archivos=malloc(peso_de_buffer+sizeof(int));
-		memcpy(buffer_de_archivos,&peso_de_buffer,sizeof(int));
-
-		int offset=sizeof(int);
-		for(int j=0;j<nodos_hijos->elements_count;j++){
-
-			GFile* nodo_hijo=list_get(nodos_hijos,j);
-			int peso_nombre=strlen(nodo_hijo->fname)+1;
-			memcpy(buffer_de_archivos+offset,&peso_nombre,sizeof(int));
-			offset+=sizeof(int);
-			memcpy(buffer_de_archivos+offset,nodo_hijo->fname,peso_nombre);
-			offset+=peso_nombre;
-
-		}
-
-		return buffer_de_archivos;
 	}
-	return NULL;
+
+	t_list* lista_hijos=lista_hijos_de(nodo);
+
+	void sumar_peso(GFile* nodo_hijo){
+		peso+=strlen(nodo->fname)+1;
+		peso+=sizeof(int);
+	}
+
+	list_iterate(lista_hijos,sumar_peso);
+
+	return peso;
 
 }
 
+t_list* lista_hijos_de(GFile*nodo){
+
+	t_list* lista_retorno=list_create();
+
+	for(int i=0;i<GFILEBYTABLE;i++){
+		if(es_hijo_de(nodo,tabla_de_nodos[i])){
+			list_add(lista_retorno,tabla_de_nodos[i]);
+		}
+	}
+
+	return lista_retorno;
+
+}
+
+bool es_hijo_de(GFile*nodo_padre,GFile*posible_hijo){
+
+
+	return posible_hijo->parent_dir_block==calcula_dir_padre(nodo_padre);//todo
+}
+
+
+
+void* listar_directorio_y_archivos(char*path, char*string_de_archivos){
+
+
+	char nombre[71];
+	inicializar_nombre(nombre);
+	obtener_nombre_de_archivo(nombre,path);
+	GFile* nodo=encontrar_en_tabla_de_nodos(nombre);
+	int peso=calcular_peso_readdir(nodo);
+	peso+=sizeof(int);
+	void* retorno=malloc(peso+sizeof(int));
+	int offset=0;
+	int longitud_siguiente=0;
+
+	memcpy(retorno,&peso,sizeof(int));
+	offset+=sizeof(int);
+
+	if(nodo->state==DIRECTORIO){
+
+
+
+		t_list* nodos_hijos=buscar_todo_los_nodos_hijos(nodo);
+		int cantidad_de_dirs=nodos_hijos->elements_count+2;
+		memcpy(retorno+offset,&cantidad_de_dirs,sizeof(int));
+		offset+=sizeof(int);
+
+		if(!strncmp(nodo->fname,tabla_de_nodos[0]->fname,strlen(path))){
+			longitud_siguiente=strlen("file54")+1;
+			memcpy(retorno+offset,&longitud_siguiente,sizeof(int));
+			offset+=sizeof(int);
+			memcpy(retorno+offset, "file54" ,longitud_siguiente);
+			offset+=longitud_siguiente;
+
+			int longitud_siguiente2=strlen("file349")+1;
+			memcpy(retorno+offset,&longitud_siguiente2,sizeof(int));
+			offset+=sizeof(int);
+			memcpy(retorno+offset, "file349" ,longitud_siguiente2);
+			offset+=longitud_siguiente2;
+		}else{
+
+			longitud_siguiente=strlen(".")+1;
+			memcpy(retorno+offset,&longitud_siguiente,sizeof(int));
+			offset+=sizeof(int);
+			memcpy(retorno+offset, "." ,longitud_siguiente);
+			offset+=longitud_siguiente;
+			longitud_siguiente=strlen("..")+1;
+			memcpy(retorno+offset,&longitud_siguiente,sizeof(int));
+			offset+=sizeof(int);
+			memcpy(retorno+offset, ".." ,longitud_siguiente);
+			offset+=longitud_siguiente;
+
+		}
+
+
+		void meter_en_puntero(GFile* nodo_hijo){
+			longitud_siguiente=strlen(nodo_hijo->fname)+1;
+			memcpy(retorno+offset,&longitud_siguiente,sizeof(int));
+			offset+=sizeof(int);
+			memcpy(retorno+offset, nodo_hijo->fname ,longitud_siguiente);
+			offset+=longitud_siguiente;
+
+		}
+
+
+		list_iterate(nodos_hijos,meter_en_puntero);
+
+
+	}
+	return retorno;
+}
 bool eliminar_directorio(char* path){
 	bool flag = false;
 	if(verificar_path_este_permitido(path)){
@@ -297,10 +424,23 @@ int abrir_directorio(char*path){
 	char nombre_archivo[71];
 	obtener_nombre_de_archivo(nombre_archivo,path);
 	GFile* nodo=encontrar_en_tabla_de_nodos(nombre_archivo);
-	return nodo->blk_indirect;
+	if(nodo==NULL)
+		return -1;
+	return buscar_posicion_en_tabla_de_nodos(nodo);
 
 
 
+}
+
+int buscar_posicion_en_tabla_de_nodos(GFile*nodo){
+
+	int i=0;
+	GFile*nodo_comparar=tabla_de_nodos[0];
+	while(strcmp(nodo->fname,nodo_comparar->fname)){
+		i++;
+	}
+
+	return i;
 }
 
 void* truncar(char* path,off_t offset){
@@ -352,13 +492,24 @@ void* estadisticas_fs(char* path,struct statvfs* stats){
 	memcpy(resultado+offset,&stats->__f_unused,sizeof(int));
 	offset+=sizeof(int);
 
-
+	return resultado;
 
 
 
 }
 void* acceder(char* path,int flags){
 	return NULL; //TODO
+
+}
+
+void inicializar_nombre(char fname[]){
+
+	for(int i=0;i<GFILENAMELENGTH;i++){
+
+		fname[i]='\0';
+
+	}
+
 
 }
 

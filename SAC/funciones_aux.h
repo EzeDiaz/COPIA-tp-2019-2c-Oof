@@ -20,7 +20,7 @@
 GFile* encontrar_en_tabla_de_nodos(char* );
 void* paquetizar_metadata_de_directorio(t_list*);
 GFile* buscar_nodo_libre();
-int buscar_bloque_libre(int);
+int buscar_bloque_libre();
 ptrGBloque* obtener_puntero_padre(char*);
 void obtener_nombre_de_archivo(char[],char* );
 void leer_cada_archivo_y_borrar(char*);
@@ -36,6 +36,7 @@ bool esta_full_el_bloque_puntero(ptrGBloque);
 void* obtener_direccion_de_escritura(ptrGBloque );
 int realizar_mknod(char*,mode_t,dev_t );
 t_list* buscar_todo_los_nodos_hijos(GFile* );
+void inicializar_nombre(char []);
 
 
 #endif /* FUNCIONES_AUX_H_ */

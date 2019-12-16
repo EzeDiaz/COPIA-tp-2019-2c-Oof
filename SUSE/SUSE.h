@@ -28,7 +28,7 @@
 void suse_init();
 void* suse_close(int,int);
 int suse_join(int,int);
-int suse_signal(char* , int );
+int suse_signal(char* , int);
 int suse_schedule_next(int);
 int suse_wait(char*, int ,int );
 int suse_create(int, int);

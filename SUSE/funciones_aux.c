@@ -1,10 +1,10 @@
 #include "metricas.h"
 #include "funciones_aux.h"
 
-float calcular_sjf(hilo_t*un_hilo){
+long calcular_sjf(hilo_t*un_hilo){
 
 	sem_wait(&mutex_calcular_sjf);
-	float estimacion=( (1-ALPHA_SJF)* un_hilo->prioridad + ALPHA_SJF * un_hilo->tiempos->tiempo_en_ejecucion_real);
+	long estimacion=( (1-ALPHA_SJF)* un_hilo->prioridad + ALPHA_SJF * un_hilo->tiempos->tiempo_en_ejecucion_real);
 	sem_post(&mutex_calcular_sjf);
 
 	return estimacion;
@@ -18,21 +18,14 @@ hilo_t* buscar_hilo_por_TID(int TID,int PID){
 
 	hilo_t* hilo_a_retornar;
 
-	char*pid= string_itoa(PID);
+	proceso_t* un_proceso = obtener_proceso(PID);
 
-	if(dictionary_has_key(diccionario_de_procesos,pid)){
-
-		proceso_t* un_proceso=dictionary_get(diccionario_de_procesos,pid);
-
-		void buscar_hilo(hilo_t* un_hilo){
-			if(un_hilo->hilo_informacion->tid==TID)
-				hilo_a_retornar=un_hilo;
-		}
-
-		list_iterate(un_proceso->hilos_del_programa,buscar_hilo);
-
+	void buscar_hilo(hilo_t* un_hilo){
+		if(un_hilo->hilo_informacion->tid==TID)
+			hilo_a_retornar=un_hilo;
 	}
 
+	list_iterate(un_proceso->hilos_del_programa,buscar_hilo);
 
 	return hilo_a_retornar;
 
@@ -55,13 +48,31 @@ t_queue* obtener_cola_de(char* PID, int cola){
 
 	sem_wait(&semaforo_diccionario_procesos_x_queues);
 	vector_cola= dictionary_get(diccionario_procesos_x_queues,PID);
+	t_list*  lista_a_retornar = list_get(vector_cola,cola);
 	sem_post(&semaforo_diccionario_procesos_x_queues);
 
-	sem_wait(&mutex_lista);
-	t_list*  lista_a_retornar = list_get(vector_cola,cola);
-	sem_post(&mutex_lista);
-
 	return lista_a_retornar;
+}
+
+void poner_cola_ready_de(char* PID,t_queue* cola){
+	poner_cola_de(PID,COLA_READY,cola);
+}
+
+void poner_cola_exec_de(char* PID,t_queue* cola){
+	poner_cola_de(PID,COLA_EXEC,cola);
+}
+
+
+void poner_cola_de(char*PID,int cola,t_queue* cola_a_meter){
+
+	sem_wait(&semaforo_diccionario_procesos_x_queues);
+	t_list* vector_cola= dictionary_get(diccionario_procesos_x_queues,PID);
+	list_remove(vector_cola,cola);
+	list_add_in_index(vector_cola,cola,cola_a_meter);
+	sem_post(&semaforo_diccionario_procesos_x_queues);
+
+
+
 }
 
 // LOGS
@@ -77,9 +88,9 @@ void incializar_logs_sistema(){
 	remove("logger.log");
 
 	logger_de_deserializacion= log_create("log_deserializacion.log","Deserializacion",0,LOG_LEVEL_INFO);
-	log_metricas_programa = log_create("log_metricas_programa.log","log_metricas_programa",1,LOG_LEVEL_INFO);
-	log_metricas_hilo = log_create("log_metricas_hilo.log","log_metricas_hilo",1,LOG_LEVEL_INFO);
-	log_metricas_sistema = log_create("log_metricas.log","log_metricas",1,LOG_LEVEL_INFO);
+	log_metricas_programa = log_create("log_metricas_programa.log","log_metricas_programa",0,LOG_LEVEL_INFO);
+	log_metricas_hilo = log_create("log_metricas_hilo.log","log_metricas_hilo",0,LOG_LEVEL_INFO);
+	log_metricas_sistema = log_create("log_metricas.log","log_metricas",0,LOG_LEVEL_INFO);
 	log_colas = log_create("log_colas.log","log_colas",0,LOG_LEVEL_INFO);
 	logger = log_create("logger.log","logger",0,LOG_LEVEL_INFO);
 

@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <commons/collections/list.h>
 #include "globales.h"
+#include "funciones_aux.h"
 
 //Funcionalidades con archivos
 int crear_archivo(char* path,mode_t mode);
@@ -27,6 +28,9 @@ int crear_directorio(char* , mode_t );
 void* listar_directorio_y_archivos(char*, char*);
 t_list* listar_metadata();
 bool eliminar_directorio();
+t_list* lista_hijos_de(GFile*);
+int calcular_peso_readdir(GFile* );
+bool es_hijo_de(GFile*,GFile*);
 
 
 

@@ -7,46 +7,69 @@
 #include "serializacion.h"
 #include <errno.h>
 #include <fuse.h>
+
 #include "globales.h"
 #include <commons/collections/list.h>
 #include <commons/string.h>
 
 int serializar_fs_rmdir(char* path){
 	printf("llego un rmdir\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_para_eliminar_directorio(path);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
 	free(paquete);
 	int retorno;
+	close(socket);
 	memcpy(&retorno,resultado,sizeof(int));
 	return 0;
 
 
 }
 
-int serializar_fs_opendir(const char *path, struct fuse_file_info *fi){
+DIR* serializar_fs_opendir(const char *path, struct fuse_file_info *fi){
+	printf("llego un opendir\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+	printf("me conecte\n");
+	void* paquete = serializar_paquete_para_abrir_directorio(path);
 
-	if(!string_contains(path,"SAC")){
+	void* resultado = enviar_paquete(paquete,socket);
+	printf("termine el envio de msj con sac\n");
 
-		return ENONET;
+	free(paquete);
+	printf("pase el free\n");
+
+	uint32_t retorno;
+	printf("declare el retorno\n");
 
 
-	}else{
+	memcpy(&retorno,resultado,sizeof(uint32_t));//todo
+	printf("tengo el retorno con &d \n",retorno);
+	close(socket);
 
-		printf("llego un opendir\n");
-		void* paquete = serializar_paquete_para_abrir_directorio(path);
-		void* resultado = enviar_paquete(paquete);
-		free(paquete);
-		int retorno;
-		memcpy(&retorno,resultado,sizeof(int));
+	if (retorno<0){
+		errno=ENONET;
+		return NULL;
+	}
+	else{
 		return retorno;
 	}
-
 }
+
 
 int serializar_fs_create(const char *path, mode_t mode , struct fuse_file_info * fi){
 	printf("llego un create\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_para_crear_archivo(path,mode);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
@@ -56,8 +79,13 @@ int serializar_fs_create(const char *path, mode_t mode , struct fuse_file_info *
 }
 int serializar_fs_mknod(char* name,mode_t mode,dev_t dev){
 	printf("llego un mknod\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_fs_mknod(name,mode,dev);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
@@ -66,11 +94,35 @@ int serializar_fs_mknod(char* name,mode_t mode,dev_t dev){
 
 }
 
+
+int serializar_fs_releasedir(const char * path, struct fuse_file_info *fi){
+
+	printf("llego un releasedir\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
+	void* paquete = serializar_paquete_fs_releasedir(path);
+	free(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
+	free(resultado);
+
+	return 0;
+
+
+}
+
 int serializar_fs_statfs(const char* path, struct statvfs* stats){
 	printf("llego un statfs\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_fs_statfs(path, stats);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
 	free(paquete);
+	close(socket);
 	int retorno;
 
 	//The 'f_favail', 'f_fsid' and 'f_flag' fields are ignored
@@ -79,6 +131,8 @@ int serializar_fs_statfs(const char* path, struct statvfs* stats){
 		memcpy(&stats->__f_spare[i],resultado+offset,sizeof(int));
 		offset+=sizeof(int);
 	}
+
+
 
 	memcpy(&stats->__f_unused,resultado+offset,sizeof(int));
 	offset+=sizeof(int);
@@ -109,8 +163,13 @@ int serializar_fs_statfs(const char* path, struct statvfs* stats){
 int serializar_fs_truncate(const char *path, off_t offset, struct fuse_file_info *fi){
 
 	printf("llego un truncate\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_fs_truncate(path,offset);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
@@ -121,22 +180,28 @@ int serializar_fs_truncate(const char *path, off_t offset, struct fuse_file_info
 
 
 int serializar_fs_access(const char *path, int flags){
-
+	/*
 	printf("llego un accsess\n");
 	void* paquete = serializar_paquete_fs_accses(path,flags);
 	void* resultado = enviar_paquete(paquete);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
-	free(resultado);
-	return resultado;
+	free(resultado);*/
+	return 0;
 }
 
 int serializar_fs_rename(char* old_path,char* new_path,int flags){
 
 	printf("llego un rename\n");
+
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_fs_rename(old_path,new_path,flags);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
@@ -146,68 +211,124 @@ int serializar_fs_rename(char* old_path,char* new_path,int flags){
 
 int serializar_fs_getattr(const char *path, struct stat *unos_stats,struct fuse_file_info *fi){
 
-	printf("llego un getattr\n");
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
 
-	if(!string_contains(path,"SAC")){
-
-		//stat(path,unos_stats);
-		return 0;
-
-
-	}else{
+	void* paquete = serializar_paquete_para_obtener_atributos(path);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
+	free(paquete);
 
 
-		void* paquete = serializar_paquete_para_obtener_atributos(path);
-		void* resultado = enviar_paquete(paquete);
-		free(paquete);
+	int primer_valor;
+	memcpy(&primer_valor,resultado,sizeof(int));
+	printf("\n primer valor: %d \n",primer_valor);
+	if(primer_valor == (-ENOENT)){
+		free(resultado);
 
-		int offset=0;
-		memcpy(&unos_stats->st_atim.tv_nsec,resultado+offset,sizeof(unos_stats->st_atim));
-		offset+=sizeof(unos_stats->st_atim);
-		memcpy(&unos_stats->st_atim.tv_sec,resultado+offset,sizeof(unos_stats->st_atim));
-		offset+=sizeof(unos_stats->st_atim);
-		memcpy(&unos_stats->st_gid,resultado+offset,sizeof(unos_stats->st_gid));
-		offset+=sizeof(unos_stats->st_gid);
-		memcpy(&unos_stats->st_mode,resultado+offset,sizeof(unos_stats->st_mode));
-		offset+=sizeof(unos_stats->st_mode);
-		memcpy(&unos_stats->st_mtim.tv_nsec,resultado+offset,sizeof(unos_stats->st_mtim));
-		offset+=sizeof(unos_stats->st_mtim);
-		memcpy(&unos_stats->st_mtim.tv_sec,resultado+offset,sizeof(unos_stats->st_mtim));
-		offset+=sizeof(unos_stats->st_mtim);
-		memcpy(&unos_stats->st_nlink,resultado+offset,sizeof(unos_stats->st_nlink));
-		offset+=sizeof(unos_stats->st_nlink);
-		memcpy(&unos_stats->st_size,resultado+offset,sizeof(unos_stats->st_size));
-		offset+=sizeof(unos_stats->st_size);
-		memcpy(&unos_stats->st_uid,resultado+offset,sizeof(unos_stats->st_uid));
+		return (-ENOENT);
+	}
+	int offset=0;
+	memcpy(&unos_stats->st_atim.tv_nsec,resultado+offset,sizeof(unos_stats->st_atim.tv_nsec));
+	offset+=sizeof(unos_stats->st_atim.tv_nsec);
+	memcpy(&unos_stats->st_atim.tv_sec,resultado+offset,sizeof(unos_stats->st_atim.tv_sec));
+	offset+=sizeof(unos_stats->st_atim.tv_sec);
+	memcpy(&unos_stats->st_gid,resultado+offset,sizeof(unos_stats->st_gid));
+	offset+=sizeof(unos_stats->st_gid);
+	memcpy(&unos_stats->st_mode,resultado+offset,sizeof(unos_stats->st_mode));
+	offset+=sizeof(unos_stats->st_mode);
+	memcpy(&unos_stats->st_mtim.tv_nsec,resultado+offset,sizeof(unos_stats->st_mtim.tv_nsec));
+	offset+=sizeof(unos_stats->st_mtim.tv_nsec);
+	memcpy(&unos_stats->st_mtim.tv_sec,resultado+offset,sizeof(unos_stats->st_mtim.tv_sec));
+	offset+=sizeof(unos_stats->st_mtim.tv_sec);
+	memcpy(&unos_stats->st_nlink,resultado+offset,sizeof(unos_stats->st_nlink));
+	offset+=sizeof(unos_stats->st_nlink);
+	memcpy(&unos_stats->st_size,resultado+offset,sizeof(unos_stats->st_size));
+	offset+=sizeof(unos_stats->st_size);
+	memcpy(&unos_stats->st_uid,resultado+offset,sizeof(unos_stats->st_uid));
 
-		return 0;
+	memcpy(&unos_stats->__pad1,resultado+offset,sizeof(unos_stats->__pad1));
+	offset+=sizeof(unos_stats->__pad1);
+	memcpy(&unos_stats->__pad2,resultado+offset,sizeof(unos_stats->__pad2));
+	offset+=sizeof(unos_stats->__pad2);
+	memcpy(&unos_stats->st_ino,resultado+offset,sizeof(unos_stats->st_ino));
+	offset+=sizeof(unos_stats->st_ino);
+	memcpy(&unos_stats->st_blksize,resultado+offset,sizeof(unos_stats->st_blksize));
+	offset+=sizeof(unos_stats->st_blksize);
+	memcpy(&unos_stats->st_blocks,resultado+offset,sizeof(unos_stats->st_blocks));
+	offset+=sizeof(unos_stats->st_blocks);
+	memcpy(&unos_stats->st_rdev,resultado+offset,sizeof(unos_stats->st_rdev));
+	offset+=sizeof(unos_stats->st_rdev);
+	memcpy(&unos_stats->st_dev,resultado+offset,sizeof(unos_stats->st_dev));
+
+
+	return 0;
+
+}
+
+
+
+
+
+
+
+int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t rellenar, off_t offset, struct fuse_file_info *fi ){
+	int argc=0;
+	char**argv=malloc(1);
+	printf("argv listo\n");
+	int socket=conectar_SAC_SERVER(argc,argv[0]);
+	printf("envio el paquete\n");
+	void* paquete = serializar_paquete_para_leer_directorio(path);
+	void* resultado = enviar_paquete(paquete,socket);
+	printf("recibi el paquete\n");
+	int cantidad;
+	int desplazamiento=0;
+	char* nombre;
+	int nombre_longitud;
+	memcpy(&cantidad,resultado,sizeof(int));
+	desplazamiento+=sizeof(int);
+	printf("la cantidad no esta cagada %d \n",cantidad);
+
+	for(int i=0; i<cantidad;i++){
+		printf("entre al for\n");
+
+	memcpy(&nombre_longitud,resultado+desplazamiento,sizeof(int));
+	desplazamiento+=sizeof(int);
+
+	printf("lei la longitud de %d \n",nombre_longitud);
+
+	nombre=(char*)malloc(nombre_longitud);
+	memcpy(nombre,resultado+desplazamiento,nombre_longitud);
+	desplazamiento+=nombre_longitud;
+
+	printf("lei el nombre con %s \n",nombre);
+
+	rellenar( buffer, nombre, NULL, 0 );
+
+	printf("rellene el buffer con el filler \n");
 
 	}
 
 
 
-
-}
-
-
-int serializar_fs_readdir(const char *path, void *buffer, fuse_fill_dir_t cosa, off_t offset, struct fuse_file_info *fi , int flags){
-	void* paquete = serializar_paquete_para_leer_directorio(path, buffer,offset);
-	void* resultado = enviar_paquete(paquete);
-	free(paquete);
-	int retorno;
-	memcpy(&retorno,resultado,sizeof(int));
-
-	return retorno;
+	return 0;
 }
 
 int serializar_fs_mkdir(const char *path, mode_t mode){
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_para_crear_directorio(path,mode);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
 	free(resultado);
-	return resultado;
+	printf("recibi this flag %d",retorno);
+	return retorno;
 
 }
 
@@ -222,23 +343,34 @@ int serializar_fs_open(const char *pathname, struct fuse_file_info *fi){
 
 
 	}else{
-
+		int argc;
+		char**argv;
+		int socket=conectar_SAC_SERVER(argc,argv[1]);
 		void* paquete = serializar_paquete_para_abrir_archivo(pathname);
-		void* resultado = enviar_paquete(paquete);
+		void* resultado = enviar_paquete(paquete,socket);
 		free(paquete);
 		int retorno;
 		memcpy(&retorno,resultado,sizeof(int));
 		free(resultado);
+		close(socket);
 		if(retorno!=-1){
 			return ENOSYS ;
-		}else{return -1;}
+		}else{
+			return -1;
+		}
 	}
 
 }
 int serializar_fs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
+
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_para_leer_archivo( path, buf, size, offset);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
 	free(paquete);
+	close(socket);
 	int retorno=0;
 	memcpy(buf,resultado,size);
 	free(resultado);
@@ -249,8 +381,13 @@ int serializar_fs_read(const char *path, char *buf, size_t size, off_t offset, s
 }
 int serializar_fs_write(const char * path1, const char *path2, size_t size, off_t offset, struct fuse_file_info *fi){
 	// TODO esto quizas esta medio mal, el prototipo de FUSE me dice algo y la syscall otra cosa
+	int argc;
+	char** argv;
+	int socket=conectar_SAC_SERVER(argc,argv[1]);
+
 	void* paquete = serializar_paquete_para_escribir_archivo( path1, path2,  size, offset);
-	void* resultado = enviar_paquete(paquete);
+	void* resultado = enviar_paquete(paquete,socket);
+	close(socket);
 	free(paquete);
 	int retorno;
 	memcpy(&retorno,resultado,sizeof(int));
@@ -260,6 +397,8 @@ int serializar_fs_write(const char * path1, const char *path2, size_t size, off_
 }
 
 void* serializar_paquete_para_crear_archivo(const char *path, mode_t mode){
+
+
 	int peso=0;
 	int peso_path=string_length(path)+1;
 	int peso_mode= sizeof(mode);
@@ -281,6 +420,22 @@ void* serializar_paquete_para_crear_archivo(const char *path, mode_t mode){
 	return paquete;
 }
 
+void* serializar_paquete_fs_releasedir(const char* path){
+
+	int peso_path=strlen(path)+1;
+	void* paquete=malloc(sizeof(int)*2+peso_path);
+	int offset=0;
+	int codigo_de_operacion=RELEASEDIR;
+
+	memcpy(paquete+offset,&codigo_de_operacion,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,&peso_path,sizeof(int));
+	offset+=sizeof(int);
+	memcpy(paquete+offset,path,peso_path);
+
+	return paquete;
+
+}
 
 void* serializar_paquete_fs_statfs(const char *path, struct statvfs* stats){
 
@@ -449,31 +604,23 @@ void* serializar_paquete_para_eliminar_directorio(char* path){
 
 
 }
-void* serializar_paquete_para_leer_directorio(const char *path, void *buffer,off_t offset){
+void* serializar_paquete_para_leer_directorio(const char *path){
 
-	char* nombres_de_archivos=leer_nombres_de_archivos_y_directorios(buffer);
 	int peso = 0;
-	int peso_path = string_length(path)+1;
-	int peso_buffer = string_length(nombres_de_archivos)+1;
-	peso=peso_path+peso_buffer + 3* sizeof(int);
+	int peso_path = strlen(path)+1;
+	peso=peso_path + 2* sizeof(int);
 	int desplazamiento=0;
 	int codigo_de_operacion = LISTAR_DIRECTORIO_Y_ARCHIVOS;
 	void*paquete = malloc(peso+sizeof(int));
-
 
 	memcpy(paquete,&peso,sizeof(int));
 	desplazamiento+=sizeof(int);
 	memcpy(paquete+desplazamiento,&codigo_de_operacion,sizeof(int));
 	desplazamiento+=sizeof(int);
-	memcpy(paquete+desplazamiento,&offset,sizeof(off_t));
-	desplazamiento+=sizeof(off_t);
 	memcpy(paquete+desplazamiento,&peso_path,sizeof(int));
 	desplazamiento+=sizeof(int);
 	memcpy(paquete+desplazamiento,path,peso_path);
 	desplazamiento+=peso_path;
-	memcpy(paquete+desplazamiento,&peso_buffer,sizeof(int));
-	desplazamiento+=sizeof(int);
-	memcpy(paquete+desplazamiento,nombres_de_archivos,peso_path);
 
 	return paquete;
 }
@@ -596,8 +743,8 @@ void* serializar_paquete_para_abrir_archivo(const char *pathname){
 
 void* serializar_paquete_para_obtener_atributos(const char*path){
 
-	int peso_path = string_length(path)+1;
-	int peso=peso_path+ 2* sizeof(int);
+	int peso_path = strlen(path)+1;
+	int peso=peso_path+ sizeof(int) +sizeof(int);
 	int desplazamiento=0;
 	int codigo_de_operacion = GET_ATTRIBUTES;
 	void*paquete = malloc(peso+sizeof(int));
@@ -639,30 +786,32 @@ void* serializar_paquete_para_abrir_directorio(const char* path){
 
 
 //RECIBIR Y ENVIAR A SAC_SERVER
-void* enviar_paquete(void*paquete){
-
+void* enviar_paquete(void*paquete,int socket ){
 	int peso;
 	memcpy(&peso,paquete,sizeof(int));
-	send(socket_sac_server,paquete,peso, 0);
+	send(socket ,paquete,peso + sizeof(int), 0);
 	int alocador;
-	return recibir_resultado(&alocador);
-
+	return recibir_resultado(&alocador,socket);
 }
 
-
-void* recibir_resultado(int* alocador){
+void* recibir_resultado(int* alocador,int socket){
 
 	void* buffer;
 
-	if(recv(socket_sac_server, alocador, 4, MSG_WAITALL)!=0){
+	printf("\n voy al recv \n");
+	if(recv(socket, alocador, 4, MSG_WAITALL)!=0){
+		printf("\n entre bien \n");
 		buffer = malloc(*alocador);
-		recv(socket_sac_server, buffer, *alocador, MSG_WAITALL);
+		recv(socket, buffer, *alocador, MSG_WAITALL);
 		return buffer;
 	}else{
+
+		printf("\n se murio \n");
 		*alocador = 0;
-		return buffer;
+		return NULL;
 	}
 }
+
 
 //Funciones Auxiliares
 

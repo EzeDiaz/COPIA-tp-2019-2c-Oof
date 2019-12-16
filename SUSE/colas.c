@@ -30,15 +30,15 @@ void newToReady(){
 	sem_post(&semaforo_diccionario_de_procesos);
 
 	long milisegundos_ready= time(NULL);
-	sem_wait(&mutex_cronometro);
 	hilo->tiempos->tiempo_llegada_a_READY = milisegundos_ready;
-	sem_post(&mutex_cronometro);
 
 	sem_wait(&un_proceso->mutex_cola_ready);
 	queue_push(cola_ready,hilo);
 	sem_post(&un_proceso->mutex_cola_ready);
 
+	sem_wait(&hilo->mutex_estado_del_hilo);
 	hilo->estado_del_hilo = READY;
+	sem_post(&hilo->mutex_estado_del_hilo);
 
 	sem_post(&un_proceso->procesos_en_ready);
 
@@ -56,6 +56,8 @@ void newToReady(){
 		sem_post(&mutex_suse_schedule_next);
 	}
 	 */
+	poner_cola_exec_de(pid,cola_exec);
+	poner_cola_ready_de(pid,cola_ready);
 	free(pid);
 
 }
@@ -83,74 +85,15 @@ void estadoNew()
 void encolar_en_new(hilo_t* hilo){
 
 	long milisegundos_new= time(NULL);
-	sem_wait(&mutex_cronometro);
 	hilo->tiempos->tiempo_llegada_a_NEW = milisegundos_new;
-	sem_post(&mutex_cronometro);
 
 	sem_wait(&mutex_cola_new);
 	queue_push(cola_new,hilo);
 	sem_post(&sem_encolar_en_new);
 	sem_post(&mutex_cola_new);
+
 }
 
-/// ******************************************************************************************************** ///
-/// ************************************* PASAR THREADS DE READY A EXEC ************************************ ///
-/// ******************************************************************************************************** ///
-
-
-void readyToExec(int PID)
-{
-	// Habria que chequear que entre UN SOLO thread a exec POR proceso
-
-	char* pid=string_itoa(PID);
-	t_queue* cola_exec = obtener_cola_exec_de(pid);
-	t_queue* cola_ready = obtener_cola_ready_de(pid);
-
-	while(1){
-
-		//poner semaforo, mucha espera activa
-		if(queue_is_empty(cola_exec) && !queue_is_empty(cola_ready)){
-
-			int tid=suse_schedule_next(PID);
-			/*
-			bool tienen_mismo_tid(hilo_t*un_hilo){
-
-				return un_hilo->hilo_informacion->tid == hilo->hilo_informacion->tid;
-			}*/
-
-
-		}
-	}
-
-	free(pid);
-}
-
-void * estadoReady(int PID)
-{
-	// El booleano finConsola esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true
-	// y se frenara la planificacion
-	char*pid=string_itoa(PID);
-	while(!finDePlanificacion)
-	{
-		if(!finDePlanificacion)
-		{
-			sem_wait(&semaforo_diccionario_de_procesos);
-			proceso_t* un_proceso = dictionary_get(diccionario_de_procesos,pid);
-			sem_post(&semaforo_diccionario_de_procesos);
-
-			//sem_wait(&un_proceso->procesos_en_ready);
-
-
-			readyToExec(PID);
-
-		}
-
-		// Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec.
-		// En caso de no encontrar uno para poder trabajar no hago nada
-	}
-	free(pid);
-	return NULL;
-}
 
 /// ******************************************************************************************************** ///
 /// ****************************************** PROCESOS EN EXEC  ******************************************* ///
@@ -159,11 +102,12 @@ void * estadoReady(int PID)
 void exec(hilo_t* hilo){
 
 	long milisegundos_exec= time(NULL);
-	sem_wait(&mutex_cronometro);
+	sem_wait(&hilo->mutex_tiempo_exec);
 	hilo->tiempos->tiempo_llegada_a_EXEC = milisegundos_exec;
-	hilo->tiempos->sumatoria_tiempos_en_READY += milisegundos_exec- hilo->tiempos->tiempo_llegada_a_READY;
-	sem_post(&mutex_cronometro);
-
+	sem_post(&hilo->mutex_tiempo_exec);
+	sem_wait(&hilo->mutex_sumatoria_ready);
+	hilo->tiempos->sumatoria_tiempos_en_READY += (milisegundos_exec- hilo->tiempos->tiempo_llegada_a_READY);
+	sem_post(&hilo->mutex_sumatoria_ready);
 }
 
 void ejecutar_funcion(hilo_t* hilo){
@@ -195,39 +139,50 @@ void exec_to_exit(hilo_t* hilo){
 	char* pid = string_itoa(hilo->PID);
 	char* hilo_info = string_itoa(hilo->hilo_informacion->tid);
 
+	sem_wait(&hilo->mutex_tiempo_exec);
+	sem_wait(&hilo->mutex_sumatoria_exec);
 	int milisegundos_exit= time(NULL);
-	sem_wait(&mutex_cronometro);
 	hilo->tiempos->sumatoria_tiempos_en_EXEC += milisegundos_exit - hilo->tiempos->tiempo_llegada_a_EXEC;
 	hilo->tiempos->tiempo_en_ejecucion_real = milisegundos_exit - hilo->tiempos->tiempo_llegada_a_EXEC;
-	sem_post(&mutex_cronometro);
+	sem_post(&hilo->mutex_sumatoria_exec);
+	sem_post(&hilo->mutex_tiempo_exec);
 
-	proceso_t* el_proceso=dictionary_get(diccionario_de_procesos,pid);
-
+	proceso_t* un_proceso=obtener_proceso(hilo->PID);
 	t_queue* cola_ready=obtener_cola_ready_de(pid);
-	t_list* lista_de_joineados_x_hilo=dictionary_get(el_proceso->diccionario_joineados_por_tid,hilo_info);
+	t_list* lista_de_joineados_x_hilo=dictionary_get(un_proceso->diccionario_joineados_por_tid,hilo_info);
 
 	if(lista_de_joineados_x_hilo!=NULL && !list_is_empty(lista_de_joineados_x_hilo)){
 
 		for (int i=0; i<lista_de_joineados_x_hilo->elements_count;i++){
-			int tid_para_ready= list_get(lista_de_joineados_x_hilo,i);
+			int tid_para_ready= list_remove(lista_de_joineados_x_hilo,0);
 			bool mismo_tid(hilo_t* un_hilo){
 
-				return un_hilo->hilo_informacion->tid==tid_para_ready;
+				bool mismo_pid=un_hilo->PID==hilo->PID;
+				bool mismo_tid_que_el_hilo=un_hilo->hilo_informacion->tid==tid_para_ready;
+				return mismo_tid_que_el_hilo&&mismo_pid;
 
 			}
+			dictionary_put(un_proceso->diccionario_joineados_por_tid,hilo_info,lista_de_joineados_x_hilo);
+			sem_wait(&mutex_lista_bloqueados);
 			hilo_t* hilo_joineado=list_remove_by_condition(bloqueados,mismo_tid);
+			sem_post(&mutex_lista_bloqueados);
+			sem_wait(&un_proceso->mutex_cola_ready);
+
+			long milisegundos_ready= time(NULL);
+			hilo->tiempos->tiempo_llegada_a_READY = milisegundos_ready;
+
 			queue_push(cola_ready,hilo_joineado);
-			sem_post(&el_proceso->procesos_en_ready);
-
-
-
-
+			sem_post(&un_proceso->mutex_cola_ready);
+			sem_post(&un_proceso->procesos_en_ready);
 		}
 	}
 
+	sem_wait(&hilo->mutex_estado_del_hilo);
+	hilo->estado_del_hilo=EXIT;
+	sem_post(&hilo->mutex_estado_del_hilo);
+
 	sem_wait(&mutex_cola_exit);
 	queue_push(cola_exit,hilo);
-	hilo->estado_del_hilo=EXIT;
 	sem_post(&mutex_cola_exit);
 
 	free(pid);
@@ -242,9 +197,7 @@ void exit_thread(hilo_t* hilo){
 	//Cuando termina de ejecutar la funcion del hilo, este "muere" y viene a exit ¿haciendo una cola de threads terminados?
 
 	exec_to_exit(hilo);
-	sem_wait(&semaforo_lista_procesos_finalizados);
-	list_add(hilos_finalizados,hilo);
-	sem_post(&semaforo_lista_procesos_finalizados);
+
 	sem_post(&grado_de_multiprogramacion_contador);
 	mostrar_metricas();
 	sem_post(&procesos_en_new);

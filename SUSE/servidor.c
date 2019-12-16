@@ -29,6 +29,7 @@ int iniciar_servidor(){
 	struct sockaddr_in direccionServidor;
 	direccionServidor.sin_family= AF_INET;
 	direccionServidor.sin_addr.s_addr= inet_addr(IP); //INADDR_ANY;
+	free(IP);
 	direccionServidor.sin_port=htons(PUERTO_ESCUCHA);
 
 	//El PUERTO_ESCUCHA deberia ser int (?)

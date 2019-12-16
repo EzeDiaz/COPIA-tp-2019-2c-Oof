@@ -111,7 +111,7 @@ void identificar_paquete_y_ejecutar_comando(int, void*);
 void* listar_metadata_directorio_y_archivos(void*);
 void* decifrar_archivo_a_crear(void*);
 archivo_descifrado_escritura* decifrar_archivo_a_escribir(void*);
-void* decifrar_archivo_a_leer(void*);
+params_lectura* decifrar_archivo_a_leer(void*);
 char* decifrar_archivo_a_borrar(void*);
 creacion* decifrar_creacion(void*);
 directorio_a_listar_t* decifrar_directorio_a_listar(void*);

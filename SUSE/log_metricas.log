@@ -1,104 +1,352 @@
-[INFO] 16:14:18:951 log_metricas/(15245:15257): grado de programacion actual: 5 
+[INFO] 12:17:20:763 log_metricas/(6904:6948): grado de programacion actual: 95 
 
-[INFO] 16:14:18:970 log_metricas/(15245:15257): el semaforo afinado
-[INFO] 16:14:18:973 log_metricas/(15245:15257):  tiene un valor de 0 
+[INFO] 12:17:20:763 log_metricas/(6904:6948): el semaforo afinado
+[INFO] 12:17:20:763 log_metricas/(6904:6948):  tiene un valor de 0 
 
-[INFO] 16:14:18:974 log_metricas/(15245:15257): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:18:977 log_metricas/(15245:15257):  tiene un valor de 1 
+[INFO] 12:17:20:763 log_metricas/(6904:6948): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:20:763 log_metricas/(6904:6948):  tiene un valor de 1 
 
-[INFO] 16:14:19:100 log_metricas/(15245:15262): grado de programacion actual: 6 
+[INFO] 12:17:23:860 log_metricas/(6904:6949): grado de programacion actual: 96 
 
-[INFO] 16:14:19:102 log_metricas/(15245:15262): el semaforo afinado
-[INFO] 16:14:19:104 log_metricas/(15245:15262):  tiene un valor de 0 
+[INFO] 12:17:23:860 log_metricas/(6904:6949): el semaforo afinado
+[INFO] 12:17:23:860 log_metricas/(6904:6949):  tiene un valor de 0 
 
-[INFO] 16:14:19:106 log_metricas/(15245:15262): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:19:107 log_metricas/(15245:15262):  tiene un valor de 1 
+[INFO] 12:17:23:860 log_metricas/(6904:6949): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:23:860 log_metricas/(6904:6949):  tiene un valor de 1 
 
-[INFO] 16:14:19:174 log_metricas/(15245:15257): grado de programacion actual: 8 
+[INFO] 12:17:24:187 log_metricas/(6904:6948): grado de programacion actual: 96 
 
-[INFO] 16:14:19:175 log_metricas/(15245:15257): el semaforo afinado
-[INFO] 16:14:19:175 log_metricas/(15245:15257):  tiene un valor de 0 
+[INFO] 12:17:24:187 log_metricas/(6904:6948): el semaforo afinado
+[INFO] 12:17:24:187 log_metricas/(6904:6948):  tiene un valor de 0 
 
-[INFO] 16:14:19:176 log_metricas/(15245:15257): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:19:179 log_metricas/(15245:15257):  tiene un valor de 1 
+[INFO] 12:17:24:187 log_metricas/(6904:6948): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:24:187 log_metricas/(6904:6948):  tiene un valor de 1 
 
-[INFO] 16:14:19:195 log_metricas/(15245:15262): grado de programacion actual: 9 
+[INFO] 12:17:24:782 log_metricas/(6904:6950): grado de programacion actual: 96 
 
-[INFO] 16:14:19:196 log_metricas/(15245:15262): el semaforo afinado
-[INFO] 16:14:19:196 log_metricas/(15245:15262):  tiene un valor de 0 
+[INFO] 12:17:24:782 log_metricas/(6904:6950): el semaforo afinado
+[INFO] 12:17:24:782 log_metricas/(6904:6950):  tiene un valor de 0 
 
-[INFO] 16:14:19:197 log_metricas/(15245:15262): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:19:198 log_metricas/(15245:15262):  tiene un valor de 1 
+[INFO] 12:17:24:782 log_metricas/(6904:6950): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:24:782 log_metricas/(6904:6950):  tiene un valor de 1 
 
-[INFO] 16:14:19:288 log_metricas/(15245:15257): grado de programacion actual: 11 
+[INFO] 12:17:27:213 log_metricas/(6904:6949): grado de programacion actual: 97 
 
-[INFO] 16:14:19:289 log_metricas/(15245:15257): el semaforo afinado
-[INFO] 16:14:19:290 log_metricas/(15245:15257):  tiene un valor de 0 
+[INFO] 12:17:27:213 log_metricas/(6904:6949): el semaforo afinado
+[INFO] 12:17:27:213 log_metricas/(6904:6949):  tiene un valor de 0 
 
-[INFO] 16:14:19:290 log_metricas/(15245:15257): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:19:297 log_metricas/(15245:15257):  tiene un valor de 1 
+[INFO] 12:17:27:213 log_metricas/(6904:6949): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:27:213 log_metricas/(6904:6949):  tiene un valor de 1 
 
-[INFO] 16:14:19:358 log_metricas/(15245:15257): grado de programacion actual: 13 
+[INFO] 12:17:28:325 log_metricas/(6904:6948): grado de programacion actual: 97 
 
-[INFO] 16:14:19:359 log_metricas/(15245:15257): el semaforo afinado
-[INFO] 16:14:19:359 log_metricas/(15245:15257):  tiene un valor de 0 
+[INFO] 12:17:28:326 log_metricas/(6904:6948): el semaforo afinado
+[INFO] 12:17:28:326 log_metricas/(6904:6948):  tiene un valor de 0 
 
-[INFO] 16:14:19:366 log_metricas/(15245:15257): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:19:367 log_metricas/(15245:15257):  tiene un valor de 1 
+[INFO] 12:17:28:326 log_metricas/(6904:6948): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:28:326 log_metricas/(6904:6948):  tiene un valor de 1 
 
-[INFO] 16:14:19:428 log_metricas/(15245:15257): grado de programacion actual: 15 
+[INFO] 12:17:28:549 log_metricas/(6904:6951): grado de programacion actual: 97 
 
-[INFO] 16:14:19:428 log_metricas/(15245:15257): el semaforo afinado
-[INFO] 16:14:19:429 log_metricas/(15245:15257):  tiene un valor de 0 
+[INFO] 12:17:28:549 log_metricas/(6904:6951): el semaforo afinado
+[INFO] 12:17:28:549 log_metricas/(6904:6951):  tiene un valor de 0 
 
-[INFO] 16:14:19:430 log_metricas/(15245:15257): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:19:430 log_metricas/(15245:15257):  tiene un valor de 1 
+[INFO] 12:17:28:550 log_metricas/(6904:6951): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:28:550 log_metricas/(6904:6951):  tiene un valor de 1 
 
-[INFO] 16:14:34:157 log_metricas/(15245:15251): grado de programacion actual: 10 
+[INFO] 12:17:28:901 log_metricas/(6904:6950): grado de programacion actual: 97 
 
-[INFO] 16:14:34:160 log_metricas/(15245:15251): el semaforo afinado
-[INFO] 16:14:34:163 log_metricas/(15245:15251):  tiene un valor de 0 
+[INFO] 12:17:28:901 log_metricas/(6904:6950): el semaforo afinado
+[INFO] 12:17:28:901 log_metricas/(6904:6950):  tiene un valor de 0 
 
-[INFO] 16:14:34:164 log_metricas/(15245:15251): el semaforo solo_hiper_mega_piola
-[INFO] 16:14:34:165 log_metricas/(15245:15251):  tiene un valor de 1 
+[INFO] 12:17:28:901 log_metricas/(6904:6950): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:28:901 log_metricas/(6904:6950):  tiene un valor de 1 
 
-[INFO] 16:15:16:378 log_metricas/(15245:15271): grado de programacion actual: 11 
+[INFO] 12:17:29:906 log_metricas/(6904:6952): grado de programacion actual: 97 
 
-[INFO] 16:15:16:378 log_metricas/(15245:15271): el semaforo afinado
-[INFO] 16:15:16:379 log_metricas/(15245:15271):  tiene un valor de 0 
+[INFO] 12:17:29:906 log_metricas/(6904:6952): el semaforo afinado
+[INFO] 12:17:29:906 log_metricas/(6904:6952):  tiene un valor de 0 
 
-[INFO] 16:15:16:380 log_metricas/(15245:15271): el semaforo solo_hiper_mega_piola
-[INFO] 16:15:16:380 log_metricas/(15245:15271):  tiene un valor de 1 
+[INFO] 12:17:29:906 log_metricas/(6904:6952): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:29:906 log_metricas/(6904:6952):  tiene un valor de 1 
 
-[INFO] 16:15:44:347 log_metricas/(15245:15251): grado de programacion actual: 11 
+[INFO] 12:17:30:544 log_metricas/(6904:6949): grado de programacion actual: 98 
 
-[INFO] 16:15:44:348 log_metricas/(15245:15251): el semaforo afinado
-[INFO] 16:15:44:349 log_metricas/(15245:15251):  tiene un valor de 0 
+[INFO] 12:17:30:544 log_metricas/(6904:6949): el semaforo afinado
+[INFO] 12:17:30:544 log_metricas/(6904:6949):  tiene un valor de 0 
 
-[INFO] 16:15:44:349 log_metricas/(15245:15251): el semaforo solo_hiper_mega_piola
-[INFO] 16:15:44:355 log_metricas/(15245:15251):  tiene un valor de 1 
+[INFO] 12:17:30:544 log_metricas/(6904:6949): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:30:545 log_metricas/(6904:6949):  tiene un valor de 1 
 
-[INFO] 16:15:54:992 log_metricas/(15245:15271): grado de programacion actual: 12 
+[INFO] 12:17:32:34 log_metricas/(6904:6951): grado de programacion actual: 98 
 
-[INFO] 16:15:54:993 log_metricas/(15245:15271): el semaforo afinado
-[INFO] 16:15:54:994 log_metricas/(15245:15271):  tiene un valor de 0 
+[INFO] 12:17:32:34 log_metricas/(6904:6951): el semaforo afinado
+[INFO] 12:17:32:34 log_metricas/(6904:6951):  tiene un valor de 0 
 
-[INFO] 16:15:54:994 log_metricas/(15245:15271): el semaforo solo_hiper_mega_piola
-[INFO] 16:15:54:995 log_metricas/(15245:15271):  tiene un valor de 1 
+[INFO] 12:17:32:34 log_metricas/(6904:6951): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:32:34 log_metricas/(6904:6951):  tiene un valor de 1 
 
-[INFO] 16:16:05:537 log_metricas/(15245:15271): grado de programacion actual: 13 
+[INFO] 12:17:32:791 log_metricas/(6904:6950): grado de programacion actual: 98 
 
-[INFO] 16:16:05:540 log_metricas/(15245:15271): el semaforo afinado
-[INFO] 16:16:05:541 log_metricas/(15245:15271):  tiene un valor de 0 
+[INFO] 12:17:32:791 log_metricas/(6904:6950): el semaforo afinado
+[INFO] 12:17:32:791 log_metricas/(6904:6950):  tiene un valor de 0 
 
-[INFO] 16:16:05:542 log_metricas/(15245:15271): el semaforo solo_hiper_mega_piola
-[INFO] 16:16:05:542 log_metricas/(15245:15271):  tiene un valor de 1 
+[INFO] 12:17:32:791 log_metricas/(6904:6950): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:32:791 log_metricas/(6904:6950):  tiene un valor de 1 
 
-[INFO] 16:16:05:614 log_metricas/(15245:15271): grado de programacion actual: 14 
+[INFO] 12:17:33:386 log_metricas/(6904:6952): grado de programacion actual: 98 
 
-[INFO] 16:16:05:615 log_metricas/(15245:15271): el semaforo afinado
-[INFO] 16:16:05:615 log_metricas/(15245:15271):  tiene un valor de 0 
+[INFO] 12:17:33:386 log_metricas/(6904:6952): el semaforo afinado
+[INFO] 12:17:33:386 log_metricas/(6904:6952):  tiene un valor de 0 
 
-[INFO] 16:16:05:616 log_metricas/(15245:15271): el semaforo solo_hiper_mega_piola
-[INFO] 16:16:05:616 log_metricas/(15245:15271):  tiene un valor de 1 
+[INFO] 12:17:33:386 log_metricas/(6904:6952): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:33:386 log_metricas/(6904:6952):  tiene un valor de 1 
+
+[INFO] 12:17:34:864 log_metricas/(6904:6951): grado de programacion actual: 98 
+
+[INFO] 12:17:34:864 log_metricas/(6904:6951): el semaforo afinado
+[INFO] 12:17:34:864 log_metricas/(6904:6951):  tiene un valor de 0 
+
+[INFO] 12:17:34:864 log_metricas/(6904:6951): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:34:864 log_metricas/(6904:6951):  tiene un valor de 1 
+
+[INFO] 12:17:35:652 log_metricas/(6904:6947): grado de programacion actual: 98 
+
+[INFO] 12:17:35:652 log_metricas/(6904:6947): el semaforo afinado
+[INFO] 12:17:35:652 log_metricas/(6904:6947):  tiene un valor de 0 
+
+[INFO] 12:17:35:652 log_metricas/(6904:6947): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:35:652 log_metricas/(6904:6947):  tiene un valor de 1 
+
+[INFO] 12:17:35:653 log_metricas/(6904:6947): grado de programacion actual: 98 
+
+[INFO] 12:17:35:653 log_metricas/(6904:6947): el semaforo afinado
+[INFO] 12:17:35:653 log_metricas/(6904:6947):  tiene un valor de 0 
+
+[INFO] 12:17:35:653 log_metricas/(6904:6947): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:35:653 log_metricas/(6904:6947):  tiene un valor de 1 
+
+[INFO] 12:17:36:378 log_metricas/(6904:6952): grado de programacion actual: 98 
+
+[INFO] 12:17:36:378 log_metricas/(6904:6952): el semaforo afinado
+[INFO] 12:17:36:378 log_metricas/(6904:6952):  tiene un valor de 0 
+
+[INFO] 12:17:36:378 log_metricas/(6904:6952): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:36:378 log_metricas/(6904:6952):  tiene un valor de 1 
+
+[INFO] 12:17:38:440 log_metricas/(6904:6948): grado de programacion actual: 98 
+
+[INFO] 12:17:38:440 log_metricas/(6904:6948): el semaforo afinado
+[INFO] 12:17:38:440 log_metricas/(6904:6948):  tiene un valor de 0 
+
+[INFO] 12:17:38:440 log_metricas/(6904:6948): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:38:440 log_metricas/(6904:6948):  tiene un valor de 1 
+
+[INFO] 12:17:38:450 log_metricas/(6904:6948): grado de programacion actual: 98 
+
+[INFO] 12:17:38:450 log_metricas/(6904:6948): el semaforo afinado
+[INFO] 12:17:38:450 log_metricas/(6904:6948):  tiene un valor de 0 
+
+[INFO] 12:17:38:450 log_metricas/(6904:6948): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:38:450 log_metricas/(6904:6948):  tiene un valor de 1 
+
+[INFO] 12:17:40:644 log_metricas/(6904:6949): grado de programacion actual: 99 
+
+[INFO] 12:17:40:644 log_metricas/(6904:6949): el semaforo afinado
+[INFO] 12:17:40:644 log_metricas/(6904:6949):  tiene un valor de 0 
+
+[INFO] 12:17:40:644 log_metricas/(6904:6949): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:40:644 log_metricas/(6904:6949):  tiene un valor de 1 
+
+[INFO] 12:17:40:652 log_metricas/(6904:6949): grado de programacion actual: 100 
+
+[INFO] 12:17:40:652 log_metricas/(6904:6949): el semaforo afinado
+[INFO] 12:17:40:652 log_metricas/(6904:6949):  tiene un valor de 0 
+
+[INFO] 12:17:40:652 log_metricas/(6904:6949): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:40:652 log_metricas/(6904:6949):  tiene un valor de 1 
+
+[INFO] 12:17:42:273 log_metricas/(6904:6905): grado de programacion actual: 100 
+
+[INFO] 12:17:42:273 log_metricas/(6904:6905): el semaforo afinado
+[INFO] 12:17:42:273 log_metricas/(6904:6905):  tiene un valor de 0 
+
+[INFO] 12:17:42:273 log_metricas/(6904:6905): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:42:273 log_metricas/(6904:6905):  tiene un valor de 1 
+
+[INFO] 12:17:42:891 log_metricas/(6904:6950): grado de programacion actual: 100 
+
+[INFO] 12:17:42:891 log_metricas/(6904:6950): el semaforo afinado
+[INFO] 12:17:42:891 log_metricas/(6904:6950):  tiene un valor de 0 
+
+[INFO] 12:17:42:891 log_metricas/(6904:6950): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:42:891 log_metricas/(6904:6950):  tiene un valor de 1 
+
+[INFO] 12:17:42:904 log_metricas/(6904:6950): grado de programacion actual: 100 
+
+[INFO] 12:17:42:904 log_metricas/(6904:6950): el semaforo afinado
+[INFO] 12:17:42:904 log_metricas/(6904:6950):  tiene un valor de 0 
+
+[INFO] 12:17:42:904 log_metricas/(6904:6950): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:42:904 log_metricas/(6904:6950):  tiene un valor de 1 
+
+[INFO] 12:17:44:999 log_metricas/(6904:6951): grado de programacion actual: 98 
+
+[INFO] 12:17:44:999 log_metricas/(6904:6951): el semaforo afinado
+[INFO] 12:17:44:999 log_metricas/(6904:6951):  tiene un valor de 0 
+
+[INFO] 12:17:44:999 log_metricas/(6904:6951): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:44:999 log_metricas/(6904:6951):  tiene un valor de 1 
+
+[INFO] 12:17:45:7 log_metricas/(6904:6951): grado de programacion actual: 98 
+
+[INFO] 12:17:45:7 log_metricas/(6904:6951): el semaforo afinado
+[INFO] 12:17:45:7 log_metricas/(6904:6951):  tiene un valor de 0 
+
+[INFO] 12:17:45:7 log_metricas/(6904:6951): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:45:7 log_metricas/(6904:6951):  tiene un valor de 1 
+
+[INFO] 12:17:46:516 log_metricas/(6904:6952): grado de programacion actual: 98 
+
+[INFO] 12:17:46:516 log_metricas/(6904:6952): el semaforo afinado
+[INFO] 12:17:46:516 log_metricas/(6904:6952):  tiene un valor de 0 
+
+[INFO] 12:17:46:516 log_metricas/(6904:6952): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:46:516 log_metricas/(6904:6952):  tiene un valor de 1 
+
+[INFO] 12:17:46:523 log_metricas/(6904:6952): grado de programacion actual: 98 
+
+[INFO] 12:17:46:523 log_metricas/(6904:6952): el semaforo afinado
+[INFO] 12:17:46:523 log_metricas/(6904:6952):  tiene un valor de 0 
+
+[INFO] 12:17:46:523 log_metricas/(6904:6952): el semaforo solo_hiper_mega_piola
+[INFO] 12:17:46:524 log_metricas/(6904:6952):  tiene un valor de 1 
+
+[INFO] 12:18:04:31 log_metricas/(6904:6911): grado de programacion actual: 98 
+
+[INFO] 12:18:04:31 log_metricas/(6904:6911): el semaforo afinado
+[INFO] 12:18:04:31 log_metricas/(6904:6911):  tiene un valor de 0 
+
+[INFO] 12:18:04:31 log_metricas/(6904:6911): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:31 log_metricas/(6904:6911):  tiene un valor de 1 
+
+[INFO] 12:18:04:33 log_metricas/(6904:6911): grado de programacion actual: 98 
+
+[INFO] 12:18:04:33 log_metricas/(6904:6911): el semaforo afinado
+[INFO] 12:18:04:33 log_metricas/(6904:6911):  tiene un valor de 0 
+
+[INFO] 12:18:04:33 log_metricas/(6904:6911): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:33 log_metricas/(6904:6911):  tiene un valor de 1 
+
+[INFO] 12:18:04:42 log_metricas/(6904:6916): grado de programacion actual: 98 
+
+[INFO] 12:18:04:42 log_metricas/(6904:6916): el semaforo afinado
+[INFO] 12:18:04:42 log_metricas/(6904:6916):  tiene un valor de 0 
+
+[INFO] 12:18:04:42 log_metricas/(6904:6916): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:42 log_metricas/(6904:6916):  tiene un valor de 0 
+
+[INFO] 12:18:04:53 log_metricas/(6904:6957): grado de programacion actual: 99 
+
+[INFO] 12:18:04:53 log_metricas/(6904:6957): el semaforo afinado
+[INFO] 12:18:04:53 log_metricas/(6904:6957):  tiene un valor de 0 
+
+[INFO] 12:18:04:53 log_metricas/(6904:6957): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:53 log_metricas/(6904:6957):  tiene un valor de 1 
+
+[INFO] 12:18:04:62 log_metricas/(6904:6911): grado de programacion actual: 99 
+
+[INFO] 12:18:04:62 log_metricas/(6904:6911): el semaforo afinado
+[INFO] 12:18:04:62 log_metricas/(6904:6911):  tiene un valor de 0 
+
+[INFO] 12:18:04:62 log_metricas/(6904:6911): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:62 log_metricas/(6904:6911):  tiene un valor de 1 
+
+[INFO] 12:18:04:67 log_metricas/(6904:6916): grado de programacion actual: 99 
+
+[INFO] 12:18:04:68 log_metricas/(6904:6916): el semaforo afinado
+[INFO] 12:18:04:68 log_metricas/(6904:6916):  tiene un valor de 0 
+
+[INFO] 12:18:04:68 log_metricas/(6904:6916): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:68 log_metricas/(6904:6916):  tiene un valor de 1 
+
+[INFO] 12:18:04:76 log_metricas/(6904:6957): grado de programacion actual: 100 
+
+[INFO] 12:18:04:76 log_metricas/(6904:6957): el semaforo afinado
+[INFO] 12:18:04:76 log_metricas/(6904:6957):  tiene un valor de 0 
+
+[INFO] 12:18:04:76 log_metricas/(6904:6957): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:76 log_metricas/(6904:6957):  tiene un valor de 1 
+
+[INFO] 12:18:04:84 log_metricas/(6904:6911): grado de programacion actual: 100 
+
+[INFO] 12:18:04:84 log_metricas/(6904:6911): el semaforo afinado
+[INFO] 12:18:04:84 log_metricas/(6904:6911):  tiene un valor de 0 
+
+[INFO] 12:18:04:85 log_metricas/(6904:6911): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:85 log_metricas/(6904:6911):  tiene un valor de 1 
+
+[INFO] 12:18:04:98 log_metricas/(6904:6916): grado de programacion actual: 100 
+
+[INFO] 12:18:04:98 log_metricas/(6904:6916): el semaforo afinado
+[INFO] 12:18:04:98 log_metricas/(6904:6916):  tiene un valor de 0 
+
+[INFO] 12:18:04:98 log_metricas/(6904:6916): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:98 log_metricas/(6904:6916):  tiene un valor de 1 
+
+[INFO] 12:18:04:102 log_metricas/(6904:6911): grado de programacion actual: 100 
+
+[INFO] 12:18:04:102 log_metricas/(6904:6911): el semaforo afinado
+[INFO] 12:18:04:102 log_metricas/(6904:6911):  tiene un valor de 0 
+
+[INFO] 12:18:04:102 log_metricas/(6904:6911): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:102 log_metricas/(6904:6911):  tiene un valor de 1 
+
+[INFO] 12:18:04:119 log_metricas/(6904:6916): grado de programacion actual: 100 
+
+[INFO] 12:18:04:119 log_metricas/(6904:6916): el semaforo afinado
+[INFO] 12:18:04:119 log_metricas/(6904:6916):  tiene un valor de 0 
+
+[INFO] 12:18:04:119 log_metricas/(6904:6916): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:119 log_metricas/(6904:6916):  tiene un valor de 1 
+
+[INFO] 12:18:04:128 log_metricas/(6904:6916): grado de programacion actual: 100 
+
+[INFO] 12:18:04:128 log_metricas/(6904:6916): el semaforo afinado
+[INFO] 12:18:04:128 log_metricas/(6904:6916):  tiene un valor de 0 
+
+[INFO] 12:18:04:128 log_metricas/(6904:6916): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:04:128 log_metricas/(6904:6916):  tiene un valor de 1 
+
+[INFO] 12:18:52:300 log_metricas/(6904:6905): grado de programacion actual: 100 
+
+[INFO] 12:18:52:300 log_metricas/(6904:6905): el semaforo afinado
+[INFO] 12:18:52:300 log_metricas/(6904:6905):  tiene un valor de 0 
+
+[INFO] 12:18:52:300 log_metricas/(6904:6905): el semaforo solo_hiper_mega_piola
+[INFO] 12:18:52:300 log_metricas/(6904:6905):  tiene un valor de 1 
+
+[INFO] 12:20:02:309 log_metricas/(6904:6905): grado de programacion actual: 100 
+
+[INFO] 12:20:02:309 log_metricas/(6904:6905): el semaforo afinado
+[INFO] 12:20:02:309 log_metricas/(6904:6905):  tiene un valor de 0 
+
+[INFO] 12:20:02:309 log_metricas/(6904:6905): el semaforo solo_hiper_mega_piola
+[INFO] 12:20:02:309 log_metricas/(6904:6905):  tiene un valor de 1 
+
+[INFO] 12:21:12:316 log_metricas/(6904:6905): grado de programacion actual: 100 
+
+[INFO] 12:21:12:316 log_metricas/(6904:6905): el semaforo afinado
+[INFO] 12:21:12:317 log_metricas/(6904:6905):  tiene un valor de 0 
+
+[INFO] 12:21:12:317 log_metricas/(6904:6905): el semaforo solo_hiper_mega_piola
+[INFO] 12:21:12:317 log_metricas/(6904:6905):  tiene un valor de 1 
+
+[INFO] 12:22:22:325 log_metricas/(6904:6905): grado de programacion actual: 100 
+
+[INFO] 12:22:22:325 log_metricas/(6904:6905): el semaforo afinado
+[INFO] 12:22:22:325 log_metricas/(6904:6905):  tiene un valor de 0 
+
+[INFO] 12:22:22:325 log_metricas/(6904:6905): el semaforo solo_hiper_mega_piola
+[INFO] 12:22:22:325 log_metricas/(6904:6905):  tiene un valor de 1 
 

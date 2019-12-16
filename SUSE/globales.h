@@ -21,7 +21,6 @@ pthread_mutex_t semaforo_diccionario_procesos_x_queues;
 pthread_mutex_t semaforo_diccionario_procesos_x_semaforo;
 pthread_mutex_t mutex_log_servidor;
 pthread_mutex_t semaforo_lista_procesos_finalizados;
-pthread_mutex_t semaforo_estado_blocked;
 pthread_mutex_t semaforo_diccionario_por_semaforo;
 pthread_mutex_t mutex_lista_block;
 pthread_mutex_t mutex_diccionario;
@@ -43,6 +42,8 @@ pthread_mutex_t mutex_cola_exit;
 pthread_mutex_t mutex_cronometro;
 pthread_mutex_t mutex_lista_bloqueados;
 pthread_mutex_t mutex_bloquear_hilo;
+pthread_mutex_t mutex_desbloquear_hilo;
+pthread_mutex_t mutex_diccionario_sincro_wait_signal;
 
 //Contador
 sem_t grado_de_multiprogramacion_contador;
@@ -66,6 +67,7 @@ t_dictionary* diccionario_de_procesos;
 t_dictionary* diccionario_procesos_x_queues; // Va a ser una tupla de (PID;VectorDeColas)
 t_dictionary* diccionario_de_procesos_x_semaforo;
 t_dictionary* diccionario_bloqueados_por_semafaro;
+t_dictionary* diccionario_sincro_wait_signal;
 
 //COLAS
 t_queue* cola_new;

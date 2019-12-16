@@ -59,7 +59,7 @@ enum{
 }tipos_de_busqueda;
 
 //Semaforos
-sem_t* mutex_log_servidor;
+pthread_mutex_t mutex_log_servidor;
 sem_t*mutex_tabla_de_nodos;
 
 

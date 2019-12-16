@@ -42,6 +42,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		semaforo_descifrado_t* semaforo_wait=descifrar_suse_wait(buffer);
 		int paquete=suse_wait(semaforo_wait->nombre_del_semaforo, semaforo_wait->tid,cliente_socket);
 		armar_paquete((void*)paquete,INT ,cliente_socket);
+		free(semaforo_wait->nombre_del_semaforo);
 		free(semaforo_wait);
 		break;
 
@@ -49,6 +50,7 @@ void identificar_paquete_y_ejecutar_comando(int cliente_socket, void* buffer){
 		log_info(logger_de_deserializacion, "Es el codigo de 'suse_signal', comenzando la deserializacion de parametros\n");
 		semaforo_descifrado_t* semaforo_signal=descifrar_suse_signal(buffer);
 		armar_paquete((void*)suse_signal(semaforo_signal->nombre_del_semaforo,cliente_socket),INT,cliente_socket);
+		free(semaforo_signal->nombre_del_semaforo);
 		free(semaforo_signal);
 		break;
 

@@ -3,6 +3,9 @@
 #define GFILENAMELENGTH 71
 #define GHEADERBLOCKS 1
 #define BLKINDIRECT 1000
+#define DEFAULT_FILE_NAME "saraza"
+#define DEFAULT_FILE_CONTENT 0
+#define DEFAULT_FILE_PATH "/" DEFAULT_FILE_NAME
 
 typedef uint32_t ptrGBloque;
 

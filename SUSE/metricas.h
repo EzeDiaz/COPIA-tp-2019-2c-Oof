@@ -15,7 +15,7 @@ void metricas_por_programa();
 void metricas_por_hilo();
 int cantidad_hilos(proceso_t*);
 void metricas_de_hilos_por_estado(char*,proceso_t*);
-int cantidad_hilos_en_el_estado(t_list* , int);
+int cantidad_hilos_en_el_estado(proceso_t* , int);
 int obtener_tiempo_total_de(proceso_t*);
 
 #endif /* METRICAS_H_ */
