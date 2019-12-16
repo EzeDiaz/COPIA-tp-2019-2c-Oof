@@ -57,7 +57,7 @@ typedef struct{
 	int references;
 } mappedFile; //1 por cada archivo. Los privados pueden solo ser ref 1 vez? VER MAP_PRIVATE y sus implicancias
 
-int TRANSLATE_DL_TO_DF(uint32_t dl);
+int TRANSLATE_DL_TO_OFFSET_IN_THE_PAGE(uint32_t dl);
 void LOG_METRICS(int socket);
 void LOG_SYSTEM_METRICS();
 void LOG_PROGRAM_METRICS(int a_client_socket);
@@ -112,6 +112,16 @@ int FREE_USED_FRAME(uint32_t address, addressSpace* address_space);
 heapMetadata* GET_METADATA_BEHIND_ADDRESS(uint32_t address, segment* a_segment, int *metadata_page_num, int *metadata_offset);
 void BRING_FROM_SWAP(segment* a_segment, pageFrame* current_page);
 int TOTAL_MEMORY_SIZE();
+
+//Remodelan2
+void MERGE_CONSECUTIVES_FREE_BLOCKS_V2(segment* a_segment);
+heapMetadata* GET_METADATA_BEHIND_ADDRESS_V2(uint32_t address, segment* a_segment, int *metadata_page_num, int *metadata_offset, bool *isSplit);
+uint32_t ITERATE_SEGMENT_TO_FIND_FREE_SPACE(segment* segment, int bytes);
+void WRITE_USED_AND_FREE_METADATA(segment* a_segment, uint32_t bytes);
+uint32_t ALLOC(addressSpace* addr_spc, uint32_t bytes);
+int WRITE_N_BYTES_DATA_TO_MUSE_V2(uint32_t dst, addressSpace* address_space, size_t bytes_a_copiar, void* data);
+void* GET_N_BYTES_DATA_FROM_MUSE_V2(addressSpace* address_space, uint32_t src, size_t bytes_a_copiar);
+uint32_t OFFSET_ADDR_TO_METADATA(uint32_t segment_base, uint32_t md_page_num, uint32_t md_move_in_page, uint32_t addr);
 
 //Potentially deprecated
 segment* CREATE_NEW_EMPTY_SEGMENT(char* name);
